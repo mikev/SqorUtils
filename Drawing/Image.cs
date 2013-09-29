@@ -1,0 +1,179 @@
+using System;
+using MonoTouch.Foundation;
+using Sqor.Utils.Data;
+using MonoTouch.UIKit;
+using Sqor.Utils.Net;
+using Sqor.Utils.Drawing;
+using System.Threading.Tasks;
+using System.Linq;
+using MonoTouch.CoreGraphics;
+
+namespace Sqor.Utils.Drawing
+{
+    public enum ImageSource { None, Url, ByteArray, Native, Custom }
+    
+    public struct Image
+    {
+        private readonly ImageSource source;
+        private readonly string url;
+        private readonly byte[] byteArray;
+        
+        #if MONOTOUCH
+        private readonly UIImage nativeImage;
+        #endif
+        
+        public Image(
+            ImageSource source, 
+            string url, 
+            byte[] byteArray
+        #if MONOTOUCH
+            , UIImage nativeImage
+        #endif
+        ) : this()
+        {
+            if (url != null && !url.Contains("://"))
+                throw new InvalidOperationException("Invalid Url: " + url);
+        
+            this.source = source;
+            this.url = url;
+            this.byteArray = byteArray;
+            #if MONOTOUCH
+            this.nativeImage = nativeImage;
+            #endif
+        }
+        
+        public ImageSource Source
+        {
+            get { return source; }
+        }
+        
+        public string Url
+        {
+            get { return url; }
+        }
+        
+        public byte[] ByteArray
+        {
+            get { return byteArray; }
+        }
+        
+        public Task<byte[]> ToByteArray()
+        {
+            switch (Source)
+            {
+                case ImageSource.Url:
+                    return Http.To(Url).Get().AsBinary();
+                case ImageSource.ByteArray:
+                    return Task.FromResult(ByteArray);
+                case ImageSource.Native:
+                    return Task.FromResult(NativeImage.SaveToByteArray());
+                case ImageSource.None:
+                    return Task.FromResult((byte[])null);
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+        
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Image))
+                return false;
+                
+            return base.Equals((Image)obj);
+        }
+        
+        public bool Equals(Image other)
+        {
+            if (other.Source != Source)
+                return false;
+                
+            switch (Source)
+            {
+                case ImageSource.Url:
+                    return other.Url == Url;
+                case ImageSource.ByteArray:
+                    return other.ByteArray.SequenceEqual(ByteArray);
+                case ImageSource.None:
+                    return true;
+#if MONOTOUCH
+                case ImageSource.Native:
+                    return other.NativeImage == NativeImage;
+#endif
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+        
+        public override int GetHashCode()
+        {
+            switch (Source)
+            {   
+                case ImageSource.Url:
+                    return Url.GetHashCode();
+                case ImageSource.ByteArray:
+                    return ByteArray.GetHashCode();
+                case ImageSource.Native:
+                    return NativeImage.GetHashCode();
+                default:
+                    return 0;
+            }
+        }
+        
+        #if MONOTOUCH
+        
+        public UIImage NativeImage
+        {
+            get { return nativeImage; }
+        }
+        
+        #endif
+        
+        public Image DefaultTo(Image image)
+        {
+            if (Source == ImageSource.None)
+                return image;
+            else
+                return this;
+        }
+        
+        public static implicit operator Image(string url)
+        {
+            return !string.IsNullOrEmpty(url) ? new Image(ImageSource.Url, url, null, null) : new Image(ImageSource.None, null, null, null);
+        }
+        
+        public static implicit operator Image(byte[] data)
+        {
+            return new Image(data != null ? ImageSource.ByteArray : ImageSource.None, null, data, null);
+        }
+        
+        public static implicit operator Image(NSData data)
+        {
+            return data.ToByteArray();
+        }
+        
+        public static bool operator ==(Image image1, Image image2)
+        {
+            return image1.Equals(image2);
+        }
+        
+        public static bool operator !=(Image image1, Image image2)
+        {
+            return !image1.Equals(image2);
+        }
+        
+        #if MONOTOUCH
+        
+        public static implicit operator Image(UIImage image)
+        {
+            return new Image(ImageSource.Native, null, null, image);
+        }
+        
+        #endif
+        
+        public override string ToString()
+        {
+            return string.Format("[Image: Source={0}, Url={1}, ByteArray={2}, NativeImage={3}]", Source, Url, ByteArray != null ? "byte[" + ByteArray.Length + "]" : "null", NativeImage != null ? "{value}" : "null");
+        }
+    }
+}
+
