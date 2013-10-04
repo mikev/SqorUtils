@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 
+#if MONOTOUCH
+
 namespace Sqor.Utils.Drawing
 {
     public partial class GraphicsPath
@@ -24,3 +26,4 @@ namespace Sqor.Utils.Drawing
     }
 }
 
+#endif

@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Sqor.Utils.Generics;
 using Sqor.Utils.Strings;
 using Sqor.Utils.Json;
@@ -97,6 +99,16 @@ namespace Sqor.Utils.Json
 //                var date = unixEpoch.AddSeconds(seconds);
 //                return date;
 //            }
+            else if (type.IsGenericDictionary())
+            {
+                var dictionary = (IDictionary)Activator.CreateInstance(type);
+                var jsonObject = (JsonObject)graph;
+                foreach (var item in jsonObject)
+                {
+                    dictionary[item.Key] = item.Value;
+                }
+                return dictionary;
+            }
 			else if (type.IsArray)
 			{
                 if (graph is JsonArray)
@@ -136,11 +148,11 @@ namespace Sqor.Utils.Json
 			{
 				var result = Activator.CreateInstance(type);
 				var jsonObject = (JsonObject)graph;
-				foreach (var property in type.GetProperties()) 
+				foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x))) 
 				{
                     try 
                     {
-                        var keyName = KeyAttribute.GetKey(property);
+                        var keyName = JsonAttribute.GetKey(property);
                         var jsonValue = jsonObject[keyName];
                         if (jsonValue != null)
                         {
@@ -265,13 +277,13 @@ namespace Sqor.Utils.Json
 			{
 				var values = new List<KeyValuePair<string, JsonValue>>();
 
-				foreach (var property in type.GetProperties())
+				foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x)))
 				{
                     try 
                     {
                         var value = property.GetValue(graph, null);
                         var jsonValue = ConvertObjectToJsonValue(value);
-                        var keyName = KeyAttribute.GetKey(property);
+                        var keyName = JsonAttribute.GetKey(property);
                         values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
                     }
                     catch (Exception e)

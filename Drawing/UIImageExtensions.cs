@@ -1,3 +1,5 @@
+#if MONOTOUCH
+
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
@@ -60,3 +62,5 @@ namespace Sqor.Utils.Drawing
         }
     }
 }
+
+#endif

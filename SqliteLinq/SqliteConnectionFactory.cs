@@ -1,3 +1,5 @@
+#if MONOTOUCH
+
 using System;
 using Mono.Data.Sqlite;
 using System.Data.Common;
@@ -42,3 +44,4 @@ namespace Sqor.Utils.SqliteLinq
     }
 }
 
+#endif

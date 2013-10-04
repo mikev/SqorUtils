@@ -1,12 +1,16 @@
 using System;
-using MonoTouch.Foundation;
-using Sqor.Utils.Data;
-using MonoTouch.UIKit;
 using Sqor.Utils.Net;
-using Sqor.Utils.Drawing;
 using System.Threading.Tasks;
 using System.Linq;
+
+#if MONOTOUCH 
+
+using Sqor.Utils.Data;
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
+
+#endif
 
 namespace Sqor.Utils.Drawing
 {
@@ -26,9 +30,11 @@ namespace Sqor.Utils.Drawing
             ImageSource source, 
             string url, 
             byte[] byteArray
-        #if MONOTOUCH
+#if MONOTOUCH
             , UIImage nativeImage
-        #endif
+#else
+            , object nativeImage
+#endif
         ) : this()
         {
             if (url != null && !url.Contains("://"))
@@ -65,8 +71,10 @@ namespace Sqor.Utils.Drawing
                     return Http.To(Url).Get().AsBinary();
                 case ImageSource.ByteArray:
                     return Task.FromResult(ByteArray);
+#if MONOTOUCH
                 case ImageSource.Native:
                     return Task.FromResult(NativeImage.SaveToByteArray());
+#endif
                 case ImageSource.None:
                     return Task.FromResult((byte[])null);
                 default:
@@ -112,8 +120,10 @@ namespace Sqor.Utils.Drawing
                     return Url.GetHashCode();
                 case ImageSource.ByteArray:
                     return ByteArray.GetHashCode();
+#if MONOTOUCH
                 case ImageSource.Native:
                     return NativeImage.GetHashCode();
+#endif
                 default:
                     return 0;
             }
@@ -145,11 +155,12 @@ namespace Sqor.Utils.Drawing
         {
             return new Image(data != null ? ImageSource.ByteArray : ImageSource.None, null, data, null);
         }
-        
+#if MONOTOUCH        
         public static implicit operator Image(NSData data)
         {
             return data.ToByteArray();
         }
+#endif
         
         public static bool operator ==(Image image1, Image image2)
         {
@@ -172,7 +183,16 @@ namespace Sqor.Utils.Drawing
         
         public override string ToString()
         {
-            return string.Format("[Image: Source={0}, Url={1}, ByteArray={2}, NativeImage={3}]", Source, Url, ByteArray != null ? "byte[" + ByteArray.Length + "]" : "null", NativeImage != null ? "{value}" : "null");
+            return string.Format("[Image: Source={0}, Url={1}, ByteArray={2}, NativeImage={3}]", 
+                Source, 
+                Url, 
+                ByteArray != null ? "byte[" + ByteArray.Length + "]" : "null", 
+#if MONOTOUCH
+                NativeImage != null ? "{value}" : "null"
+#else
+                null
+#endif
+            );
         }
     }
 }

@@ -1,8 +1,8 @@
+#if MONOTOUCH
+
 using System;
 using MonoTouch.Foundation;
 using MonoTouch.ObjCRuntime;
-
-#if MONOTOUCH
 
 namespace Sqor.Utils.Net
 {

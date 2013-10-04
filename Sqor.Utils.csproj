@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A9F6FA4C-0082-486E-912E-CEE2E84BB0C3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sqor.Utils</RootNamespace>
+    <AssemblyName>Sqor.Utils</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Arrays\ArrayReadOnlyList.cs" />
+    <Compile Include="Caches\LruCache.cs" />
+    <Compile Include="Data\NSDataExtensions.cs" />
+    <Compile Include="DateTimes\DateTimeExtensions.cs" />
+    <Compile Include="DateTimes\DateTimeSpan.cs" />
+    <Compile Include="Delegates\Actions.cs" />
+    <Compile Include="Dictionaries\DictionaryExtensions.cs" />
+    <Compile Include="Drawing\Bitmap.cs" />
+    <Compile Include="Drawing\Color.cs" />
+    <Compile Include="Drawing\ColorExtensions.cs" />
+    <Compile Include="Drawing\Font.cs" />
+    <Compile Include="Drawing\GraphicsPath.cs" />
+    <Compile Include="Drawing\Identicon.cs" />
+    <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Drawing\IosBitmap.cs" />
+    <Compile Include="Drawing\IosColor.cs" />
+    <Compile Include="Drawing\IosFont.cs" />
+    <Compile Include="Drawing\IosGraphicsPath.cs" />
+    <Compile Include="Drawing\Matrix.cs" />
+    <Compile Include="Drawing\PointExtensions.cs" />
+    <Compile Include="Drawing\RectangleExtensions.cs" />
+    <Compile Include="Drawing\SizeExtensions.cs" />
+    <Compile Include="Drawing\UIFontExtensions.cs" />
+    <Compile Include="Drawing\UIImageExtensions.cs" />
+    <Compile Include="Encryption\Crypto.cs" />
+    <Compile Include="Enumerables\EnumerableExtensions.cs" />
+    <Compile Include="Events\EventExtensions.cs" />
+    <Compile Include="Exceptions\ExceptionExtensions.cs" />
+    <Compile Include="Generics\GenericExtensions.cs" />
+    <Compile Include="Injection\Binding.cs" />
+    <Compile Include="Injection\Cache.cs" />
+    <Compile Include="Injection\ConcurrentCache.cs" />
+    <Compile Include="Injection\ConstantResolver.cs" />
+    <Compile Include="Injection\Container.cs" />
+    <Compile Include="Injection\Context.cs" />
+    <Compile Include="Injection\FactoryResolver.cs" />
+    <Compile Include="Injection\HybridCache.cs" />
+    <Compile Include="Injection\IBinding.cs" />
+    <Compile Include="Injection\ICache.cs" />
+    <Compile Include="Injection\IgnoreAttribute.cs" />
+    <Compile Include="Injection\InjectionModule.cs" />
+    <Compile Include="Injection\Injector.cs" />
+    <Compile Include="Injection\IResolver.cs" />
+    <Compile Include="Injection\IScope.cs" />
+    <Compile Include="Injection\MethodResolver.cs" />
+    <Compile Include="Injection\ReflectionResolver.cs" />
+    <Compile Include="Injection\Request.cs" />
+    <Compile Include="Injection\ResolverFactoryResolver.cs" />
+    <Compile Include="Injection\Scopes\NoScope.cs" />
+    <Compile Include="Injection\Scopes\SingletonScope.cs" />
+    <Compile Include="Injection\Scopes\TransientScope.cs" />
+    <Compile Include="Injection\Scopes\WebRequestScope.cs" />
+    <Compile Include="Json\IJsonSerializer.cs" />
+    <Compile Include="Json\JsonArray.cs" />
+    <Compile Include="Json\JsonAttribute.cs" />
+    <Compile Include="Json\JsonExtensions.cs" />
+    <Compile Include="Json\JsonObject.cs" />
+    <Compile Include="Json\JsonObjectSerializer.cs" />
+    <Compile Include="Json\JsonPrimitive.cs" />
+    <Compile Include="Json\JsonReader.cs" />
+    <Compile Include="Json\JsonSerializer.cs" />
+    <Compile Include="Json\JsonToken.cs" />
+    <Compile Include="Json\JsonTokenType.cs" />
+    <Compile Include="Json\JsonType.cs" />
+    <Compile Include="Json\JsonValue.cs" />
+    <Compile Include="Lists\ListExtensions.cs" />
+    <Compile Include="Logging\BasicLogFormatter.cs" />
+    <Compile Include="Logging\ConsoleLogPrinter.cs" />
+    <Compile Include="Logging\DatePrefixedFormatter.cs" />
+    <Compile Include="Logging\FileLogPrinter.cs" />
+    <Compile Include="Logging\HybridPrinter.cs" />
+    <Compile Include="Logging\IFileManager.cs" />
+    <Compile Include="Logging\ILogFormatter.cs" />
+    <Compile Include="Logging\ILogPrinter.cs" />
+    <Compile Include="Logging\LogContext.cs" />
+    <Compile Include="Logging\LogExtensions.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\MessageType.cs" />
+    <Compile Include="Logging\RollingFileManager.cs" />
+    <Compile Include="Logging\WindowsEventLogPrinter.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\ModelCollection.cs" />
+    <Compile Include="Models\ModelMetaData.cs" />
+    <Compile Include="Net\Http.cs" />
+    <Compile Include="Net\NSUrlExtensions.cs" />
+    <Compile Include="Net\TimeoutWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Numbers\NumberExtensions.cs" />
+    <Compile Include="SqliteLinq\AutoIncrementAttribute.cs" />
+    <Compile Include="SqliteLinq\ColumnAttribute.cs" />
+    <Compile Include="SqliteLinq\DataContext.cs" />
+    <Compile Include="SqliteLinq\DbConnectionExtensions.cs" />
+    <Compile Include="SqliteLinq\Mapping.cs" />
+    <Compile Include="SqliteLinq\MappingManager.cs" />
+    <Compile Include="SqliteLinq\MaxLengthAttribute.cs" />
+    <Compile Include="SqliteLinq\Migrations\ColumnBuilder.cs" />
+    <Compile Include="SqliteLinq\Migrations\CreateMetaTables.cs" />
+    <Compile Include="SqliteLinq\Migrations\IDatabaseDriver.cs" />
+    <Compile Include="SqliteLinq\Migrations\Migration.cs" />
+    <Compile Include="SqliteLinq\Migrations\MigrationManager.cs" />
+    <Compile Include="SqliteLinq\Migrations\MigrationOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\AddColumnOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\CreateTableOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\DropColumnOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\DropTableOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\RenameTableOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\Operations\SqlOperation.cs" />
+    <Compile Include="SqliteLinq\Migrations\SqliteDriver.cs" />
+    <Compile Include="SqliteLinq\Migrations\SqlType.cs" />
+    <Compile Include="SqliteLinq\Migrations\SysColumn.cs" />
+    <Compile Include="SqliteLinq\Migrations\SysDb.cs" />
+    <Compile Include="SqliteLinq\Migrations\SysMigration.cs" />
+    <Compile Include="SqliteLinq\Migrations\SysTable.cs" />
+    <Compile Include="SqliteLinq\Migrations\TableBuilder.cs" />
+    <Compile Include="SqliteLinq\PrimaryKeyAttribute.cs" />
+    <Compile Include="SqliteLinq\SqliteConnectionFactory.cs" />
+    <Compile Include="SqliteLinq\Table.cs" />
+    <Compile Include="SqliteLinq\TableAttribute.cs" />
+    <Compile Include="Streams\StreamExtensions.cs" />
+    <Compile Include="Strings\StringExtensions.cs" />
+    <Compile Include="Threading\AsyncLazy.cs" />
+    <Compile Include="Threading\TaskExtensions.cs" />
+    <Compile Include="Threading\WorkerThread.cs" />
+    <Compile Include="Threading\WorkQueue.cs" />
+    <Compile Include="Types\Class.cs" />
+    <Compile Include="Types\TypeExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Json\Readme.md" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

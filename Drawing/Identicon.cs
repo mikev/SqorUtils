@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
+#if MONOTOUCH
+
 namespace Sqor.Utils.Drawing
 {
     /// <summary>
@@ -449,3 +451,5 @@ namespace Sqor.Utils.Drawing
         }
     }
 }
+
+#endif

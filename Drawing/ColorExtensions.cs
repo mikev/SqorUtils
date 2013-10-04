@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 
+#if MONOTOUCH
+
 namespace Sqor.Utils.Drawing
 {
     public static class ColorExtensions
@@ -120,3 +122,5 @@ namespace Sqor.Utils.Drawing
         }
     }
 }
+
+#endif

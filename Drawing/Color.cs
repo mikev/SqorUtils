@@ -2,6 +2,8 @@ using System;
 using System.Globalization;
 using Sqor.Utils.Strings;
 
+#if MONOTOUCH
+
 namespace Sqor.Utils.Drawing
 {
     public partial class Color
@@ -134,3 +136,4 @@ namespace Sqor.Utils.Drawing
     }
 }
 
+#endif

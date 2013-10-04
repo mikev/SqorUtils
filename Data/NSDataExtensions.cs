@@ -1,3 +1,5 @@
+#if MONOTOUCH
+
 using System;
 using MonoTouch.Foundation;
 using System.Runtime.InteropServices;
@@ -15,3 +17,4 @@ namespace Sqor.Utils.Data
     }
 }
 
+#endif

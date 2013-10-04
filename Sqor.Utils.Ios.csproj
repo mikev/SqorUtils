@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -41,32 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="Events\" />
-    <Folder Include="Net\" />
-    <Folder Include="Json\" />
-    <Folder Include="Streams\" />
-    <Folder Include="Dictionaries\" />
-    <Folder Include="Generics\" />
-    <Folder Include="Strings\" />
-    <Folder Include="Enumerables\" />
-    <Folder Include="Logging\" />
-    <Folder Include="Injection\" />
-    <Folder Include="Models\" />
-    <Folder Include="Types\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Encryption\" />
-    <Folder Include="Drawing\" />
-    <Folder Include="Delegates\" />
-    <Folder Include="Threading\" />
-    <Folder Include="Datetimes\" />
-    <Folder Include="DateTimes\" />
-    <Folder Include="Arrays\" />
-    <Folder Include="Lists\" />
-    <Folder Include="Caches\" />
-    <Folder Include="Numbers\" />
-    <Folder Include="Data\" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
@@ -177,7 +153,9 @@
     <Compile Include="Threading\WorkerThread.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Threading\AsyncLazy.cs" />
-    <Compile Include="Net\TimeoutWebClient.cs" />
+    <Compile Include="Net\TimeoutWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Net\Http.cs" />
     <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="DateTimes\DateTimeExtensions.cs" />

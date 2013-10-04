@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 
+#if MONOTOUCH
+
 namespace Sqor.Utils.Drawing
 {
     public partial class Bitmap : IDisposable
@@ -39,3 +41,4 @@ namespace Sqor.Utils.Drawing
     }
 }
 
+#endif

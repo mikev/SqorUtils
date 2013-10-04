@@ -33,9 +33,14 @@ namespace Sqor.Utils.Generics
             }
         }
 
+        public static bool IsNullableValueType(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
         public static Type GetNullableValueType(this Type type)
         {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsNullableValueType())
             {
                 return type.GetGenericArguments()[0];
             }
