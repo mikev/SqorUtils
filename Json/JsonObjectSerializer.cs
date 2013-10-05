@@ -46,7 +46,7 @@ namespace Sqor.Utils.Json
                 return DateTime.ParseExact(s, dateFormat, null);
         }
 
-		private object ConvertJsonObjectToType(JsonValue graph, Type type) 
+		static internal object ConvertJsonObjectToType(JsonValue graph, Type type) 
 		{
 			if (type == typeof(string)) 
 			{
@@ -146,30 +146,12 @@ namespace Sqor.Utils.Json
 			}
 			else 
 			{
-				var result = Activator.CreateInstance(type);
 				var jsonObject = (JsonObject)graph;
-				foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x))) 
-				{
-                    try 
-                    {
-                        var keyName = JsonAttribute.GetKey(property);
-                        var jsonValue = jsonObject[keyName];
-                        if (jsonValue != null)
-                        {
-                            var value = ConvertJsonObjectToType(jsonValue, property.PropertyType);
-                            property.SetValue(result, value, null);
-                        }
-                    }
-                    catch (Exception e) 
-                    {
-                        throw new InvalidOperationException("Error deserializing property " + property.Name, e);
-                    }
-				}
-				return result;
+                return jsonObject.To(type);
 			}
 		}
 
-		private JsonValue ConvertObjectToJsonValue(object graph) 
+		static internal JsonValue ConvertObjectToJsonValue(object graph) 
 		{
             if (graph == null)
             {
@@ -275,25 +257,7 @@ namespace Sqor.Utils.Json
             }
 			else 
 			{
-				var values = new List<KeyValuePair<string, JsonValue>>();
-
-				foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x)))
-				{
-                    try 
-                    {
-                        var value = property.GetValue(graph, null);
-                        var jsonValue = ConvertObjectToJsonValue(value);
-                        var keyName = JsonAttribute.GetKey(property);
-                        values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
-                    }
-                    catch (Exception e)
-                    {
-                        throw new InvalidOperationException("Error serializing property " + property.Name, e);
-                    }
-				}
-
-				var result = new JsonObject(values);
-				return result;
+                return JsonObject.From(graph);
 			}
 		}
 	}

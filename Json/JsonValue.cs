@@ -6,9 +6,9 @@ namespace Sqor.Utils.Json
 {
     public class JsonValue : IEnumerable<JsonValue>
     {
-        public JsonType Type { get; private set; }
+        public JsonNodeType Type { get; private set; }
 
-        public JsonValue(JsonType type)
+        public JsonValue(JsonNodeType type)
         {
             Type = type;
         }

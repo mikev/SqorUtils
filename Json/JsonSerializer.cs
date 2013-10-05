@@ -31,16 +31,16 @@ namespace Sqor.Utils.Json
         {
             switch (value.Type)
             {
-                case JsonType.Number:
+                case JsonNodeType.Number:
                     builder.Append(value.Value);
                     break;
-                case JsonType.String:
+                case JsonNodeType.String:
                     builder.Append("\"" + EscapeString((string)value.Value) + "\"");
                     break;
-                case JsonType.Boolean:
+                case JsonNodeType.Boolean:
                     builder.Append((bool)value.Value ? "true" : "false");
                     break;
-                case JsonType.Object:
+                case JsonNodeType.Object:
                     builder.Append("null");
                     break;
                 default:

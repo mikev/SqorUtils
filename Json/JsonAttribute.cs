@@ -8,11 +8,19 @@ namespace Sqor.Utils.Json
     {
         public bool Serialize { get; private set; }
         public string JsonKey { get; private set; }
+        public bool CatchAll { get; private set; }
 
         public JsonAttribute(string jsonKey)
         {
             JsonKey = jsonKey;
             Serialize = true;
+        }
+
+        public JsonAttribute(string jsonKey, bool catchAll)
+        {
+            JsonKey = jsonKey;
+            Serialize = true;
+            CatchAll = catchAll;
         }
 
         public JsonAttribute(bool serialize)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -182,5 +183,66 @@ namespace Sqor.Utils.Enumerables
                 }                
             }
         }        
+
+        /// <summary>
+        /// Partitions <i>source</i> into chunks containing up to <i>size</i> elements.  This is useful when you want to break up your results 
+        /// into groups for display purposes, but you don't need to base it on any values of the content, but rather by an arbitrary fixed 
+        /// number per group.  (The last group will contain fewer if count / size is not an integer.)
+        /// </summary>
+        public static IEnumerable<IGrouping<int, TElement>> Partition<TElement>(this IEnumerable<TElement> source, int size, Func<int, IEnumerable<TElement>, IEnumerable<TElement>> resultSelector = null, bool fillEmptyWithDefault = false)
+        {
+            int partitionIndex = 0;
+            List<TElement> group = new List<TElement>();
+
+            if (resultSelector == null)
+                resultSelector = (x, y) => y;
+
+            foreach (var element in source)
+            {
+                group.Add(element);
+
+                if (group.Count == size)
+                {
+                    yield return new PartitionGrouping<TElement>(partitionIndex, resultSelector(partitionIndex, group));
+                    partitionIndex++;
+                    group = new List<TElement>();
+                }
+            }
+
+            if (group.Count > 0)
+            {
+                if (fillEmptyWithDefault)
+                    for (int i = group.Count; i < size; i++)
+                        group.Add(default(TElement));
+                yield return new PartitionGrouping<TElement>(partitionIndex, resultSelector(partitionIndex, group));
+            }
+        }
+
+        private struct PartitionGrouping<TElement> : IGrouping<int, TElement>
+        {
+            private readonly int key;
+            private readonly IEnumerable<TElement> source;
+
+            public PartitionGrouping(int key, IEnumerable<TElement> source)
+            {
+                this.key = key;
+                this.source = source;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            public IEnumerator<TElement> GetEnumerator()
+            {
+                return source.GetEnumerator();
+            }
+
+            public int Key
+            {
+                get { return key; }
+            }
+        }
     }
 }

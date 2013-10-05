@@ -104,7 +104,7 @@
     <Compile Include="Json\JsonSerializer.cs" />
     <Compile Include="Json\JsonToken.cs" />
     <Compile Include="Json\JsonTokenType.cs" />
-    <Compile Include="Json\JsonType.cs" />
+    <Compile Include="Json\JsonNodeType.cs" />
     <Compile Include="Json\JsonValue.cs" />
     <Compile Include="Lists\ListExtensions.cs" />
     <Compile Include="Logging\BasicLogFormatter.cs" />

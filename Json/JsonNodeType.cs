@@ -2,7 +2,7 @@ using System;
 
 namespace Sqor.Utils.Json
 {
-    public enum JsonType
+    public enum JsonNodeType
     {
         String,
         Number,

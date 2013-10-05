@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Sqor.Utils.Dictionaries;
 using System.Linq;
+using Sqor.Utils.Enumerables;
 
 namespace Sqor.Utils.Json
 {
@@ -9,7 +12,7 @@ namespace Sqor.Utils.Json
     {
         private Dictionary<string, JsonValue> values = new Dictionary<string, JsonValue>();
 
-        public JsonObject() : base(JsonType.Object)
+        public JsonObject() : base(JsonNodeType.Object)
         {
         }
         
@@ -19,6 +22,11 @@ namespace Sqor.Utils.Json
             {
                 this.values.Add(item.Key, item.Value);
             }
+        }
+
+        public Dictionary<string, object> AsObjectDictionary()
+        {
+            return ((IDictionary<string, JsonValue>)this).ToDictionary(x => x.Key, x => (object)x.Value);
         }
         
         public override JsonValue this[string property] 
@@ -123,6 +131,94 @@ namespace Sqor.Utils.Json
             {
                 return ((ICollection<KeyValuePair<string, JsonValue>>)values).IsReadOnly;
             }
+        }
+
+        public object To(Type type)
+        {
+			var result = Activator.CreateInstance(type);
+            PropertyInfo catchAll = null;
+            var unusedKeys = Keys.ToHashSet();
+
+			foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x))) 
+			{
+                try 
+                {
+                    var jsonAttribute = property.GetCustomAttribute<JsonAttribute>();
+                    if (jsonAttribute != null && jsonAttribute.CatchAll)
+                    {
+                        catchAll = property;
+                        continue;
+                    }
+                    var keyName = JsonAttribute.GetKey(property);
+                    unusedKeys.Remove(keyName);
+                    var jsonValue = this[keyName];
+                    if (jsonValue != null)
+                    {
+                        var value = JsonObjectSerializer.ConvertJsonObjectToType(jsonValue, property.PropertyType);
+                        property.SetValue(result, value, null);
+                    }
+                }
+                catch (Exception e) 
+                {
+                    throw new InvalidOperationException("Error deserializing property " + property.Name, e);
+                }
+			}
+
+            if (catchAll != null)
+            {
+                var dictionary = (IDictionary)Activator.CreateInstance(catchAll.PropertyType);
+                foreach (var key in unusedKeys)
+                {
+                    dictionary[key] = this[key];
+                }
+                catchAll.SetValue(result, dictionary, null);
+            }
+
+			return result;            
+        }
+
+        public T To<T>()
+        {
+            return (T)To(typeof(T));
+        }
+        
+        public static JsonObject From(object source)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+			var values = new List<KeyValuePair<string, JsonValue>>();
+
+			foreach (var property in source.GetType().GetProperties().Where(x => JsonAttribute.IsSerialized(x)))
+			{
+                try 
+                {
+                    var jsonAttribute = property.GetCustomAttribute<JsonAttribute>();
+                    var keyName = JsonAttribute.GetKey(property);
+                    if (jsonAttribute != null && jsonAttribute.CatchAll)
+                    {
+                        var dictionary = (IDictionary)property.GetValue(source, null);
+                        foreach (string key in dictionary.Keys)
+                        {
+                            var value = dictionary[key];
+                            values.Add(new KeyValuePair<string, JsonValue>(key, JsonObjectSerializer.ConvertObjectToJsonValue(value)));
+                        }
+                    }
+                    else
+                    {
+                        var value = property.GetValue(source, null);
+                        var jsonValue = JsonObjectSerializer.ConvertObjectToJsonValue(value);
+                        values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException("Error serializing property " + property.Name, e);
+                }
+			}
+
+			var result = new JsonObject(values);
+			return result;
         }
     }
 }

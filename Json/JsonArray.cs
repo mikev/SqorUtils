@@ -9,12 +9,12 @@ namespace Sqor.Utils.Json
     {
         private List<JsonValue> array;
 
-        public JsonArray() : base(JsonType.Array)
+        public JsonArray() : base(JsonNodeType.Array)
         {
             array = new List<JsonValue>();
         }
         
-        public JsonArray(IEnumerable<JsonValue> array) : base(JsonType.Array)
+        public JsonArray(IEnumerable<JsonValue> array) : base(JsonNodeType.Array)
         {
             this.array = array.ToList();
         }
