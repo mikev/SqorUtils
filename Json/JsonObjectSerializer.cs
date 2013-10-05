@@ -48,6 +48,9 @@ namespace Sqor.Utils.Json
 
 		static internal object ConvertJsonObjectToType(JsonValue graph, Type type) 
 		{
+            if (type.IsNullableValueType())
+                type = type.GetNullableValueType();
+
 			if (type == typeof(string)) 
 			{
 				return (string)graph;
@@ -80,7 +83,7 @@ namespace Sqor.Utils.Json
             {
                 return (decimal)graph;
             }
-            else if (type == typeof(DateTime) || type == typeof(DateTime?))
+            else if (type == typeof(DateTime))
             {
                 var s = (string)graph;
                 if (s == null)

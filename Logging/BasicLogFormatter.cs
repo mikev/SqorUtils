@@ -7,7 +7,18 @@ namespace Sqor.Utils.Logging
     {
         public string Format(LogContext context)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
+            if (!string.IsNullOrEmpty(Thread.CurrentThread.Name))
+            {
+                builder.Append(Thread.CurrentThread.Name);
+            }
+            else
+            {
+                builder.Append("Thread(" + Thread.CurrentThread.GetHashCode() + ")");
+            }
+            builder.Append(" - ");
+            builder.Append(context.TargetType.Name);
+            builder.Append(" - ");
             switch (context.Severity) 
             {
                 case MessageType.Information: 
@@ -19,12 +30,6 @@ namespace Sqor.Utils.Logging
                 case MessageType.Error:
                     builder.Append("ERROR");
                     break;
-            }
-            builder.Append(" - ");
-            builder.Append(context.TargetType.Name);
-            if (!Thread.CurrentThread.IsThreadPoolThread && !string.IsNullOrEmpty(Thread.CurrentThread.Name))
-            {
-                builder.Append(" - " + Thread.CurrentThread.Name);
             }
             if (context.Message != null)
             {

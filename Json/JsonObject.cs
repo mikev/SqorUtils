@@ -169,7 +169,7 @@ namespace Sqor.Utils.Json
                 var dictionary = (IDictionary)Activator.CreateInstance(catchAll.PropertyType);
                 foreach (var key in unusedKeys)
                 {
-                    dictionary[key] = this[key];
+                    dictionary[key] = this[key].ToString();
                 }
                 catchAll.SetValue(result, dictionary, null);
             }
