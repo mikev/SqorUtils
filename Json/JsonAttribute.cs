@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Sqor.Utils.Json
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.Field)]
     public class JsonAttribute : Attribute
     {
         public bool Serialize { get; private set; }

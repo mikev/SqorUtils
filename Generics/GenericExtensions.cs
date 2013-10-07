@@ -133,7 +133,7 @@ namespace Sqor.Utils.Generics
             return IsType(dictType, typeof(Dictionary<,>)) || IsType(dictType, typeof(IDictionary<,>));
         }
 
-        public static bool IsType(Type type, Type ancestor)
+        public static bool IsType(this Type type, Type ancestor)
         {
             while (type != null)
             {
