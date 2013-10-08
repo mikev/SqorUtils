@@ -55,7 +55,6 @@
     <Compile Include="Json\JsonSerializer.cs" />
     <Compile Include="Json\JsonToken.cs" />
     <Compile Include="Json\JsonTokenType.cs" />
-    <Compile Include="Json\JsonType.cs" />
     <Compile Include="Json\JsonValue.cs" />
     <Compile Include="Json\KeyAttribute.cs" />
     <Compile Include="Dictionaries\DictionaryExtensions.cs" />
@@ -171,5 +170,7 @@
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Matrix.cs" />
     <Compile Include="Drawing\IosGraphicsPath.cs" />
+    <Compile Include="Json\JsonNodeType.cs" />
+    <Compile Include="Json\JsonAttribute.cs" />
   </ItemGroup>
 </Project>
