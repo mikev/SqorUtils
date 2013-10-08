@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Arrays\ArrayReadOnlyList.cs" />
     <Compile Include="Caches\LruCache.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
     <Compile Include="DateTimes\DateTimeExtensions.cs" />
     <Compile Include="DateTimes\DateTimeSpan.cs" />
