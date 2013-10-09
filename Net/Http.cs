@@ -26,6 +26,7 @@ namespace Sqor.Utils.Net
         private string acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
         private static bool isCurlLoggingEnabled = true;
         private Action<Http> onError;
+        private bool synchronous;
     
         private Http(string url)
         {
@@ -61,6 +62,12 @@ namespace Sqor.Utils.Net
             return new Http(url);
         }
         
+        public Http AsSynchronous()
+        {
+            synchronous = true;
+            return this;
+        }
+            
         public Http OnError(Action<Http> onError)
         {
             this.onError = onError;
@@ -273,10 +280,20 @@ namespace Sqor.Utils.Net
                 
                 try
                 {
-                    if (binaryRequestData == null)
-                        response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
-                    else if (binaryRequestData != null)
-                        response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData).ConfigureAwait(true);
+                    if (http.synchronous)
+                    {
+                        if (binaryRequestData == null)
+                            response = client.DownloadData(new Uri(http.Url));
+                        else if (binaryRequestData != null)
+                            response = client.UploadData(new Uri(http.Url), Method, binaryRequestData);
+                    }
+                    else
+                    {
+                        if (binaryRequestData == null)
+                            response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
+                        else if (binaryRequestData != null)
+                            response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData).ConfigureAwait(true);                        
+                    }
                         
                     responseContentType = client.ResponseHeaders["Content-Type"];
                     foreach (var statusCodeResponse in statusCodeResponses)
@@ -291,6 +308,7 @@ namespace Sqor.Utils.Net
                     {
                         http.onUnauthorized(http);
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
+// ReSharper disable once CSharpWarnings::CS4014
                         Execute();
                     }
                     if (e.Response != null)
@@ -336,7 +354,7 @@ namespace Sqor.Utils.Net
                 }
                 client.Dispose();
             }
-            
+
             public WhenStatusContext WhenStatusIs(HttpStatusCode responseCode)
             {
                 return WhenStatusIs(x => x == responseCode);
@@ -347,7 +365,7 @@ namespace Sqor.Utils.Net
                 ignoreErrors = true;
                 return new WhenStatusContext(this, responseCode);
             }
-            
+
             public WhenStatusContext Else()
             {
                 return new WhenStatusContext(this, statuCode => true);
