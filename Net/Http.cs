@@ -292,7 +292,6 @@ namespace Sqor.Utils.Net
                         http.onUnauthorized(http);
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
                         Execute();
-                        return;
                     }
                     if (e.Response != null)
                     {
@@ -336,36 +335,6 @@ namespace Sqor.Utils.Net
                     }
                 }
                 client.Dispose();
-                
-                
-                
-//                        var request = (HttpWebRequest)WebRequest.Create(new Uri(url.ToString()));
-//                        request.Method = Method;
-    
-//                    }
-//                    catch (WebException e)
-//                    {
-//                        response = (HttpWebResponse)e.Response;
-//                    
-//                        if (ignoreErrors)
-//                        {
-//                            isErrored = true;
-//                            error = e;
-//                            Console.WriteLine(e);
-//                            return response;
-//                        }
-//                        else
-//                        {
-//                            throw;
-//                        }
-//                    }
-//                }
-//                catch (Exception e)
-//                {
-//                    this.LogInfo("Error making request to: " + http.url, e);
-//                    throw;
-//                }
-//                return response;
             }
             
             public WhenStatusContext WhenStatusIs(HttpStatusCode responseCode)

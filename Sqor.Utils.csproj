@@ -188,11 +188,13 @@
     <Compile Include="Types\Class.cs" />
     <Compile Include="Types\TypeExtensions.cs" />
     <Compile Include="Web\ActionResult.cs" />
+    <Compile Include="Web\AreaActionFilterAttribute.cs" />
     <Compile Include="Web\BaseActionDescriptor.cs" />
     <Compile Include="Web\BaseActionInvoker.cs" />
     <Compile Include="Web\BaseController.cs" />
     <Compile Include="Web\BaseParameterBindingInfo.cs" />
     <Compile Include="Web\BaseParameterDescriptor.cs" />
+    <Compile Include="Web\BaseAsyncActionDescriptor.cs" />
     <Compile Include="Web\CustomAttributeExtensions.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
     <Compile Include="Web\JsonDefaultModelBinder.cs" />

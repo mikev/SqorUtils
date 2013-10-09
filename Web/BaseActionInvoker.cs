@@ -8,7 +8,7 @@ namespace Sqor.Utils.Web
         protected override ActionDescriptor FindAction(ControllerContext controllerContext, ControllerDescriptor controllerDescriptor, string actionName)
         {
             var result = base.FindAction(controllerContext, controllerDescriptor, actionName);
-            return result != null ? new BaseActionDescriptor((AsyncActionDescriptor)result) : null;
+            return result is AsyncActionDescriptor ? (ActionDescriptor)new BaseAsyncActionDescriptor((AsyncActionDescriptor)result) : result != null ? new BaseActionDescriptor(result) : null;
         }
 
         protected override void InvokeActionResult(ControllerContext controllerContext, ActionResult actionResult)
