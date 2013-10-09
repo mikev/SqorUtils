@@ -401,6 +401,12 @@ namespace Sqor.Utils.Net
                 await Execute();
                 return ResponseAsJson();
             }
+
+            public async Task<JsonObject> AsJsonObject()
+            {
+                var response = await AsJson();
+                return (JsonObject)response;
+            }
             
             internal JsonValue ResponseAsJson()
             {

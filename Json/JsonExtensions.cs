@@ -6,7 +6,7 @@ namespace Sqor.Utils.Json
     {
         public static JsonValue FromJson(this string s)
         {
-            if (s == null || s == "")
+            if (string.IsNullOrEmpty(s))
                 return null;
         
             return new JsonObjectSerializer().Parse(s);

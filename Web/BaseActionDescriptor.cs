@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Mvc.Async;
 
 namespace Sqor.Utils.Web
 {
-    public class BaseActionDescriptor : ActionDescriptor
+    public class BaseActionDescriptor : AsyncActionDescriptor
     {
-        private ActionDescriptor source;
+        private AsyncActionDescriptor source;
         private List<ParameterDescriptor> parameterDescriptors = new List<ParameterDescriptor>();
 
-        public BaseActionDescriptor(ActionDescriptor source)
+        public BaseActionDescriptor(AsyncActionDescriptor source)
         {
             this.source = source;
             parameterDescriptors.AddRange(source.GetParameters().Select(x => TransformParameter(x)));
@@ -24,6 +25,16 @@ namespace Sqor.Utils.Web
         private ParameterDescriptor TransformParameter(ParameterDescriptor parameterDescriptor)
         {
             return new BaseParameterDescriptor(parameterDescriptor);
+        }
+
+        public override IAsyncResult BeginExecute(ControllerContext controllerContext, IDictionary<string, object> parameters, AsyncCallback callback, object state)
+        {
+            return source.BeginExecute(controllerContext, parameters, callback, state);
+        }
+
+        public override object EndExecute(IAsyncResult asyncResult)
+        {
+            return source.EndExecute(asyncResult);
         }
 
         public override object Execute(ControllerContext controllerContext, IDictionary<string, object> parameters)

@@ -90,18 +90,6 @@ namespace Sqor.Utils.Json
                     return null;
                 return ParseDate(s);
             }
-//            else if (type == typeof(DateTime) || type == typeof(DateTime?))
-//            {
-//                var s = (string)graph;
-//                if (s == null)
-//                    return null;
-//
-//                s = s.ChopStart("/Date(");
-//                s = s.ChopEnd(")/");
-//                var seconds = (int)(long.Parse(s) / 1000);
-//                var date = unixEpoch.AddSeconds(seconds);
-//                return date;
-//            }
             else if (type.IsGenericDictionary())
             {
                 var dictionary = (IDictionary)Activator.CreateInstance(type);
