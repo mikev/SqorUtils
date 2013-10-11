@@ -196,6 +196,8 @@
     <Compile Include="Web\BaseParameterDescriptor.cs" />
     <Compile Include="Web\BaseAsyncActionDescriptor.cs" />
     <Compile Include="Web\CustomAttributeExtensions.cs" />
+    <Compile Include="Web\HttpForbiddenException.cs" />
+    <Compile Include="Web\HttpUnauthorizedException.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
     <Compile Include="Web\JsonDefaultModelBinder.cs" />
     <Compile Include="Web\JsonModelBinder.cs" />

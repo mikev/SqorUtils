@@ -36,12 +36,12 @@ namespace Sqor.Utils.Encryption
             Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(key, System.Text.Encoding.UTF8.GetBytes(key));
             this.key = rfc.GetBytes(8);
             this.iv = this.key;
-            this.algorithm = EncryptionAlgorithm.Des;
+            this.algorithm = EncryptionAlgorithm.Rijndael;
 
             StringEncoding = Encoding.Encoded_As_UTF8;
         }
 
-        public Crypto(byte[] key, byte[] iv, EncryptionAlgorithm algorithm = EncryptionAlgorithm.Des)
+        public Crypto(byte[] key, byte[] iv, EncryptionAlgorithm algorithm = EncryptionAlgorithm.Rijndael)
         {
             StringEncoding = Encoding.Encoded_As_UTF8;
 

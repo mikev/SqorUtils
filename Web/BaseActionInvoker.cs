@@ -16,10 +16,11 @@ namespace Sqor.Utils.Web
             // By default, the status description of an HttpUnauthorizedResult is not sent to the 
             // client.  The following code addresses that and sends back the description as the 
             // body.
-            var unauthorizedResult = actionResult as HttpUnauthorizedResult;
-            if (unauthorizedResult != null)
+            var statusCodeResult = actionResult as HttpStatusCodeResult;
+            if (statusCodeResult != null)
             {
-                controllerContext.HttpContext.Response.Write(unauthorizedResult.StatusDescription);
+                actionResult = new HttpStatusCodeResult(statusCodeResult.StatusCode);
+                controllerContext.HttpContext.Response.Write(statusCodeResult.StatusDescription);
             }
 
             base.InvokeActionResult(controllerContext, actionResult);

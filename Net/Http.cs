@@ -278,6 +278,7 @@ namespace Sqor.Utils.Net
                     binaryRequestData = Encoding.UTF8.GetBytes(stringRequestData);
                 }
                 
+                WebException error = null;
                 try
                 {
                     if (http.synchronous)
@@ -304,21 +305,25 @@ namespace Sqor.Utils.Net
                 }
                 catch (WebException e)
                 {
-                    if (http.onUnauthorized != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
+                    error = e;
+                }
+                if (error != null)
+                {
+                    if (http.onUnauthorized != null && ((HttpWebResponse)error.Response).StatusCode == HttpStatusCode.Unauthorized)
                     {
                         http.onUnauthorized(http);
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
-// ReSharper disable once CSharpWarnings::CS4014
-                        Execute();
+                        await Execute();
                     }
-                    if (e.Response != null)
+                    if (error.Response != null)
                     {
                         // Extract response
-                        using (var stream = e.Response.GetResponseStream())
+                        using (var stream = error.Response.GetResponseStream())
                         {
                             response = stream.ReadBytesToEnd();
                         }
-                        responseContentType = e.Response.ContentType;
+                        responseContentType = error.Response.ContentType;
+                        var exception = new InvalidOperationException("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(response), error);
                     
                         if (ignoreErrors)
                         {
@@ -326,7 +331,7 @@ namespace Sqor.Utils.Net
                             
                             foreach (var statusCodeResponse in statusCodeResponses)
                             {
-                                if (statusCodeResponse.Item1(((HttpWebResponse)e.Response).StatusCode))
+                                if (statusCodeResponse.Item1(((HttpWebResponse)error.Response).StatusCode))
                                 {
                                     statusCodeResponse.Item2();
                                     return;
@@ -335,21 +340,21 @@ namespace Sqor.Utils.Net
                             
                             if (http.onError != null)
                                 http.onError(http);
-                            throw;
+                            throw exception;
                         }
                         else
                         {
-                            this.LogInfo("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(response), e);
+                            this.LogInfo(exception.Message, error);
                             if (http.onError != null)
                                 http.onError(http);
-                            throw;
+                            throw exception;
                         }
                     }
                     else
                     {
                         if (http.onError != null)
                             http.onError(http);
-                        throw;
+                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url, error);
                     }
                 }
                 client.Dispose();
@@ -471,6 +476,20 @@ namespace Sqor.Utils.Net
         {
             public SendRequestContext(Http http, string method) : base(http, method)
             {
+            }
+
+            public RequestContext Json(string json)
+            {
+                ContentType = "application/json";
+                stringRequestData = json;
+                return this;
+            }
+            
+            public RequestContext Json(JsonValue json)
+            {
+                ContentType = "application/json";
+                stringRequestData = json.ToJson();
+                return this;
             }
             
             public RequestContext Json(object o)
