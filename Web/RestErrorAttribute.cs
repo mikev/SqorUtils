@@ -44,7 +44,7 @@ namespace Sqor.Utils.Web
             }
             else
             {
-                this.LogInfo("Validation Failure: " + filterContext.Exception);
+                this.LogInfo("Unhandled Exception: " + filterContext.Exception);
                 filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.InternalServerError, filterContext.Exception.ToString());
             }
             filterContext.ExceptionHandled = true;
