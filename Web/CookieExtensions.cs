@@ -11,6 +11,16 @@ namespace Sqor.Utils.Web
     /// </summary>
     public static class CookieExtensions
     {
+        public static void DeleteCookie(this HttpContext context, string group)
+        {
+            context.Response.Cookies.Set(new HttpCookie(group) { Expires = DateTime.Now.AddDays(-1) });
+        }
+
+        public static void DeleteCookie(this HttpContextBase context, string group)
+        {
+            context.Response.Cookies.Set(new HttpCookie(group) { Expires = DateTime.Now.AddDays(-1) });
+        }
+
         public static string GetCookieValue(this HttpContext context, string group, string name)
         {
             HttpCookie cookie = context.Request.Cookies[group];

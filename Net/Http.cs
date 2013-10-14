@@ -387,10 +387,10 @@ namespace Sqor.Utils.Net
             /// <returns>The json.</returns>
             public async Task<JsonValue> AsJson()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsJson();
             }
 
@@ -414,10 +414,10 @@ namespace Sqor.Utils.Net
             
             public async Task<T> As<T>()
             {
+                await Execute();
                 if (isErrored) 
                     return default(T);
-                    
-                await Execute();
+
                 return ResponseAs<T>();
             }
             
@@ -435,10 +435,10 @@ namespace Sqor.Utils.Net
             
             public async Task<string> AsString()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsString();
             }
             
@@ -455,10 +455,10 @@ namespace Sqor.Utils.Net
             
             public async Task<byte[]> AsBinary()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsBinary();
             }
             

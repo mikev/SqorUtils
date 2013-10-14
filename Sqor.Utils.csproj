@@ -84,6 +84,7 @@
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
     <Compile Include="Functional\FunctionalExtensions.cs" />
+    <Compile Include="Generators\Generate.cs" />
     <Compile Include="Generics\GenericExtensions.cs" />
     <Compile Include="Injection\Binding.cs" />
     <Compile Include="Injection\Cache.cs" />
