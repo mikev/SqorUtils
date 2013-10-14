@@ -47,6 +47,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Mvc\System.Web.WebPages.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -202,11 +206,13 @@
     <Compile Include="Web\HttpForbiddenException.cs" />
     <Compile Include="Web\HttpUnauthorizedException.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
+    <Compile Include="Web\InputExtensions.cs" />
     <Compile Include="Web\JsonDefaultModelBinder.cs" />
     <Compile Include="Web\JsonModelBinder.cs" />
     <Compile Include="Web\JsonResult.cs" />
     <Compile Include="Web\JsonTypeAttribute.cs" />
     <Compile Include="Web\LogFilterAttribute.cs" />
+    <Compile Include="Web\ModelExtensions.cs" />
     <Compile Include="Web\NotAreaConstraint.cs" />
     <Compile Include="Web\NotNullAttribute.cs" />
     <Compile Include="Web\NotNullFilterAttribute.cs" />
