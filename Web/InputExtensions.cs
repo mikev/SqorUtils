@@ -14,6 +14,7 @@ namespace Sqor.Utils.Web
                 tagBuilder.MergeAttributes(htmlAttributes.ToDictionary());
             tagBuilder.MergeAttribute("type", "checkbox");
             tagBuilder.MergeAttribute("name", name, true);
+            tagBuilder.MergeAttribute("value", value, true);
             if (isChecked)
                 tagBuilder.MergeAttribute("checked", "checked", true);
             return new HtmlString(tagBuilder.ToString());

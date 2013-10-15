@@ -283,17 +283,17 @@ namespace Sqor.Utils.Net
                 {
                     if (http.synchronous)
                     {
-                        if (binaryRequestData == null)
+                        if (binaryRequestData == null && Method == "GET")
                             response = client.DownloadData(new Uri(http.Url));
-                        else if (binaryRequestData != null)
-                            response = client.UploadData(new Uri(http.Url), Method, binaryRequestData);
+                        else 
+                            response = client.UploadData(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]);
                     }
                     else
                     {
-                        if (binaryRequestData == null)
+                        if (binaryRequestData == null && Method == "GET")
                             response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
-                        else if (binaryRequestData != null)
-                            response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData).ConfigureAwait(true);                        
+                        else 
+                            response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]).ConfigureAwait(true);                        
                     }
                         
                     responseContentType = client.ResponseHeaders["Content-Type"];

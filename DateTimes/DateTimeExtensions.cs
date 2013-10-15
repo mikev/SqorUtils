@@ -128,6 +128,19 @@ namespace Sqor.Utils.DateTimes
             return DateTime.ParseExact(date, culture.DateTimeFormat.ShortDatePattern, null);
         }
 
+        public static string ToDateTime(this DateTime datetime)
+        {
+            var culture = CultureInfo.CurrentUICulture;
+            var timezone = TimeZoneInfo.Local;
+            return datetime.ToDateTime(culture, timezone);
+        }
+
+        public static string ToDateTime(this DateTime datetime, CultureInfo culture, TimeZoneInfo timezone)
+        {
+            datetime = TimeZoneInfo.ConvertTime(datetime, TimeZoneInfo.Utc, timezone);
+            return datetime.ToString(culture.DateTimeFormat.ShortDatePattern + " " + culture.DateTimeFormat.ShortTimePattern);
+        }
+
         public static string ToTimeOrDate(this DateTime datetime, CultureInfo culture, TimeZoneInfo timezone)
         {
             var now = DateTime.UtcNow;

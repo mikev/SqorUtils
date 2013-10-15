@@ -14,7 +14,7 @@ namespace Sqor.Utils.Json
 	public class JsonObjectSerializer : IJsonSerializer
 	{
 //        private static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        internal const string dateFormat = "o";
+        internal const string dateFormat = @"yyyy-MM-dd\THH:mm:ss\Z";
 
 		public JsonValue Parse(string input)
 		{
@@ -41,7 +41,14 @@ namespace Sqor.Utils.Json
             if (s == "0000-00-00T00:00:00Z")
                 return null;
             if (s.EndsWith("Z"))
-                return DateTime.ParseExact(s, @"yyyy-MM-dd\THH:mm:ss\Z", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                try
+                {
+                    return DateTime.SpecifyKind(DateTime.ParseExact(s, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal), DateTimeKind.Utc);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException("Invalid DateTime: " + s, e);
+                }
             else
                 return DateTime.ParseExact(s, dateFormat, null);
         }
@@ -191,9 +198,6 @@ namespace Sqor.Utils.Json
                 var date = (DateTime)graph;
                 var s = date.ToString(dateFormat);
                 return s;
-//                var seconds = (int)(date - unixEpoch).TotalSeconds;
-//                var s = "/Date(" + seconds + ")/";
-//                return s;
             }
 			else if (type.IsArray) 
 			{
