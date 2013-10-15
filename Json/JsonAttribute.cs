@@ -30,9 +30,6 @@ namespace Sqor.Utils.Json
 
         public static bool IsSerialized(PropertyInfo property)
         {
-            if (!property.CanWrite)
-                return false;
-
             var attribute = (JsonAttribute)GetCustomAttribute(property, typeof(JsonAttribute));
             return attribute == null || attribute.Serialize;            
         }
