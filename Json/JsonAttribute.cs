@@ -9,6 +9,8 @@ namespace Sqor.Utils.Json
         public bool Serialize { get; private set; }
         public string JsonKey { get; private set; }
         public bool CatchAll { get; private set; }
+        public bool IsDenormalized { get; set; }
+        public string Connector { get; set; }
 
         public JsonAttribute(string jsonKey)
         {

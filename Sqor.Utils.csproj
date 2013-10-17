@@ -40,7 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
-      <HintPath>..\..\Sqor.Rest\bin\EntityFramework.dll</HintPath>
+      <HintPath>..\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,6 +78,7 @@
     <Compile Include="Drawing\IosFont.cs" />
     <Compile Include="Drawing\IosGraphicsPath.cs" />
     <Compile Include="Drawing\Matrix.cs" />
+    <Compile Include="Drawing\NetFColor.cs" />
     <Compile Include="Drawing\PointExtensions.cs" />
     <Compile Include="Drawing\RectangleExtensions.cs" />
     <Compile Include="Drawing\SizeExtensions.cs" />
@@ -113,9 +114,11 @@
     <Compile Include="Injection\Scopes\SingletonScope.cs" />
     <Compile Include="Injection\Scopes\TransientScope.cs" />
     <Compile Include="Injection\Scopes\WebRequestScope.cs" />
+    <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Json\JsonArray.cs" />
     <Compile Include="Json\JsonAttribute.cs" />
+    <Compile Include="Json\JsonConverterAttribute.cs" />
     <Compile Include="Json\JsonExtensions.cs" />
     <Compile Include="Json\JsonGroupAttribute.cs" />
     <Compile Include="Json\JsonHiddenAttribute.cs" />

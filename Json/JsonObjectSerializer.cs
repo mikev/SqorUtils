@@ -55,6 +55,14 @@ namespace Sqor.Utils.Json
 
 		static internal object ConvertJsonObjectToType(JsonValue graph, Type type) 
 		{
+            // Custom converter?
+            var converterAttribute = type.GetCustomAttribute<JsonConverterAttribute>();
+            if (converterAttribute != null)
+            {
+                var converter = (IJsonConverter)Activator.CreateInstance(converterAttribute.Converter);
+                return converter.FromJson(graph);
+            }
+
             if (type.IsNullableValueType())
                 type = type.GetNullableValueType();
 
@@ -120,13 +128,13 @@ namespace Sqor.Utils.Json
                     }
                     return result;
                 }
-                else if (graph is JsonPrimitive || ((JsonPrimitive)graph).Value == null)
+                else if (graph is JsonPrimitive && ((JsonPrimitive)graph).Value == null)
                 {
                     return null;
                 }
                 else
                 {
-                    throw new InvalidOperationException("Expected an array or the null value, but found: " + graph);
+                    throw new InvalidOperationException("Expected an array or the null value, but found: " + graph.ToString()); // ToString is not the same as implicit conversion since we have user type conversions -- ignore resharper
                 }
 			}
 			else if (type.IsGenericList())
@@ -157,6 +165,15 @@ namespace Sqor.Utils.Json
             }
             
 			var type = graph.GetType();
+
+            // Custom converter?
+            var converterAttribute = type.GetCustomAttribute<JsonConverterAttribute>();
+            if (converterAttribute != null)
+            {
+                var converter = (IJsonConverter)Activator.CreateInstance(converterAttribute.Converter);
+                return converter.ToJson(graph);
+            }
+
             if (graph is JsonValue)
             {
                 return (JsonValue)graph;

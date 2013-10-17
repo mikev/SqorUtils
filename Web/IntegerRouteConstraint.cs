@@ -9,9 +9,14 @@ namespace Sqor.Utils.Web
         public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values,
             RouteDirection routeDirection)
         {
-            var routeValue = values.Get(parameterName) as string;
+            var routeValue = values.Get(parameterName);
+            if (routeValue is int)
+                return true;
+
+            var routeString = routeValue as string;
+
             int result;
-            if (routeValue != null && int.TryParse(routeValue, out result))
+            if (routeString != null && int.TryParse(routeString, out result))
                 return true;
 
             return false;
