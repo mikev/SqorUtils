@@ -224,7 +224,7 @@ namespace Sqor.Utils.Json
                     {
                         var value = property.GetValue(source, null);
                         var jsonValue = JsonObjectSerializer.ConvertObjectToJsonValue(value);
-                        if (jsonAttribute.IsDenormalized)
+                        if (jsonAttribute != null && jsonAttribute.IsDenormalized)
                         {
                             var connector = jsonAttribute.Connector ?? "";
                             var jsonObject = (JsonObject)jsonValue;
