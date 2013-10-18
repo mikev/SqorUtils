@@ -199,6 +199,11 @@ namespace Sqor.Utils.Drawing
 
         class ImageJsonConverter : IJsonConverter
         {
+            public string TypeDescription
+            {
+                get { return "url"; }
+            }
+
             public JsonValue ToJson(object o)
             {
                 var image = (Image)o;

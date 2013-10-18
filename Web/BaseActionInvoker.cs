@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using System.Web.Mvc.Async;
 
 namespace Sqor.Utils.Web
@@ -20,6 +21,7 @@ namespace Sqor.Utils.Web
             if (statusCodeResult != null)
             {
                 actionResult = new HttpStatusCodeResult(statusCodeResult.StatusCode);
+                controllerContext.HttpContext.Response.ContentType = "text/plain";
                 controllerContext.HttpContext.Response.Write(statusCodeResult.StatusDescription);
             }
 

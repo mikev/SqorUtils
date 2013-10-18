@@ -182,6 +182,11 @@ namespace Sqor.Utils.Drawing
 
         class ColorJsonConverter : IJsonConverter
         {
+            public string TypeDescription
+            {
+                get { return "color ('#RRGGBB')"; }
+            }
+
             public JsonValue ToJson(object o)
             {
                 return ((Color)o).ToHtmlColor();

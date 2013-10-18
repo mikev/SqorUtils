@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Validation;
+﻿using System;
+using System.Data.Entity.Validation;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
@@ -45,7 +46,8 @@ namespace Sqor.Utils.Web
             else
             {
                 this.LogInfo("Unhandled Exception: " + filterContext.Exception);
-                filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.InternalServerError, filterContext.Exception.ToString());
+                var s = filterContext.Exception.ToString();
+                filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.InternalServerError, s);
             }
             filterContext.ExceptionHandled = true;
         }
