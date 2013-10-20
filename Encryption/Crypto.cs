@@ -1,12 +1,21 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.IO;
 using System.Text;
+using Sqor.Utils.Generators;
 
 namespace Sqor.Utils.Encryption
 {
     public class Crypto
     {
+        public static string Generate128BitPassword()
+        {
+            var random = new Random();
+            var bytes = Generate.Sequence(128 / 8, () => (byte)random.Next(256)).ToArray();
+            return Convert.ToBase64String(bytes);
+        }
+
         /// <summary>
         /// The encoding of the final string produced after the encryption
         /// </summary>
@@ -36,12 +45,12 @@ namespace Sqor.Utils.Encryption
             Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(key, System.Text.Encoding.UTF8.GetBytes(key));
             this.key = rfc.GetBytes(8);
             this.iv = this.key;
-            this.algorithm = EncryptionAlgorithm.Des;
+            this.algorithm = EncryptionAlgorithm.Rijndael;
 
             StringEncoding = Encoding.Encoded_As_UTF8;
         }
 
-        public Crypto(byte[] key, byte[] iv, EncryptionAlgorithm algorithm = EncryptionAlgorithm.Des)
+        public Crypto(byte[] key, byte[] iv, EncryptionAlgorithm algorithm = EncryptionAlgorithm.Rijndael)
         {
             StringEncoding = Encoding.Encoded_As_UTF8;
 

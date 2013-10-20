@@ -42,11 +42,28 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Dev|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Dev\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Mvc\System.Web.WebPages.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Arrays\ArrayReadOnlyList.cs" />
     <Compile Include="Caches\LruCache.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
     <Compile Include="DateTimes\DateTimeExtensions.cs" />
     <Compile Include="DateTimes\DateTimeSpan.cs" />
@@ -73,6 +91,7 @@
     <Compile Include="Drawing\IosFont.cs" />
     <Compile Include="Drawing\IosGraphicsPath.cs" />
     <Compile Include="Drawing\Matrix.cs" />
+    <Compile Include="Drawing\NetFColor.cs" />
     <Compile Include="Drawing\PointExtensions.cs" />
     <Compile Include="Drawing\RectangleExtensions.cs" />
     <Compile Include="Drawing\SizeExtensions.cs" />
@@ -82,6 +101,8 @@
     <Compile Include="Enumerables\EnumerableExtensions.cs" />
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
+    <Compile Include="Functional\FunctionalExtensions.cs" />
+    <Compile Include="Generators\Generate.cs" />
     <Compile Include="Generics\GenericExtensions.cs" />
     <Compile Include="Injection\Binding.cs" />
     <Compile Include="Injection\Cache.cs" />
@@ -106,9 +127,11 @@
     <Compile Include="Injection\Scopes\SingletonScope.cs" />
     <Compile Include="Injection\Scopes\TransientScope.cs" />
     <Compile Include="Injection\Scopes\WebRequestScope.cs" />
+    <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Json\JsonArray.cs" />
     <Compile Include="Json\JsonAttribute.cs" />
+    <Compile Include="Json\JsonConverterAttribute.cs" />
     <Compile Include="Json\JsonExtensions.cs" />
     <Compile Include="Json\JsonGroupAttribute.cs" />
     <Compile Include="Json\JsonHiddenAttribute.cs" />
@@ -186,6 +209,32 @@
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Types\Class.cs" />
     <Compile Include="Types\TypeExtensions.cs" />
+    <Compile Include="Web\ActionResult.cs" />
+    <Compile Include="Web\AreaActionFilterAttribute.cs" />
+    <Compile Include="Web\BaseActionDescriptor.cs" />
+    <Compile Include="Web\BaseActionInvoker.cs" />
+    <Compile Include="Web\BaseController.cs" />
+    <Compile Include="Web\BaseParameterBindingInfo.cs" />
+    <Compile Include="Web\BaseParameterDescriptor.cs" />
+    <Compile Include="Web\BaseAsyncActionDescriptor.cs" />
+    <Compile Include="Web\CookieExtensions.cs" />
+    <Compile Include="Web\CustomAttributeExtensions.cs" />
+    <Compile Include="Web\HttpForbiddenException.cs" />
+    <Compile Include="Web\HttpUnauthorizedException.cs" />
+    <Compile Include="Web\InjectionControllerFactory.cs" />
+    <Compile Include="Web\InputExtensions.cs" />
+    <Compile Include="Web\IntegerRouteConstraint.cs" />
+    <Compile Include="Web\JsonDefaultModelBinder.cs" />
+    <Compile Include="Web\JsonModelBinder.cs" />
+    <Compile Include="Web\JsonResult.cs" />
+    <Compile Include="Web\JsonTypeAttribute.cs" />
+    <Compile Include="Web\LogFilterAttribute.cs" />
+    <Compile Include="Web\ModelExtensions.cs" />
+    <Compile Include="Web\NotAreaConstraint.cs" />
+    <Compile Include="Web\NotNullAttribute.cs" />
+    <Compile Include="Web\NotNullFilterAttribute.cs" />
+    <Compile Include="Web\RestErrorAttribute.cs" />
+    <Compile Include="Web\RestValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Json\Readme.md" />

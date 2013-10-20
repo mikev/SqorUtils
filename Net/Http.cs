@@ -26,6 +26,7 @@ namespace Sqor.Utils.Net
         private string acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
         private static bool isCurlLoggingEnabled = true;
         private Action<Http> onError;
+        private bool synchronous;
     
         private Http(string url)
         {
@@ -61,6 +62,12 @@ namespace Sqor.Utils.Net
             return new Http(url);
         }
         
+        public Http AsSynchronous()
+        {
+            synchronous = true;
+            return this;
+        }
+            
         public Http OnError(Action<Http> onError)
         {
             this.onError = onError;
@@ -271,12 +278,23 @@ namespace Sqor.Utils.Net
                     binaryRequestData = Encoding.UTF8.GetBytes(stringRequestData);
                 }
                 
+                WebException error = null;
                 try
                 {
-                    if (binaryRequestData == null)
-                        response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
-                    else if (binaryRequestData != null)
-                        response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData).ConfigureAwait(true);
+                    if (http.synchronous)
+                    {
+                        if (binaryRequestData == null && Method == "GET")
+                            response = client.DownloadData(new Uri(http.Url));
+                        else 
+                            response = client.UploadData(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]);
+                    }
+                    else
+                    {
+                        if (binaryRequestData == null && Method == "GET")
+                            response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
+                        else 
+                            response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]).ConfigureAwait(true);                        
+                    }
                         
                     responseContentType = client.ResponseHeaders["Content-Type"];
                     foreach (var statusCodeResponse in statusCodeResponses)
@@ -287,21 +305,25 @@ namespace Sqor.Utils.Net
                 }
                 catch (WebException e)
                 {
-                    if (http.onUnauthorized != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
+                    error = e;
+                }
+                if (error != null)
+                {
+                    if (http.onUnauthorized != null && ((HttpWebResponse)error.Response).StatusCode == HttpStatusCode.Unauthorized)
                     {
                         http.onUnauthorized(http);
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
-                        Execute();
-                        return;
+                        await Execute();
                     }
-                    if (e.Response != null)
+                    if (error.Response != null)
                     {
                         // Extract response
-                        using (var stream = e.Response.GetResponseStream())
+                        using (var stream = error.Response.GetResponseStream())
                         {
                             response = stream.ReadBytesToEnd();
                         }
-                        responseContentType = e.Response.ContentType;
+                        responseContentType = error.Response.ContentType;
+                        var exception = new InvalidOperationException("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(response), error);
                     
                         if (ignoreErrors)
                         {
@@ -309,7 +331,7 @@ namespace Sqor.Utils.Net
                             
                             foreach (var statusCodeResponse in statusCodeResponses)
                             {
-                                if (statusCodeResponse.Item1(((HttpWebResponse)e.Response).StatusCode))
+                                if (statusCodeResponse.Item1(((HttpWebResponse)error.Response).StatusCode))
                                 {
                                     statusCodeResponse.Item2();
                                     return;
@@ -318,56 +340,26 @@ namespace Sqor.Utils.Net
                             
                             if (http.onError != null)
                                 http.onError(http);
-                            throw;
+                            throw exception;
                         }
                         else
                         {
-                            this.LogInfo("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(response), e);
+                            this.LogInfo(exception.Message, error);
                             if (http.onError != null)
                                 http.onError(http);
-                            throw;
+                            throw exception;
                         }
                     }
                     else
                     {
                         if (http.onError != null)
                             http.onError(http);
-                        throw;
+                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url, error);
                     }
                 }
                 client.Dispose();
-                
-                
-                
-//                        var request = (HttpWebRequest)WebRequest.Create(new Uri(url.ToString()));
-//                        request.Method = Method;
-    
-//                    }
-//                    catch (WebException e)
-//                    {
-//                        response = (HttpWebResponse)e.Response;
-//                    
-//                        if (ignoreErrors)
-//                        {
-//                            isErrored = true;
-//                            error = e;
-//                            Console.WriteLine(e);
-//                            return response;
-//                        }
-//                        else
-//                        {
-//                            throw;
-//                        }
-//                    }
-//                }
-//                catch (Exception e)
-//                {
-//                    this.LogInfo("Error making request to: " + http.url, e);
-//                    throw;
-//                }
-//                return response;
             }
-            
+
             public WhenStatusContext WhenStatusIs(HttpStatusCode responseCode)
             {
                 return WhenStatusIs(x => x == responseCode);
@@ -378,7 +370,7 @@ namespace Sqor.Utils.Net
                 ignoreErrors = true;
                 return new WhenStatusContext(this, responseCode);
             }
-            
+
             public WhenStatusContext Else()
             {
                 return new WhenStatusContext(this, statuCode => true);
@@ -395,11 +387,17 @@ namespace Sqor.Utils.Net
             /// <returns>The json.</returns>
             public async Task<JsonValue> AsJson()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsJson();
+            }
+
+            public async Task<JsonObject> AsJsonObject()
+            {
+                var response = await AsJson();
+                return (JsonObject)response;
             }
             
             internal JsonValue ResponseAsJson()
@@ -416,10 +414,10 @@ namespace Sqor.Utils.Net
             
             public async Task<T> As<T>()
             {
+                await Execute();
                 if (isErrored) 
                     return default(T);
-                    
-                await Execute();
+
                 return ResponseAs<T>();
             }
             
@@ -437,10 +435,10 @@ namespace Sqor.Utils.Net
             
             public async Task<string> AsString()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsString();
             }
             
@@ -457,10 +455,10 @@ namespace Sqor.Utils.Net
             
             public async Task<byte[]> AsBinary()
             {
+                await Execute();
                 if (isErrored) 
                     return null;
-                    
-                await Execute();
+
                 return ResponseAsBinary();
             }
             
@@ -478,6 +476,20 @@ namespace Sqor.Utils.Net
         {
             public SendRequestContext(Http http, string method) : base(http, method)
             {
+            }
+
+            public RequestContext Json(string json)
+            {
+                ContentType = "application/json";
+                stringRequestData = json;
+                return this;
+            }
+            
+            public RequestContext Json(JsonValue json)
+            {
+                ContentType = "application/json";
+                stringRequestData = json.ToJson();
+                return this;
             }
             
             public RequestContext Json(object o)

@@ -14,7 +14,7 @@ namespace Sqor.Utils.Json
 	public class JsonObjectSerializer : IJsonSerializer
 	{
 //        private static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        internal const string dateFormat = "yyyy-MM-dd HH:mm:ss";
+        internal const string dateFormat = @"yyyy-MM-dd\THH:mm:ss\Z";
 
 		public JsonValue Parse(string input)
 		{
@@ -41,13 +41,28 @@ namespace Sqor.Utils.Json
             if (s == "0000-00-00T00:00:00Z")
                 return null;
             if (s.EndsWith("Z"))
-                return DateTime.ParseExact(s, @"yyyy-MM-dd\THH:mm:ss\Z", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                try
+                {
+                    return DateTime.SpecifyKind(DateTime.ParseExact(s, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal), DateTimeKind.Utc);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException("Invalid DateTime: " + s, e);
+                }
             else
                 return DateTime.ParseExact(s, dateFormat, null);
         }
 
 		static internal object ConvertJsonObjectToType(JsonValue graph, Type type) 
 		{
+            // Custom converter?
+            var converterAttribute = type.GetCustomAttribute<JsonConverterAttribute>();
+            if (converterAttribute != null)
+            {
+                var converter = (IJsonConverter)Activator.CreateInstance(converterAttribute.Converter);
+                return converter.FromJson(graph);
+            }
+
             if (type.IsNullableValueType())
                 type = type.GetNullableValueType();
 
@@ -90,18 +105,6 @@ namespace Sqor.Utils.Json
                     return null;
                 return ParseDate(s);
             }
-//            else if (type == typeof(DateTime) || type == typeof(DateTime?))
-//            {
-//                var s = (string)graph;
-//                if (s == null)
-//                    return null;
-//
-//                s = s.ChopStart("/Date(");
-//                s = s.ChopEnd(")/");
-//                var seconds = (int)(long.Parse(s) / 1000);
-//                var date = unixEpoch.AddSeconds(seconds);
-//                return date;
-//            }
             else if (type.IsGenericDictionary())
             {
                 var dictionary = (IDictionary)Activator.CreateInstance(type);
@@ -125,13 +128,13 @@ namespace Sqor.Utils.Json
                     }
                     return result;
                 }
-                else if (graph is JsonPrimitive || ((JsonPrimitive)graph).Value == null)
+                else if (graph is JsonPrimitive && ((JsonPrimitive)graph).Value == null)
                 {
                     return null;
                 }
                 else
                 {
-                    throw new InvalidOperationException("Expected an array or the null value, but found: " + graph);
+                    throw new InvalidOperationException("Expected an array or the null value, but found: " + graph.ToString()); // ToString is not the same as implicit conversion since we have user type conversions -- ignore resharper
                 }
 			}
 			else if (type.IsGenericList())
@@ -162,6 +165,15 @@ namespace Sqor.Utils.Json
             }
             
 			var type = graph.GetType();
+
+            // Custom converter?
+            var converterAttribute = type.GetCustomAttribute<JsonConverterAttribute>();
+            if (converterAttribute != null)
+            {
+                var converter = (IJsonConverter)Activator.CreateInstance(converterAttribute.Converter);
+                return converter.ToJson(graph);
+            }
+
             if (graph is JsonValue)
             {
                 return (JsonValue)graph;
@@ -203,9 +215,6 @@ namespace Sqor.Utils.Json
                 var date = (DateTime)graph;
                 var s = date.ToString(dateFormat);
                 return s;
-//                var seconds = (int)(date - unixEpoch).TotalSeconds;
-//                var s = "/Date(" + seconds + ")/";
-//                return s;
             }
 			else if (type.IsArray) 
 			{

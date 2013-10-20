@@ -96,7 +96,7 @@ namespace Sqor.Utils.Json
             return ((ICollection<KeyValuePair<string, JsonValue>>)values).GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return ((ICollection<KeyValuePair<string, JsonValue>>)values).GetEnumerator();
         }
@@ -135,6 +135,11 @@ namespace Sqor.Utils.Json
 
         public object To(Type type)
         {
+            return To(type, "");
+        }
+
+        private object To(Type type, string keyPrefix)
+        {
 			var result = Activator.CreateInstance(type);
             PropertyInfo catchAll = null;
             var unusedKeys = Keys.ToHashSet();
@@ -149,13 +154,24 @@ namespace Sqor.Utils.Json
                         catchAll = property;
                         continue;
                     }
-                    var keyName = JsonAttribute.GetKey(property);
+                    var keyName = keyPrefix + JsonAttribute.GetKey(property);
                     unusedKeys.Remove(keyName);
-                    var jsonValue = this[keyName];
-                    if (jsonValue != null)
+
+                    if (jsonAttribute.IsDenormalized)
                     {
-                        var value = JsonObjectSerializer.ConvertJsonObjectToType(jsonValue, property.PropertyType);
+                        var connector = jsonAttribute.Connector ?? "";
+                        var newPrefix = keyName + connector;
+                        var value = To(property.PropertyType, newPrefix);
                         property.SetValue(result, value, null);
+                    }
+                    else
+                    {
+                        var jsonValue = this[keyName];
+                        if (jsonValue != null)
+                        {
+                            var value = JsonObjectSerializer.ConvertJsonObjectToType(jsonValue, property.PropertyType);
+                            property.SetValue(result, value, null);
+                        }
                     }
                 }
                 catch (Exception e) 
@@ -208,7 +224,20 @@ namespace Sqor.Utils.Json
                     {
                         var value = property.GetValue(source, null);
                         var jsonValue = JsonObjectSerializer.ConvertObjectToJsonValue(value);
-                        values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
+                        if (jsonAttribute != null && jsonAttribute.IsDenormalized)
+                        {
+                            var connector = jsonAttribute.Connector ?? "";
+                            var jsonObject = (JsonObject)jsonValue;
+                            foreach (var item in jsonObject)
+                            {
+                                var newKey = keyName + connector + item.Key;
+                                values.Add(new KeyValuePair<string, JsonValue>(newKey, item.Value));
+                            }
+                        }
+                        else
+                        {
+                            values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -222,4 +251,3 @@ namespace Sqor.Utils.Json
         }
     }
 }
-

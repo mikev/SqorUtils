@@ -1,4 +1,5 @@
 using System;
+using Sqor.Utils.Json;
 using Sqor.Utils.Net;
 using System.Threading.Tasks;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Sqor.Utils.Drawing
 {
     public enum ImageSource { None, Url, ByteArray, Native, Custom }
     
+    [JsonConverter(typeof(ImageJsonConverter))]
     public struct Image
     {
         private readonly ImageSource source;
@@ -193,6 +195,27 @@ namespace Sqor.Utils.Drawing
                 null
 #endif
             );
+        }
+
+        class ImageJsonConverter : IJsonConverter
+        {
+            public string TypeDescription
+            {
+                get { return "url"; }
+            }
+
+            public JsonValue ToJson(object o)
+            {
+                var image = (Image)o;
+                if (image.Source != ImageSource.Url)
+                    throw new InvalidOperationException("Cannot convert a non-Url based image into json");
+                return ((Image)o).Url;
+            }
+
+            public object FromJson(JsonValue json)
+            {
+                return new Image(ImageSource.Url, json, null, null);
+            }
         }
     }
 }
