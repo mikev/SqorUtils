@@ -17,7 +17,6 @@ namespace Sqor.Utils.Drawing
     public class Identicon
     {        
         private static List<GraphicsPath> shapes = new List<GraphicsPath>(16);
-        private static List<GraphicsPath> invshapes = new List<GraphicsPath>(16);
         private static List<GraphicsPath> symshapes = new List<GraphicsPath>(4);
         private static bool initialized = false;
 
@@ -26,9 +25,7 @@ namespace Sqor.Utils.Drawing
             for (int i = 0; i < 16; i++)
             {
                 GraphicsPath gp = new GraphicsPath();
-                GraphicsPath ip = new GraphicsPath();
                 shapes.Add(gp);    
-                invshapes.Add(gp);
             }
 
             // initializing the 16 shapes
@@ -168,11 +165,8 @@ namespace Sqor.Utils.Drawing
         public static byte[] CreateIdenticonData(int source, uint size, bool outline)
         {
             var logo = CreateIdenticon(source, size, outline);
-            var stream = new MemoryStream();
             return logo.SaveToByteArray();
         }
-        
-        private static bool variable;
         
         /// <summary>
         /// creates a new Identicon
