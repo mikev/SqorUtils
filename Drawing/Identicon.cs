@@ -185,7 +185,7 @@ namespace Sqor.Utils.Drawing
             if (size == 0) return null;
             if (!initialized) Initialize();
             Bitmap g = new Bitmap((int) size,(int) size);            
-            g.FillColor = Color.FromRgb(255, 255, 255);
+            g.FillColor = Color.FromRgba(255, 255, 255);
             g.FillRect(new Rectangle(0, 0, (int)size, (int)size));
 
             int centerindex = source & 3; // 2 lowest bits
@@ -200,7 +200,7 @@ namespace Sqor.Utils.Drawing
             int red = (source >> 14) & 31;
             int green = (source >> 19) & 31;
             int blue = (source >> 24) & 31;
-            Color shapecolor = Color.FromRgb(red * 8, green * 8, blue * 8);
+            Color shapecolor = Color.FromRgba(red * 8, green * 8, blue * 8);
 
             // remaining bits to decide shape flipping
             bool flipcenter = ((source >> 29) & 1) == 1;
@@ -208,8 +208,8 @@ namespace Sqor.Utils.Drawing
             bool flipsides = ((source >> 31) & 1) == 1;            
 
             var sb = shapecolor;
-            var wb = Color.FromRgb(255, 255, 255);
-            var p = Color.FromRgb(0, 0, 0);
+            var wb = Color.FromRgba(255, 255, 255);
+            var p = Color.FromRgba(0, 0, 0);
                         
             #region Transform and move shapes into position
 

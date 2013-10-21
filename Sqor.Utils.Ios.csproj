@@ -204,5 +204,14 @@
     <Compile Include="Drawing\IosGraphicsPath.cs" />
     <Compile Include="Json\JsonNodeType.cs" />
     <Compile Include="Json\JsonAttribute.cs" />
+    <Compile Include="Generators\Generate.cs" />
+    <Compile Include="Functional\FunctionalExtensions.cs" />
+    <Compile Include="Json\IJsonConverter.cs" />
+    <Compile Include="Json\JsonConverterAttribute.cs" />
+    <Compile Include="Json\JsonGroupAttribute.cs" />
+    <Compile Include="Json\JsonHiddenAttribute.cs" />
+    <Compile Include="Json\JsonKeyAttribute.cs" />
+    <Compile Include="Json\JsonReadonlyAttribute.cs" />
+    <Compile Include="Json\JsonRequiredAttribute.cs" />
   </ItemGroup>
 </Project>

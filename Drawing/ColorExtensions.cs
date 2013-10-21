@@ -55,7 +55,7 @@ namespace Sqor.Utils.Drawing
             var g = (int)Math.Min(255, Math.Round(rgb[1] * 256));
             var b = (int)Math.Min(255, Math.Round(rgb[2] * 256));
   
-            return Color.FromRgb(r, g, b);
+            return Color.FromRgba(r, g, b);
         }
         
         /**
