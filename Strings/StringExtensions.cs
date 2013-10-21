@@ -647,5 +647,10 @@ namespace Sqor.Utils.Strings
         {
             return s.Replace("&hellip;", "...");
         }
+        
+        public static string RemoveIndent(this string s)
+        {
+            return string.Join("\n", s.Split('\r', '\n').Select(x => x.TrimStart()));
+        }
 	}
 }

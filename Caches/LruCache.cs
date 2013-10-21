@@ -8,10 +8,10 @@ namespace Sqor.Utils.Caches
     public class LruCache<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private int capacity;
-        private Dictionary<TKey, Entry<TKey, TValue>> storage = new Dictionary<TKey, Entry<TKey, TValue>>();
+        private Dictionary<TKey, Entry> storage = new Dictionary<TKey, Entry>();
         private object lockObject = new object();
-        private Entry<TKey, TValue> newestItem;
-        private Entry<TKey, TValue> oldestItem;
+        private Entry newestItem;
+        private Entry oldestItem;
         private Func<TKey, TValue> populator;
 
         public LruCache(int capacity, Func<TKey, TValue> populator)
@@ -73,7 +73,7 @@ namespace Sqor.Utils.Caches
         {
             lock (lockObject)
             {
-                return storage.Contains(new KeyValuePair<TKey, Entry<TKey, TValue>>(item.Key, new Entry<TKey, TValue>(item.Key, item.Value)));
+                return storage.Contains(new KeyValuePair<TKey, Entry>(item.Key, new Entry(item.Key, item.Value)));
             }
         }
 
@@ -119,7 +119,7 @@ namespace Sqor.Utils.Caches
                 while (storage.Count >= capacity)
                     Sacrifice();
 
-                var entry = new Entry<TKey, TValue>(key, value);
+                var entry = new Entry(key, value);
                 entry.OlderItem = newestItem;
                 newestItem = entry;
 
@@ -143,7 +143,7 @@ namespace Sqor.Utils.Caches
                 }
                 else
                 {
-                    Entry<TKey, TValue> entry;
+                    Entry entry;
                     if (storage.TryGetValue(key, out entry))
                     {
                         RemoveEntryFromList(entry);
@@ -158,7 +158,7 @@ namespace Sqor.Utils.Caches
             }
         }
 
-        private void RemoveEntryFromList(Entry<TKey, TValue> entry)
+        private void RemoveEntryFromList(Entry entry)
         {
             lock (lockObject)
             {
@@ -181,7 +181,7 @@ namespace Sqor.Utils.Caches
         {
             lock (lockObject)
             {
-                Entry<TKey, TValue> entry;
+                Entry entry;
                 bool found = storage.TryGetValue(key, out entry);
                 if (found)
                 {
@@ -245,10 +245,10 @@ namespace Sqor.Utils.Caches
             }
         }
 
-        class Entry<TKey, TValue>
+        class Entry
         {
-            public Entry<TKey, TValue> OlderItem;
-            public Entry<TKey, TValue> NewerItem;
+            public Entry OlderItem;
+            public Entry NewerItem;
 
             public readonly TKey Key;
             public readonly TValue Value;
@@ -259,7 +259,7 @@ namespace Sqor.Utils.Caches
                 Value = value;
             }
 
-            public bool Equals(Entry<TKey, TValue> other)
+            public bool Equals(Entry other)
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
@@ -270,8 +270,8 @@ namespace Sqor.Utils.Caches
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != typeof(Entry<TKey, TValue>)) return false;
-                return Equals((Entry<TKey, TValue>)obj);
+                if (obj.GetType() != typeof(Entry)) return false;
+                return Equals((Entry)obj);
             }
 
             public override int GetHashCode()
