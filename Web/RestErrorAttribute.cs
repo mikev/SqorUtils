@@ -13,8 +13,7 @@ namespace Sqor.Utils.Web
         {
             var restValidationException = filterContext.Exception as RestValidationException;
             var dbEntityValidationException = filterContext.Exception as DbEntityValidationException;
-            var httpUnauthorizedException = filterContext.Exception as HttpUnauthorizedException;
-            var httpForbiddenException = filterContext.Exception as HttpForbiddenException;
+            var httpStatusCodeException = filterContext.Exception as HttpStatusCodeException;
             if (restValidationException != null)
             {
                 this.LogInfo("Validation Failure: " + filterContext.Exception.Message);
@@ -34,14 +33,11 @@ namespace Sqor.Utils.Web
                 this.LogInfo("Validation Failure: " + builder);
                 filterContext.Result = new ContentResult { Content = builder.ToString() };
             }
-            else if (httpUnauthorizedException != null)
+            else if (httpStatusCodeException != null)
             {
-                filterContext.Result = new HttpUnauthorizedResult(httpUnauthorizedException.Message);
-                filterContext.HttpContext.Response.AddHeader("WWW-Authenticate", "AccessToken realm=\"sqor\"");
-            }
-            else if (httpForbiddenException != null)
-            {
-                filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden, httpForbiddenException.Message);
+                filterContext.Result = new HttpStatusCodeResult(httpStatusCodeException.StatusCode, httpStatusCodeException.StatusDescription);
+                if (httpStatusCodeException.StatusCode == HttpStatusCode.Unauthorized)
+                    filterContext.HttpContext.Response.AddHeader("WWW-Authenticate", "AccessToken realm=\"sqor\"");
             }
             else
             {

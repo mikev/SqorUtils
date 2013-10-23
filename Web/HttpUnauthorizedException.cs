@@ -1,24 +1,14 @@
-﻿using System;
-using System.Net;
-using System.Runtime.Serialization;
+﻿using System.Net;
 
 namespace Sqor.Utils.Web
 {
-    public class HttpUnauthorizedException : Exception
+    public class HttpUnauthorizedException : HttpStatusCodeException
     {
-        public HttpUnauthorizedException()
+        public HttpUnauthorizedException() : base(HttpStatusCode.Unauthorized)
         {
         }
 
-        public HttpUnauthorizedException(string message) : base(message)
-        {
-        }
-
-        public HttpUnauthorizedException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected HttpUnauthorizedException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public HttpUnauthorizedException(string statusDescription) : base(HttpStatusCode.Unauthorized, statusDescription)
         {
         }
     }

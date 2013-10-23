@@ -15,22 +15,22 @@ namespace Sqor.Utils.Web
         private Container container;
         private string @namespace;
         private Assembly assembly;
+        private Type errorController;
 
-        public InjectionControllerFactory(Assembly assembly, IControllerFactory defaultFactory, Container container, string @namespace)
+        public InjectionControllerFactory(Assembly assembly, IControllerFactory defaultFactory, Container container, string @namespace, Type errorController)
         {
             this.assembly = assembly;
             this.defaultFactory = defaultFactory;
             this.container = container;
             this.@namespace = @namespace;
+            this.errorController = errorController;
         }
 
         public IController CreateController(RequestContext requestContext, string controllerName)
         {
             requestContext.HttpContext.Items[typeof(RequestContext)] = requestContext;
-
             var area = requestContext.RouteData.DataTokens["area"];
 
-            requestContext.HttpContext.Items[typeof(RequestContext)] = requestContext;
             try
             {
                 var ns = @namespace + ".Controllers.";
@@ -38,12 +38,10 @@ namespace Sqor.Utils.Web
                     ns = @namespace + ".Areas." + area + ".Controllers.";
 
                 var typeName = ns + controllerName + "Controller";
-                var controllerType = assembly.GetType(typeName, true, true);
+                var controllerType = assembly.GetType(typeName, false, true);
                 if (controllerType == null)
                 {
-                    Logger.Instance.LogError("Error finding controller: " + typeName);
-
-                    throw new InvalidOperationException("Error finding controller: " + typeName);                    
+                    controllerType = errorController;
                 }
                 var controller = (IController)container.Get(controllerType);
                 requestContext.HttpContext.Items[typeof(ControllerBase)] = controller;
