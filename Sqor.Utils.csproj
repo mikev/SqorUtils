@@ -53,6 +53,15 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tests|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Tests\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -101,9 +110,11 @@
     <Compile Include="Drawing\UIFontExtensions.cs" />
     <Compile Include="Drawing\UIImageExtensions.cs" />
     <Compile Include="Encryption\Crypto.cs" />
+    <Compile Include="EntityFramework\DbSetExtensions.cs" />
     <Compile Include="Enumerables\EnumerableExtensions.cs" />
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
+    <Compile Include="Files\FileExtensions.cs" />
     <Compile Include="Functional\FunctionalExtensions.cs" />
     <Compile Include="Generators\Generate.cs" />
     <Compile Include="Generics\GenericExtensions.cs" />
@@ -174,6 +185,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Numbers\NumberExtensions.cs" />
+    <Compile Include="Objects\ObjectExtensions.cs" />
     <Compile Include="SqliteLinq\AutoIncrementAttribute.cs" />
     <Compile Include="SqliteLinq\ColumnAttribute.cs" />
     <Compile Include="SqliteLinq\DataContext.cs" />
