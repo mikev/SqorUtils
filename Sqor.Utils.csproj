@@ -245,12 +245,15 @@
     <Compile Include="Web\JsonResult.cs" />
     <Compile Include="Web\JsonTypeAttribute.cs" />
     <Compile Include="Web\LogFilterAttribute.cs" />
+    <Compile Include="Web\MaximumVersionAttribute.cs" />
+    <Compile Include="Web\MinimumVersionAttribute.cs" />
     <Compile Include="Web\ModelExtensions.cs" />
     <Compile Include="Web\NotAreaConstraint.cs" />
     <Compile Include="Web\NotNullAttribute.cs" />
     <Compile Include="Web\NotNullFilterAttribute.cs" />
     <Compile Include="Web\RestErrorAttribute.cs" />
     <Compile Include="Web\RestValidationException.cs" />
+    <Compile Include="Web\UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Json\Readme.md" />
