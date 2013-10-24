@@ -72,7 +72,10 @@ namespace Sqor.Utils.Json
 			}
             else if (type.IsEnum)
             {
-                return Enum.Parse(type, (string)graph);
+                return Enum.GetValues(type)
+                    .Cast<Enum>()
+                    .Select(x => JsonAttribute.GetKey(x))
+                    .Single(x => x == graph);
             }
 			else if (type == typeof(bool)) 
 			{
@@ -184,7 +187,8 @@ namespace Sqor.Utils.Json
 			}
             else if (graph is Enum)
             {
-                return graph.ToString();
+                var name = JsonAttribute.GetKey((Enum)graph);
+                return name;
             }
 			else if (type == typeof(bool)) 
 			{

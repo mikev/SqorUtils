@@ -41,5 +41,12 @@ namespace Sqor.Utils.Json
             var attribute = (JsonAttribute)GetCustomAttribute(property, typeof(JsonAttribute));
             return attribute == null || attribute.JsonKey == null ? property.Name : attribute.JsonKey;
         }
+        
+        public static string GetKey(Enum enumValue)
+        {
+            var field = enumValue.GetType().GetField(Enum.GetName(enumValue.GetType(), enumValue));
+            var attribute = field.GetCustomAttribute<JsonAttribute>();
+            return attribute == null || attribute.JsonKey == null ? field.Name : attribute.JsonKey;
+        }
     }
 }
