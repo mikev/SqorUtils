@@ -46,7 +46,7 @@ namespace Sqor.Utils.Web
                             throw new InvalidOperationException("Unexpected HTTP method: " + controllerContext.HttpContext.Request.HttpMethod);
                     }
                     var actionMethodsByHttpMethod = actionMethods.Where(x => x.IsDefined(expectedAttribute)).ToArray();
-                    var defaultActionMethods = actionMethods.Where(x => !x.IsDefined(expectedAttribute)).ToArray();
+                    var defaultActionMethods = actionMethods.Where(x => !x.GetCustomAttributes().Any(y => y is ActionMethodSelectorAttribute)).ToArray();
 
                     var methods = actionMethodsByHttpMethod.Any() ? actionMethodsByHttpMethod : defaultActionMethods;
                     if (methods.Length == 1)
@@ -69,7 +69,7 @@ namespace Sqor.Utils.Web
                             .ToArray();
 
                         if (methods.Length > 1)
-                            throw new AmbiguousMatchException(string.Format("Could not find appropriate method for action {0} in controller {1} with HTTP method {2} and minimum version of {3}", actionName, controllerDescriptor.ControllerName, controllerContext.HttpContext.Request.HttpMethod, version));
+                            throw new AmbiguousMatchException(string.Format("Could not find appropriate method for action '{0}' in controller '{1}' with HTTP method {2} and minimum version of {3}", actionName, controllerDescriptor.ControllerName, controllerContext.HttpContext.Request.HttpMethod, version));
                         method = methods.Single();
                     }
                 }
