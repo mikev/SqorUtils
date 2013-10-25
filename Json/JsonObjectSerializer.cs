@@ -74,8 +74,10 @@ namespace Sqor.Utils.Json
             {
                 return Enum.GetValues(type)
                     .Cast<Enum>()
-                    .Select(x => JsonAttribute.GetKey(x))
-                    .Single(x => x == graph);
+                    .Select(x => new { Value = x, Key = JsonAttribute.GetKey(x) })
+                    .Where(x => x.Key == graph)
+                    .Select(x => x.Value)
+                    .Single();
             }
 			else if (type == typeof(bool)) 
 			{
