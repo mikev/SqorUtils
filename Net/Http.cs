@@ -389,6 +389,7 @@ namespace Sqor.Utils.Net
 
             public RequestContext OnStatus(Action<HttpStatusCode> onStatus)
             {
+                ignoreErrors = true;
                 this.onStatus = onStatus;
                 return this;
             }
