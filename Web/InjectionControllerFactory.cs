@@ -5,12 +5,15 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
 using Sqor.Utils.Injection;
+using Sqor.Utils.Ios;
 using Sqor.Utils.Logging;
 
 namespace Sqor.Utils.Web
 {
     public class InjectionControllerFactory : IControllerFactory
     {
+        public event Action<IController> Injected;
+
         private IControllerFactory defaultFactory;
         private Container container;
         private string @namespace;
@@ -45,6 +48,8 @@ namespace Sqor.Utils.Web
                 }
                 var controller = (IController)container.Get(controllerType);
                 requestContext.HttpContext.Items[typeof(ControllerBase)] = controller;
+
+                Injected.Fire(x => x(controller));
                 
                 return controller;
             }
