@@ -201,6 +201,7 @@ namespace Sqor.Utils.Net
             internal byte[] response;
             internal int statusCode;
             internal List<Tuple<Func<HttpStatusCode, bool>, Action>> statusCodeResponses = new List<Tuple<Func<HttpStatusCode, bool>, Action>>();
+            internal Action<HttpStatusCode> onStatus;
             
             protected string stringRequestData;
             protected byte[] binaryRequestData;
@@ -297,6 +298,8 @@ namespace Sqor.Utils.Net
                     }
                         
                     responseContentType = client.ResponseHeaders["Content-Type"];
+                    if (onStatus != null)
+                        onStatus(HttpStatusCode.OK);
                     foreach (var statusCodeResponse in statusCodeResponses)
                     {
                         if (statusCodeResponse.Item1(HttpStatusCode.OK))
@@ -329,9 +332,12 @@ namespace Sqor.Utils.Net
                         {
                             isErrored = true;
                             
+                            var statusCode = ((HttpWebResponse)error.Response).StatusCode;
+                            if (onStatus != null)
+                                onStatus(statusCode);
                             foreach (var statusCodeResponse in statusCodeResponses)
                             {
-                                if (statusCodeResponse.Item1(((HttpWebResponse)error.Response).StatusCode))
+                                if (statusCodeResponse.Item1(statusCode))
                                 {
                                     statusCodeResponse.Item2();
                                     return;
@@ -379,6 +385,12 @@ namespace Sqor.Utils.Net
             public async Task Go()
             {
                 await Execute();
+            }
+
+            public RequestContext OnStatus(Action<HttpStatusCode> onStatus)
+            {
+                this.onStatus = onStatus;
+                return this;
             }
             
             /// <summary>
@@ -476,6 +488,11 @@ namespace Sqor.Utils.Net
         {
             public SendRequestContext(Http http, string method) : base(http, method)
             {
+            }
+
+            public new SendRequestContext OnStatus(Action<HttpStatusCode> onStatus)
+            {
+                return (SendRequestContext)base.OnStatus(onStatus);
             }
 
             public RequestContext Json(string json)
