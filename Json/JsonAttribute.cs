@@ -11,6 +11,11 @@ namespace Sqor.Utils.Json
         public bool CatchAll { get; private set; }
         public bool IsDenormalized { get; set; }
         public string Connector { get; set; }
+        public bool RepresentsNull { get; set; }
+
+        public JsonAttribute()
+        {
+        }
 
         public JsonAttribute(string jsonKey)
         {

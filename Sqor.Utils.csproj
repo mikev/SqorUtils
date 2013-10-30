@@ -142,6 +142,7 @@
     <Compile Include="Injection\Scopes\SingletonScope.cs" />
     <Compile Include="Injection\Scopes\TransientScope.cs" />
     <Compile Include="Injection\Scopes\WebRequestScope.cs" />
+    <Compile Include="Json\EnumCache.cs" />
     <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Json\JsonArray.cs" />
