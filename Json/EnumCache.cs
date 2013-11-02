@@ -20,8 +20,9 @@ namespace Sqor.Utils.Json
         {
             var enumData = type
                 .GetFields()
+                .Where(x => x.IsStatic)
                 .Select(x => new { Field = x, Value = (Enum)x.GetValue(null), Attribute = x.GetCustomAttribute<JsonAttribute>() })
-                .Select(x => new { Key = x.Attribute != null ? x.Attribute.JsonKey : x.Field.Name, x.Value, x.Attribute })
+                .Select(x => new { Key = x.Attribute != null && x.Attribute.JsonKey != null ? x.Attribute.JsonKey : x.Field.Name, x.Value, x.Attribute })
                 .ToArray();
 
             enumsByKey = enumData.ToDictionary(x => x.Key, x => x.Value);
