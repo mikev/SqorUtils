@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Sqor.Utils.Functional;
 
 namespace Sqor.Utils.Json
 {
@@ -27,7 +28,7 @@ namespace Sqor.Utils.Json
 
             enumsByKey = enumData.ToDictionary(x => x.Key, x => x.Value);
             keysByEnum = enumData.ToDictionary(x => x.Value, x => x.Key);
-            nullValue = enumData.SingleOrDefault(x => x.Attribute.RepresentsNull).Value;
+            nullValue = enumData.SingleOrDefault(x => x.Attribute != null && x.Attribute.RepresentsNull).IfNotNull(x => x.Value);
         }
 
         public Enum NullValue
