@@ -46,6 +46,10 @@ namespace Sqor.Utils.Web
                 {
                     controllerType = errorController;
                 }
+                if (controllerType == null)
+                {
+                    return null;
+                }
                 var controller = (IController)container.Get(controllerType);
                 requestContext.HttpContext.Items[typeof(ControllerBase)] = controller;
 
