@@ -19,6 +19,7 @@ namespace Sqor.Utils.Net
         private Dictionary<string, object> queryString = new Dictionary<string, object>();
         private Dictionary<string, string> headers = new Dictionary<string, string>();
         private Dictionary<string, string> cookies = new Dictionary<string, string>();
+        private List<Action<WebHeaderCollection>> responseHeaders = new List<Action<WebHeaderCollection>>();
         private int readWriteTimeout = 60 * 1000;                   // 1 minute
         private int timeout = 60 * 1000;                            // 1 minute
         private DecompressionMethods automaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
@@ -133,6 +134,12 @@ namespace Sqor.Utils.Net
         public Http WithAcceptHeader(string acceptHeader)
         {
             this.acceptHeader = acceptHeader;
+            return this;
+        }
+
+        public Http OnResponse(Action<WebHeaderCollection> response)
+        {
+            responseHeaders.Add(response);
             return this;
         }
         
@@ -304,6 +311,10 @@ namespace Sqor.Utils.Net
                     {
                         if (statusCodeResponse.Item1(HttpStatusCode.OK))
                             statusCodeResponse.Item2();
+                    }
+                    foreach (var responseHeader in http.responseHeaders)
+                    {
+                        responseHeader(client.ResponseHeaders);
                     }
                 }
                 catch (WebException e)

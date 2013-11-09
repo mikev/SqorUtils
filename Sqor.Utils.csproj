@@ -63,6 +63,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -188,6 +192,7 @@
     </Compile>
     <Compile Include="Numbers\NumberExtensions.cs" />
     <Compile Include="Objects\ObjectExtensions.cs" />
+    <Compile Include="Passwords\PasswordUtils.cs" />
     <Compile Include="SqliteLinq\AutoIncrementAttribute.cs" />
     <Compile Include="SqliteLinq\ColumnAttribute.cs" />
     <Compile Include="SqliteLinq\DataContext.cs" />
@@ -259,6 +264,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Json\Readme.md" />
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
