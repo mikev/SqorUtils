@@ -15,7 +15,7 @@ namespace Sqor.Utils.Net
     public class Http
     {
         private string url;
-        private Action<Http> onUnauthorized;
+        private Func<Http, Task> onUnauthorized;
         private Dictionary<string, object> queryString = new Dictionary<string, object>();
         private Dictionary<string, string> headers = new Dictionary<string, string>();
         private Dictionary<string, string> cookies = new Dictionary<string, string>();
@@ -68,14 +68,14 @@ namespace Sqor.Utils.Net
             synchronous = true;
             return this;
         }
-            
+
         public Http OnError(Action<Http> onError)
         {
             this.onError = onError;
             return this;
         }
         
-        public Http OnUnauthorized(Action<Http> onUnauthorized)
+        public Http OnUnauthorized(Func<Http, Task> onUnauthorized)
         {
             this.onUnauthorized = onUnauthorized;
             return this;
@@ -237,7 +237,8 @@ namespace Sqor.Utils.Net
                     
                     foreach (var header in http.headers)
                     {
-                        builder.Append("-H \"" + header.Key + ": " + header.Value + "\" ");
+                        if (header.Value != null)
+                            builder.Append("-H \"" + header.Key + ": " + header.Value + "\" ");
                     }
                     
                     if (stringRequestData != null)
@@ -325,9 +326,12 @@ namespace Sqor.Utils.Net
                 {
                     if (http.onUnauthorized != null && ((HttpWebResponse)error.Response).StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        http.onUnauthorized(http);
+                        var onUnauthorized = http.onUnauthorized;
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
+                        isExecuted = false;
+                        await onUnauthorized(http);
                         await Execute();
+                        return;
                     }
                     if (error.Response != null)
                     {
