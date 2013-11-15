@@ -144,7 +144,7 @@ namespace Sqor.Utils.Json
             PropertyInfo catchAll = null;
             var unusedKeys = Keys.ToHashSet();
 
-			foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x))) 
+			foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x) && x.CanWrite)) 
 			{
                 try 
                 {
