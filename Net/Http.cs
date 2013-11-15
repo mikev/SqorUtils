@@ -152,6 +152,25 @@ namespace Sqor.Utils.Net
             
             return this;
         }
+
+        public bool Exists(int retryCount = 0)
+        {
+            var request = WebRequest.Create(Url);
+            request.Method = "HEAD";
+            try
+            {
+                request.GetResponse();
+                return true;
+            }
+            catch (WebException e)
+            {
+                var response = (HttpWebResponse)e.Response;
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    return false;
+                else
+                    throw;
+            }
+        }
         
         public RequestContext Get()
         {

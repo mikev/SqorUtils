@@ -103,6 +103,7 @@
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Images\ImageExtensions.cs" />
     <Compile Include="Drawing\IosBitmap.cs" />
     <Compile Include="Drawing\IosColor.cs" />
     <Compile Include="Drawing\IosFont.cs" />

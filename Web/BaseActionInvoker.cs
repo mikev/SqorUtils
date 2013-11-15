@@ -68,9 +68,21 @@ namespace Sqor.Utils.Web
                             .Select(x => x.Method)
                             .ToArray();
 
-                        if (methods.Length > 1)
+                        if (methods.Length == 2 && methods.Any(x => x.GetParameters().Any(y => y.Name == "id")) && methods.Any(x => !x.GetParameters().Any(y => y.Name == "id")))
+                        {
+                            if (controllerContext.RouteData.Values.ContainsKey("id"))
+                                method = methods.Single(x => x.GetParameters().Any(y => y.Name == "id"));
+                            else
+                                method = methods.Single(x => !x.GetParameters().Any(y => y.Name == "id"));
+                        }
+                        else if (methods.Length > 1)
+                        {
                             throw new AmbiguousMatchException(string.Format("Could not find appropriate method for action '{0}' in controller '{1}' with HTTP method {2} and minimum version of {3}", actionName, controllerDescriptor.ControllerName, controllerContext.HttpContext.Request.HttpMethod, version));
-                        method = methods.Single();
+                        }
+                        else
+                        {
+                           method = methods.Single();
+                        }
                     }
                 }
                 var result = CreateActionDescriptor(method, actionName, controllerDescriptor);

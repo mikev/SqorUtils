@@ -112,10 +112,11 @@ namespace Sqor.Utils.Json
             else if (type.IsGenericDictionary())
             {
                 var dictionary = (IDictionary)Activator.CreateInstance(type);
+                var elementType = type.GetDictionaryValueType();
                 var jsonObject = (JsonObject)graph;
                 foreach (var item in jsonObject)
                 {
-                    dictionary[item.Key] = item.Value;
+                    dictionary[item.Key] = ConvertJsonObjectToType(item.Value, elementType);
                 }
                 return dictionary;
             }
