@@ -213,5 +213,6 @@
     <Compile Include="Json\JsonKeyAttribute.cs" />
     <Compile Include="Json\JsonReadonlyAttribute.cs" />
     <Compile Include="Json\JsonRequiredAttribute.cs" />
+    <Compile Include="Json\EnumCache.cs" />
   </ItemGroup>
 </Project>
