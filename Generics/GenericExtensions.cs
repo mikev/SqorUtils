@@ -150,5 +150,15 @@ namespace Sqor.Utils.Generics
         {
             return listType.GetGenericArgument(typeof(IList<>), 0);
         }
+
+        public static Type GetDictionaryKeyType(this Type dictionaryType)
+        {
+            return dictionaryType.GetGenericArgument(typeof(IDictionary<,>), 0);
+        }
+
+        public static Type GetDictionaryValueType(this Type dictionaryType)
+        {
+            return dictionaryType.GetGenericArgument(typeof(IDictionary<,>), 1);
+        }
     }
 }

@@ -22,6 +22,13 @@ namespace Sqor.Utils.Numbers
             else
                 return (value / 1000000000M).ToString("#.##") + "B";
         }
-    }
+
+        public static int DividePlusRemainder(this int dividend, int divisor, int valueToAddIfThereIsARemainder = 1)
+        {
+            int result = dividend / divisor;
+            if (dividend % divisor > 0)
+                result += valueToAddIfThereIsARemainder;
+            return result;
+        }    }
 }
 

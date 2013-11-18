@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -19,7 +20,9 @@ namespace Sqor.Utils.Web
                 var inputStream = request.InputStream;
                 inputStream.Position = 0;
                 var content = new StreamReader(inputStream).ReadToEnd();
-                this.LogInfo("Input: " + content.Trim());
+                var s = content.Trim();
+                s = s.Substring(0, Math.Min(s.Length, 10000));
+                this.LogInfo("Input: " + s);
             }
 
             base.OnActionExecuting(filterContext);

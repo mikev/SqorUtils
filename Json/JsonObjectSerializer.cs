@@ -73,7 +73,11 @@ namespace Sqor.Utils.Json
 			}
             else if (type.IsEnum)
             {
-                return Enum.Parse(type, (string)graph);
+                var enumCache = EnumCache.GetInstance(type);
+                if (graph == null)
+                    return enumCache.NullValue;
+                else
+                    return enumCache.EnumsByKey[graph];
             }
 			else if (type == typeof(bool)) 
 			{
@@ -109,10 +113,11 @@ namespace Sqor.Utils.Json
             else if (type.IsGenericDictionary())
             {
                 var dictionary = (IDictionary)Activator.CreateInstance(type);
+                var elementType = type.GetDictionaryValueType();
                 var jsonObject = (JsonObject)graph;
                 foreach (var item in jsonObject)
                 {
-                    dictionary[item.Key] = item.Value;
+                    dictionary[item.Key] = ConvertJsonObjectToType(item.Value, elementType);
                 }
                 return dictionary;
             }
@@ -185,7 +190,11 @@ namespace Sqor.Utils.Json
 			}
             else if (graph is Enum)
             {
-                return graph.ToString();
+                var enumCache = EnumCache.GetInstance(graph.GetType());
+                if (graph.Equals(enumCache.NullValue))
+                    return new JsonPrimitive();
+                else
+                    return JsonAttribute.GetKey((Enum)graph);
             }
 			else if (type == typeof(bool)) 
 			{

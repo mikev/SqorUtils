@@ -9,16 +9,18 @@ using Sqor.Utils.Logging;
 using Sqor.Utils.Json;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
+using Sqor.Utils.Strings;
 
 namespace Sqor.Utils.Net
 {
     public class Http
     {
         private string url;
-        private Action<Http> onUnauthorized;
+        private Func<Http, Task> onUnauthorized;
         private Dictionary<string, object> queryString = new Dictionary<string, object>();
         private Dictionary<string, string> headers = new Dictionary<string, string>();
         private Dictionary<string, string> cookies = new Dictionary<string, string>();
+        private List<Action<WebHeaderCollection>> responseHeaders = new List<Action<WebHeaderCollection>>();
         private int readWriteTimeout = 60 * 1000;                   // 1 minute
         private int timeout = 60 * 1000;                            // 1 minute
         private DecompressionMethods automaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
@@ -56,7 +58,13 @@ namespace Sqor.Utils.Net
                 return url.ToString();        
             }
         }
-        
+
+        public string AcceptHeader
+        {
+            get { return acceptHeader; }
+            set { acceptHeader = value; }
+        }
+
         public static Http To(string url)
         {
             return new Http(url);
@@ -67,14 +75,14 @@ namespace Sqor.Utils.Net
             synchronous = true;
             return this;
         }
-            
+
         public Http OnError(Action<Http> onError)
         {
             this.onError = onError;
             return this;
         }
         
-        public Http OnUnauthorized(Action<Http> onUnauthorized)
+        public Http OnUnauthorized(Func<Http, Task> onUnauthorized)
         {
             this.onUnauthorized = onUnauthorized;
             return this;
@@ -82,7 +90,14 @@ namespace Sqor.Utils.Net
         
         public Http WithHeader(string key, string value)
         {
-            headers[key] = value;
+            if (key.Equals("accept", StringComparison.InvariantCultureIgnoreCase))
+            {
+                acceptHeader = value;                
+            }
+            else
+            {
+                headers[key] = value;
+            }
             return this;
         }
         
@@ -135,6 +150,12 @@ namespace Sqor.Utils.Net
             this.acceptHeader = acceptHeader;
             return this;
         }
+
+        public Http OnResponse(Action<WebHeaderCollection> response)
+        {
+            responseHeaders.Add(response);
+            return this;
+        }
         
         public Http WithLogin(string userName, string password)
         {
@@ -144,6 +165,25 @@ namespace Sqor.Utils.Net
             headers["Authorization"] = authorization;
             
             return this;
+        }
+
+        public bool Exists(int retryCount = 0)
+        {
+            var request = WebRequest.Create(Url);
+            request.Method = "HEAD";
+            try
+            {
+                request.GetResponse();
+                return true;
+            }
+            catch (WebException e)
+            {
+                var response = (HttpWebResponse)e.Response;
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    return false;
+                else
+                    throw;
+            }
         }
         
         public RequestContext Get()
@@ -201,6 +241,7 @@ namespace Sqor.Utils.Net
             internal byte[] response;
             internal int statusCode;
             internal List<Tuple<Func<HttpStatusCode, bool>, Action>> statusCodeResponses = new List<Tuple<Func<HttpStatusCode, bool>, Action>>();
+            internal Action<HttpStatusCode> onStatus;
             
             protected string stringRequestData;
             protected byte[] binaryRequestData;
@@ -229,7 +270,8 @@ namespace Sqor.Utils.Net
                     
                     foreach (var header in http.headers)
                     {
-                        builder.Append("-H \"" + header.Key + ": " + header.Value + "\" ");
+                        if (header.Value != null)
+                            builder.Append("-H \"" + header.Key + ": " + header.Value + "\" ");
                     }
                     
                     if (stringRequestData != null)
@@ -259,7 +301,8 @@ namespace Sqor.Utils.Net
                 client.AutomaticDecompression = http.automaticDecompression;
                 client.Headers.Add("User-Agent", http.userAgent);
                 client.Headers.Add("Accept", http.acceptHeader);
-                client.Headers.Add("Content-Type", ContentType);
+                if (!ContentType.IsNullOrEmpty())
+                    client.Headers.Add("Content-Type", ContentType);
                 
                 // Process cookies            
                 foreach (var cookie in http.cookies)
@@ -298,10 +341,16 @@ namespace Sqor.Utils.Net
                     }
                         
                     responseContentType = client.ResponseHeaders["Content-Type"];
+                    if (onStatus != null)
+                        onStatus(HttpStatusCode.OK);
                     foreach (var statusCodeResponse in statusCodeResponses)
                     {
                         if (statusCodeResponse.Item1(HttpStatusCode.OK))
                             statusCodeResponse.Item2();
+                    }
+                    foreach (var responseHeader in http.responseHeaders)
+                    {
+                        responseHeader(client.ResponseHeaders);
                     }
                 }
                 catch (WebException e)
@@ -312,9 +361,12 @@ namespace Sqor.Utils.Net
                 {
                     if (http.onUnauthorized != null && ((HttpWebResponse)error.Response).StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        http.onUnauthorized(http);
+                        var onUnauthorized = http.onUnauthorized;
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
+                        isExecuted = false;
+                        await onUnauthorized(http);
                         await Execute();
+                        return;
                     }
                     if (error.Response != null)
                     {
@@ -330,9 +382,12 @@ namespace Sqor.Utils.Net
                         {
                             isErrored = true;
                             
+                            var statusCode = ((HttpWebResponse)error.Response).StatusCode;
+                            if (onStatus != null)
+                                onStatus(statusCode);
                             foreach (var statusCodeResponse in statusCodeResponses)
                             {
-                                if (statusCodeResponse.Item1(((HttpWebResponse)error.Response).StatusCode))
+                                if (statusCodeResponse.Item1(statusCode))
                                 {
                                     statusCodeResponse.Item2();
                                     return;
@@ -380,6 +435,13 @@ namespace Sqor.Utils.Net
             public async Task Go()
             {
                 await Execute();
+            }
+
+            public RequestContext OnStatus(Action<HttpStatusCode> onStatus)
+            {
+                ignoreErrors = true;
+                this.onStatus = onStatus;
+                return this;
             }
             
             /// <summary>
@@ -477,6 +539,11 @@ namespace Sqor.Utils.Net
         {
             public SendRequestContext(Http http, string method) : base(http, method)
             {
+            }
+
+            public new SendRequestContext OnStatus(Action<HttpStatusCode> onStatus)
+            {
+                return (SendRequestContext)base.OnStatus(onStatus);
             }
 
             public RequestContext Json(string json)

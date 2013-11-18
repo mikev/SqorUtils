@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 using Sqor.Utils.Json;
 
@@ -9,6 +10,13 @@ namespace Sqor.Utils.Web
     {
         public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
+            if (bindingContext.ModelName == "action")
+            {
+                var collection = (ValueProviderCollection)bindingContext.ValueProvider;
+                var result = collection.Where(x => !(x is RouteDataValueProvider)).Select(x => x.GetValue(bindingContext.ModelName)).FirstOrDefault(x => x != null);
+                return result != null ? result.RawValue : null;
+            }
+
             if (IsJsonType(bindingContext.ModelType))
             {
                 var request = controllerContext.RequestContext.HttpContext.Request;

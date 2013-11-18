@@ -144,7 +144,7 @@ namespace Sqor.Utils.Json
             PropertyInfo catchAll = null;
             var unusedKeys = Keys.ToHashSet();
 
-			foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x))) 
+			foreach (var property in type.GetProperties().Where(x => JsonAttribute.IsSerialized(x) && x.CanWrite)) 
 			{
                 try 
                 {
@@ -157,7 +157,7 @@ namespace Sqor.Utils.Json
                     var keyName = keyPrefix + JsonAttribute.GetKey(property);
                     unusedKeys.Remove(keyName);
 
-                    if (jsonAttribute.IsDenormalized)
+                    if (jsonAttribute != null && jsonAttribute.IsDenormalized)
                     {
                         var connector = jsonAttribute.Connector ?? "";
                         var newPrefix = keyName + connector;
@@ -203,6 +203,7 @@ namespace Sqor.Utils.Json
             if (source == null)
                 throw new ArgumentNullException("source");
 
+            var keys = new HashSet<string>();
 			var values = new List<KeyValuePair<string, JsonValue>>();
 
 			foreach (var property in source.GetType().GetProperties().Where(x => JsonAttribute.IsSerialized(x)))
@@ -217,6 +218,9 @@ namespace Sqor.Utils.Json
                         foreach (string key in dictionary.Keys)
                         {
                             var value = dictionary[key];
+                            if (keys.Contains(key))
+                                throw new InvalidOperationException("Key already exists: " + key);
+                            keys.Add(key);
                             values.Add(new KeyValuePair<string, JsonValue>(key, JsonObjectSerializer.ConvertObjectToJsonValue(value)));
                         }
                     }
@@ -231,11 +235,17 @@ namespace Sqor.Utils.Json
                             foreach (var item in jsonObject)
                             {
                                 var newKey = keyName + connector + item.Key;
+                                if (keys.Contains(newKey))
+                                    throw new InvalidOperationException("Key already exists: " + newKey);
+                                keys.Add(newKey);
                                 values.Add(new KeyValuePair<string, JsonValue>(newKey, item.Value));
                             }
                         }
                         else
                         {
+                            if (keys.Contains(keyName))
+                                throw new InvalidOperationException("Key already exists: " + keyName);
+                            keys.Add(keyName);
                             values.Add(new KeyValuePair<string, JsonValue>(keyName, jsonValue));
                         }
                     }

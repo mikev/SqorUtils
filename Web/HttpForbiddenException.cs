@@ -1,23 +1,10 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Net;
 
 namespace Sqor.Utils.Web
 {
-    public class HttpForbiddenException : Exception
+    public class HttpForbiddenException : HttpStatusCodeException
     {
-        public HttpForbiddenException()
-        {
-        }
-
-        public HttpForbiddenException(string message) : base(message)
-        {
-        }
-
-        public HttpForbiddenException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected HttpForbiddenException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public HttpForbiddenException(string statusDescription = null) : base(HttpStatusCode.Forbidden, statusDescription)
         {
         }
     }

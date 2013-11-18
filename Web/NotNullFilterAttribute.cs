@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using Sqor.Utils.Generics;
 
 namespace Sqor.Utils.Web
 {
@@ -11,7 +12,7 @@ namespace Sqor.Utils.Web
 
             foreach (var parameter in filterContext.ActionDescriptor.GetParameters())
             {
-                bool enforceNotNull = parameter.GetCustomAttributes(typeof(NotNullAttribute), true).Any();
+                bool enforceNotNull = parameter.GetCustomAttributes(typeof(NotNullAttribute), true).Any() || (parameter.ParameterType.IsValueType && !parameter.ParameterType.IsNullableValueType());
                 object value;
                 var key = parameter.BindingInfo.Prefix ?? parameter.ParameterName;
                 if (enforceNotNull && (!filterContext.ActionParameters.TryGetValue(parameter.ParameterName, out value) || value == null))

@@ -53,10 +53,24 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tests|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Tests\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -89,6 +103,7 @@
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Images\ImageExtensions.cs" />
     <Compile Include="Drawing\IosBitmap.cs" />
     <Compile Include="Drawing\IosColor.cs" />
     <Compile Include="Drawing\IosFont.cs" />
@@ -101,9 +116,11 @@
     <Compile Include="Drawing\UIFontExtensions.cs" />
     <Compile Include="Drawing\UIImageExtensions.cs" />
     <Compile Include="Encryption\Crypto.cs" />
+    <Compile Include="EntityFramework\DbSetExtensions.cs" />
     <Compile Include="Enumerables\EnumerableExtensions.cs" />
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
+    <Compile Include="Files\FileExtensions.cs" />
     <Compile Include="Functional\FunctionalExtensions.cs" />
     <Compile Include="Generators\Generate.cs" />
     <Compile Include="Generics\GenericExtensions.cs" />
@@ -130,6 +147,7 @@
     <Compile Include="Injection\Scopes\SingletonScope.cs" />
     <Compile Include="Injection\Scopes\TransientScope.cs" />
     <Compile Include="Injection\Scopes\WebRequestScope.cs" />
+    <Compile Include="Json\EnumCache.cs" />
     <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Json\JsonArray.cs" />
@@ -174,6 +192,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Numbers\NumberExtensions.cs" />
+    <Compile Include="Objects\ObjectExtensions.cs" />
+    <Compile Include="Passwords\PasswordUtils.cs" />
     <Compile Include="SqliteLinq\AutoIncrementAttribute.cs" />
     <Compile Include="SqliteLinq\ColumnAttribute.cs" />
     <Compile Include="SqliteLinq\DataContext.cs" />
@@ -223,6 +243,7 @@
     <Compile Include="Web\CookieExtensions.cs" />
     <Compile Include="Web\CustomAttributeExtensions.cs" />
     <Compile Include="Web\HttpForbiddenException.cs" />
+    <Compile Include="Web\HttpStatusCodeException.cs" />
     <Compile Include="Web\HttpUnauthorizedException.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
     <Compile Include="Web\InputExtensions.cs" />
@@ -232,15 +253,19 @@
     <Compile Include="Web\JsonResult.cs" />
     <Compile Include="Web\JsonTypeAttribute.cs" />
     <Compile Include="Web\LogFilterAttribute.cs" />
+    <Compile Include="Web\MaximumVersionAttribute.cs" />
+    <Compile Include="Web\MinimumVersionAttribute.cs" />
     <Compile Include="Web\ModelExtensions.cs" />
     <Compile Include="Web\NotAreaConstraint.cs" />
     <Compile Include="Web\NotNullAttribute.cs" />
     <Compile Include="Web\NotNullFilterAttribute.cs" />
     <Compile Include="Web\RestErrorAttribute.cs" />
     <Compile Include="Web\RestValidationException.cs" />
+    <Compile Include="Web\UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Json\Readme.md" />
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
