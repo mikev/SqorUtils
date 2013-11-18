@@ -9,6 +9,7 @@ using Sqor.Utils.Logging;
 using Sqor.Utils.Json;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
+using Sqor.Utils.Strings;
 
 namespace Sqor.Utils.Net
 {
@@ -57,7 +58,13 @@ namespace Sqor.Utils.Net
                 return url.ToString();        
             }
         }
-        
+
+        public string AcceptHeader
+        {
+            get { return acceptHeader; }
+            set { acceptHeader = value; }
+        }
+
         public static Http To(string url)
         {
             return new Http(url);
@@ -83,7 +90,14 @@ namespace Sqor.Utils.Net
         
         public Http WithHeader(string key, string value)
         {
-            headers[key] = value;
+            if (key.Equals("accept", StringComparison.InvariantCultureIgnoreCase))
+            {
+                acceptHeader = value;                
+            }
+            else
+            {
+                headers[key] = value;
+            }
             return this;
         }
         
@@ -286,7 +300,8 @@ namespace Sqor.Utils.Net
                 client.AutomaticDecompression = http.automaticDecompression;
                 client.Headers.Add("User-Agent", http.userAgent);
                 client.Headers.Add("Accept", http.acceptHeader);
-                client.Headers.Add("Content-Type", ContentType);
+                if (!ContentType.IsNullOrEmpty())
+                    client.Headers.Add("Content-Type", ContentType);
                 
                 // Process cookies            
                 foreach (var cookie in http.cookies)
