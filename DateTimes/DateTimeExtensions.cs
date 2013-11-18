@@ -95,7 +95,7 @@ namespace Sqor.Utils.DateTimes
             else
                 return datetime.ToHowLongAgo();
         }
-                
+        
         public static string ToTimeOrDate(this DateTime datetime)
         {
             var culture = CultureInfo.CurrentUICulture;
