@@ -57,5 +57,20 @@ namespace Sqor.Utils.Images
                 return stream.ToArray();
             }
         }
+
+        public static Image Crop(this Image image, int x, int y, int width, int height)
+        {
+            var scaled = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(scaled)) 
+            {
+                graphics.DrawImage(
+                    image, 
+                    new Rectangle(0, 0, scaled.Width, scaled.Height),
+                    new Rectangle(x, y, width, height), 
+                    GraphicsUnit.Pixel);
+            }
+            return scaled;
+            
+        }
     }
 }
