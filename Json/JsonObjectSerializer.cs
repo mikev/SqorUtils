@@ -15,6 +15,7 @@ namespace Sqor.Utils.Json
 	{
 //        private static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         internal const string dateFormat = @"yyyy-MM-dd\THH:mm:ss\Z";
+        internal const string legacyDateFormat = @"yyyy-MM-dd HH:mm:ss";
 
 		public JsonValue Parse(string input)
 		{
@@ -50,7 +51,7 @@ namespace Sqor.Utils.Json
                     throw new InvalidOperationException("Invalid DateTime: " + s, e);
                 }
             else
-                return DateTime.ParseExact(s, dateFormat, null);
+                return DateTime.ParseExact(s, legacyDateFormat, null);
         }
 
 		static internal object ConvertJsonObjectToType(JsonValue graph, Type type) 

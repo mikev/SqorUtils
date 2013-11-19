@@ -285,7 +285,8 @@ namespace Sqor.Utils.Net
                         builder.Append(" ");
                     }
                     
-                    builder.Append(http.Url.Replace("&", "\\&"));
+//                    builder.Append(http.Url.Replace("&", "\\&"));
+                    builder.Append(http.Url);
                     this.LogInfo(builder.ToString());
                 }
                 
