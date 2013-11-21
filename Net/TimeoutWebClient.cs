@@ -19,6 +19,7 @@ namespace Sqor.Utils.Net
         protected override WebRequest GetWebRequest(Uri address)
         {
             var request = (HttpWebRequest)base.GetWebRequest(address);
+            request.ServicePoint.Expect100Continue = false;
             request.Timeout = Timeout;
             request.ReadWriteTimeout = ReadWriteTimeout;
             request.AutomaticDecompression = AutomaticDecompression;
