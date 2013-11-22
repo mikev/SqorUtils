@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
+using Sqor.Utils.Logging;
 
 namespace Sqor.Utils.Web
 {
@@ -85,6 +86,7 @@ namespace Sqor.Utils.Web
                         }
                     }
                 }
+                this.LogInfo("Invoking action: " + method.DeclaringType.FullName + "." + method.Name + "(" + method.GetParameters().Length + ")");
                 var result = CreateActionDescriptor(method, actionName, controllerDescriptor);
                 return result is AsyncActionDescriptor ? (ActionDescriptor)new BaseAsyncActionDescriptor((AsyncActionDescriptor)result) : result != null ? new BaseActionDescriptor(result) : null;
             }

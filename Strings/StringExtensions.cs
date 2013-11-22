@@ -154,7 +154,6 @@ namespace Sqor.Utils.Strings
                 char character = characters[i];
                 if (wasLowercase && char.IsUpper(character))
                 {
-                    character = char.ToLower(character);
                     buffer.Append(' ');
                     wasLowercase = false;
                 }
@@ -162,6 +161,34 @@ namespace Sqor.Utils.Strings
                     wasLowercase = true;
 
                 buffer.Append(character);
+            }
+            return buffer.ToString();
+        }
+
+        public static string Deunderscore(this string s)
+        {
+            if (s.Length == 0)
+                return s;
+
+            var buffer = new StringBuilder();
+            var characters = s.ToCharArray();
+
+            var wasUnderscore = false;
+            foreach (char character in characters)
+            {
+                var c = character;
+                if (c == '_')
+                {
+                    buffer.Append(' ');
+                    wasUnderscore = true;
+                    continue;
+                }
+                else if (wasUnderscore)
+                {
+                    c = char.ToUpper(c);
+                    wasUnderscore = false;
+                }
+                buffer.Append(c);
             }
             return buffer.ToString();
         }
@@ -651,6 +678,11 @@ namespace Sqor.Utils.Strings
         public static string RemoveIndent(this string s)
         {
             return string.Join("\n", s.Split('\r', '\n').Select(x => x.TrimStart()));
+        }
+
+        public static bool IsTrue(this string s)
+        {
+            return s != null && (s == "true" || s == "True" || s == "Yes" || s == "yes" || s == "On" || s == "on");
         }
 	}
 }
