@@ -218,6 +218,14 @@ namespace Sqor.Utils.Enumerables
             }
         }
 
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> sequence)
+        {
+            if (sequence == null)
+                return Enumerable.Empty<T>();
+            else
+                return sequence;
+        }
+
         private struct PartitionGrouping<TElement> : IGrouping<int, TElement>
         {
             private readonly int key;

@@ -29,6 +29,15 @@ namespace Sqor.Utils.Numbers
             if (dividend % divisor > 0)
                 result += valueToAddIfThereIsARemainder;
             return result;
-        }    }
+        }    
+
+        public static int ParseInt(this string s, int defaultValue = -1)
+        {
+            int result;
+            if (!int.TryParse(s, out result))
+                result = defaultValue;
+            return result;
+        }
+    }
 }
 
