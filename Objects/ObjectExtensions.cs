@@ -13,5 +13,21 @@
 
             return o1.Equals(o2);
         }         
+
+        public static void TrimWhitespaceOnProperties(this object o)
+        {
+            foreach (var property in o.GetType().GetProperties())
+            {
+                if (property.PropertyType == typeof(string))
+                {
+                    var s = (string)property.GetValue(o, null);
+                    if (s != null)
+                    {
+                        s = s.Trim();
+                        property.SetValue(o, s, null);
+                    }
+                }
+            }
+        }
     }
 }

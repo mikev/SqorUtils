@@ -44,7 +44,8 @@ namespace Sqor.Utils.Json
             if (s.EndsWith("Z"))
                 try
                 {
-                    return DateTime.SpecifyKind(DateTime.ParseExact(s, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal), DateTimeKind.Utc);
+                    var dateTime = DateTime.ParseExact(s, dateFormat, CultureInfo.InvariantCulture);
+                    return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
                 }
                 catch (Exception e)
                 {

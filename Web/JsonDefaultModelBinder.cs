@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using Sqor.Utils.Json;
+using Sqor.Utils.Streams;
 
 namespace Sqor.Utils.Web
 {
@@ -17,10 +18,20 @@ namespace Sqor.Utils.Web
                 return result != null ? result.RawValue : null;
             }
 
-            if (IsJsonType(bindingContext.ModelType))
+            if (bindingContext.ModelType == typeof(Stream))
             {
                 var request = controllerContext.RequestContext.HttpContext.Request;
                 var inputStream = request.InputStream;
+                inputStream.Position = 0;
+                var bytes = inputStream.ReadBytesToEnd();
+                return new MemoryStream(bytes);
+            }
+
+            if (IsJsonType(bindingContext.ModelType))
+            {
+                var request = controllerContext.RequestContext.HttpContext.Request;
+                var inputStream = request
+                    .InputStream;
                 inputStream.Position = 0;
                 var content = new StreamReader(inputStream).ReadToEnd();
                 var json = content.FromJson();
