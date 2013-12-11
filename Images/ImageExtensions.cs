@@ -58,9 +58,9 @@ namespace Sqor.Utils.Images
             }
         }
 
-        public static Image Crop(this Image image, int x, int y, int width, int height)
+        public static Image Crop(this Image image, int x, int y, int width, int height, int newWidth, int newHeight)
         {
-            var scaled = new Bitmap(width, height);
+            var scaled = new Bitmap(newWidth, newHeight);
             using (var graphics = Graphics.FromImage(scaled)) 
             {
                 graphics.DrawImage(
@@ -69,8 +69,7 @@ namespace Sqor.Utils.Images
                     new Rectangle(x, y, width, height), 
                     GraphicsUnit.Pixel);
             }
-            return scaled;
-            
+            return scaled;            
         }
     }
 }
