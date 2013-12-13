@@ -115,5 +115,10 @@ namespace Sqor.Utils.Web
 
             base.InvokeActionResult(controllerContext, actionResult);
         }
+
+        protected override object GetParameterValue(ControllerContext controllerContext, ParameterDescriptor parameterDescriptor)
+        {
+            return base.GetParameterValue(controllerContext, parameterDescriptor);
+        }
     }
 }

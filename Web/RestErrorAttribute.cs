@@ -31,7 +31,7 @@ namespace Sqor.Utils.Web
                     }
                 }
                 this.LogInfo("Validation Failure: " + builder);
-                filterContext.Result = new ContentResult { Content = builder.ToString() };
+                filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.BadRequest, builder.ToString());
             }
             else if (httpStatusCodeException != null)
             {

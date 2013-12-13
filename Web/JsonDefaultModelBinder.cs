@@ -57,7 +57,8 @@ namespace Sqor.Utils.Web
                 }
             }
 
-            return base.BindModel(controllerContext, bindingContext);
+            var model = base.BindModel(controllerContext, bindingContext);
+            return model;
         }
 
         public bool IsJsonType(Type type)

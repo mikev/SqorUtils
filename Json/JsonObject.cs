@@ -5,6 +5,7 @@ using System.Reflection;
 using Sqor.Utils.Dictionaries;
 using System.Linq;
 using Sqor.Utils.Enumerables;
+using Sqor.Utils.Generics;
 
 namespace Sqor.Utils.Json
 {
@@ -185,7 +186,7 @@ namespace Sqor.Utils.Json
                 var dictionary = (IDictionary)Activator.CreateInstance(catchAll.PropertyType);
                 foreach (var key in unusedKeys)
                 {
-                    dictionary[key] = this[key].ToString();
+                    dictionary[key] = Convert.ChangeType(this[key], catchAll.PropertyType.GetGenericArgument(typeof(Dictionary<,>), 1));
                 }
                 catchAll.SetValue(result, dictionary, null);
             }

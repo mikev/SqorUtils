@@ -16,7 +16,16 @@ namespace Sqor.Utils.Web
                 object value;
                 var key = parameter.BindingInfo.Prefix ?? parameter.ParameterName;
                 if (enforceNotNull && (!filterContext.ActionParameters.TryGetValue(parameter.ParameterName, out value) || value == null))
-                    throw new RestValidationException(string.Format("Parameter '{0}' cannot be null.", key));
+                {
+//                    if (filterContext.RouteData.Values.ContainsKey(parameter.ParameterName))
+//                    {
+//                        filterContext.ActionParameters[parameter.ParameterName] = filterContext.RouteData.Values[parameter.ParameterName];
+//                    }
+//                    else
+//                    {
+                        throw new RestValidationException(string.Format("Parameter '{0}' cannot be null.", key));                    
+//                    }
+                }
             }
         }
     }
