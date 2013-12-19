@@ -214,5 +214,9 @@
     <Compile Include="Json\JsonReadonlyAttribute.cs" />
     <Compile Include="Json\JsonRequiredAttribute.cs" />
     <Compile Include="Json\EnumCache.cs" />
+    <Compile Include="Net\IHttpAdapter.cs" />
+    <Compile Include="Net\IHttpRequest.cs" />
+    <Compile Include="Net\IHttpResponse.cs" />
+    <Compile Include="Net\WebClientAdapter.cs" />
   </ItemGroup>
 </Project>
