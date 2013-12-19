@@ -187,10 +187,14 @@
     <Compile Include="Models\ModelCollection.cs" />
     <Compile Include="Models\ModelMetaData.cs" />
     <Compile Include="Net\Http.cs" />
+    <Compile Include="Net\IHttpAdapter.cs" />
+    <Compile Include="Net\IHttpRequest.cs" />
+    <Compile Include="Net\IHttpResponse.cs" />
     <Compile Include="Net\NSUrlExtensions.cs" />
     <Compile Include="Net\TimeoutWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Net\WebClientAdapter.cs" />
     <Compile Include="Numbers\NumberExtensions.cs" />
     <Compile Include="Objects\ObjectExtensions.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />

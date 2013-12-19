@@ -15,33 +15,37 @@ namespace Sqor.Utils.Net
 {
     public class Http
     {
+        private static readonly IHttpAdapter DefaultAdapter = 
+#if FALSE // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
+            // new FancyNetworkAdapter();
+#else
+            new WebClientAdapter();
+#endif
+
+        private IHttpAdapter adapter;
         private string url;
         private Func<Http, Task> onUnauthorized;
         private Dictionary<string, object> queryString = new Dictionary<string, object>();
         private Dictionary<string, string> headers = new Dictionary<string, string>();
         private Dictionary<string, string> cookies = new Dictionary<string, string>();
-        private List<Action<WebHeaderCollection>> responseHeaders = new List<Action<WebHeaderCollection>>();
-        private int readWriteTimeout = 60 * 1000;                   // 1 minute
-        private int timeout = 60 * 1000;                            // 1 minute
-        private DecompressionMethods automaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+        private List<Action<IDictionary<string, string>>> responseHeaders = new List<Action<IDictionary<string, string>>>();
         private string userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
         private string acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
         private static bool isCurlLoggingEnabled = true;
         private Action<Http> onError;
-        private bool synchronous;
     
-        private Http(string url)
+        private Http(string url, IHttpAdapter adapter)
         {
             if (url == null)
                 throw new ArgumentNullException("url");
-        
+            this.adapter = adapter ?? DefaultAdapter;
             this.url = url;
 
             headers["Accept-Language"] = "en-us,en;q=0.5";
             headers["Accept-Encoding"] = "gzip,deflate";
             headers["Accept-Charset"] = "ISO-8859-1,utf-8;q=0.7,*;q=0.7";
         }
-        
+
         public string Url
         {
             get 
@@ -65,17 +69,11 @@ namespace Sqor.Utils.Net
             set { acceptHeader = value; }
         }
 
-        public static Http To(string url)
+        public static Http To(string url, IHttpAdapter adapter = null)
         {
-            return new Http(url);
+            return new Http(url, adapter);
         }
         
-        public Http AsSynchronous()
-        {
-            synchronous = true;
-            return this;
-        }
-
         public Http OnError(Action<Http> onError)
         {
             this.onError = onError;
@@ -121,24 +119,6 @@ namespace Sqor.Utils.Net
             return this;
         }
         
-        public Http WithReadWriteTimeout(int readWriteTimeout)
-        {
-            this.readWriteTimeout = readWriteTimeout;
-            return this;
-        }
-        
-        public Http WithTimeout(int timeout)
-        {
-            this.timeout = timeout;
-            return this;
-        }
-        
-        public Http WithAutomaticDecompression(DecompressionMethods automaticDecompression)
-        {
-            this.automaticDecompression = automaticDecompression;
-            return this;
-        }
-        
         public Http WithUserAgent(string userAgent)
         {
             this.userAgent = userAgent;
@@ -151,7 +131,7 @@ namespace Sqor.Utils.Net
             return this;
         }
 
-        public Http OnResponse(Action<WebHeaderCollection> response)
+        public Http OnResponse(Action<IDictionary<string, string>> response)
         {
             responseHeaders.Add(response);
             return this;
@@ -225,13 +205,20 @@ namespace Sqor.Utils.Net
             }
             return builder.ToString();                
         }
+
+        class HttpRequest : IHttpRequest
+        {
+            public string Url { get; set; }
+            public string HttpMethod { get; set; }
+            public Dictionary<string, string> Headers { get; set; }
+            public byte[] Input { get; set; }
+        }
         
         public class RequestContext 
         {
             public string Method { get; set; }
             public string ContentType { get; set; }
         
-            private TimeoutWebClient client;
             private Http http;
             private bool ignoreErrors;
             private bool isErrored;
@@ -295,52 +282,31 @@ namespace Sqor.Utils.Net
 //                    try
 //                    {
 
-                client = new TimeoutWebClient();
-                client.ReadWriteTimeout = http.readWriteTimeout;
-                client.Timeout = http.timeout;
-                client.AutomaticDecompression = http.automaticDecompression;
-                client.Headers.Add("User-Agent", http.userAgent);
-                client.Headers.Add("Accept", http.acceptHeader);
-                if (!ContentType.IsNullOrEmpty())
-                    client.Headers.Add("Content-Type", ContentType);
-                
-                // Process cookies            
-                foreach (var cookie in http.cookies)
-                {
-                    client.Cookies.Add(new Cookie(cookie.Key, cookie.Value));
-                }
-                
-                // Process headers
-                foreach (var header in http.headers)
-                {
-                    client.Headers.Add(header.Key, header.Value);
-                }
-                
                 // Upload data
                 if (binaryRequestData == null && stringRequestData != null)
                 {
                     binaryRequestData = Encoding.UTF8.GetBytes(stringRequestData);
                 }
                 
-                WebException error = null;
-                try
+                var request = new HttpRequest
                 {
-                    if (http.synchronous)
+                    Headers = http.headers.Merge(new Dictionary<string, string>
                     {
-                        if (binaryRequestData == null && Method == "GET")
-                            response = client.DownloadData(new Uri(http.Url));
-                        else 
-                            response = client.UploadData(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]);
-                    }
-                    else
-                    {
-                        if (binaryRequestData == null && Method == "GET")
-                            response = await client.DownloadDataTaskAsync(new Uri(http.Url)).ConfigureAwait(true);
-                        else 
-                            response = await client.UploadDataTaskAsync(new Uri(http.Url), Method, binaryRequestData ?? new byte[0]).ConfigureAwait(true);                        
-                    }
-                        
-                    responseContentType = client.ResponseHeaders["Content-Type"];
+                        { "User-Agent", http.userAgent },
+                        { "Accept", http.acceptHeader },
+                        { "Content-Type", ContentType ?? "text/plain" }
+                    }),
+                    Url = http.Url,
+                    HttpMethod = Method,
+                    Input = binaryRequestData
+                };
+                
+                var response = await http.adapter.Open(request);
+                this.response = response.Output;
+                responseContentType = response.Headers["Content-Type"];
+
+                if (response.Status == 200)
+                {
                     if (onStatus != null)
                         onStatus(HttpStatusCode.OK);
                     foreach (var statusCodeResponse in statusCodeResponses)
@@ -350,16 +316,12 @@ namespace Sqor.Utils.Net
                     }
                     foreach (var responseHeader in http.responseHeaders)
                     {
-                        responseHeader(client.ResponseHeaders);
+                        responseHeader(response.Headers);
                     }
                 }
-                catch (WebException e)
+                else
                 {
-                    error = e;
-                }
-                if (error != null)
-                {
-                    if (http.onUnauthorized != null && ((HttpWebResponse)error.Response).StatusCode == HttpStatusCode.Unauthorized)
+                    if (http.onUnauthorized != null && response.Status == (int)HttpStatusCode.Unauthorized)
                     {
                         var onUnauthorized = http.onUnauthorized;
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
@@ -368,21 +330,16 @@ namespace Sqor.Utils.Net
                         await Execute();
                         return;
                     }
-                    if (error.Response != null)
+                    if (response.Output != null)
                     {
                         // Extract response
-                        using (var stream = error.Response.GetResponseStream())
-                        {
-                            response = stream.ReadBytesToEnd();
-                        }
-                        responseContentType = error.Response.ContentType;
-                        var exception = new InvalidOperationException("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(response), error);
+                        var exception = new InvalidOperationException("Error making " + Method + " request to: " + http.Url + "\n" + Encoding.UTF8.GetString(this.response));
                     
                         if (ignoreErrors)
                         {
                             isErrored = true;
                             
-                            var statusCode = ((HttpWebResponse)error.Response).StatusCode;
+                            var statusCode = (HttpStatusCode)response.Status;
                             if (onStatus != null)
                                 onStatus(statusCode);
                             foreach (var statusCodeResponse in statusCodeResponses)
@@ -400,7 +357,7 @@ namespace Sqor.Utils.Net
                         }
                         else
                         {
-                            this.LogInfo(exception.Message, error);
+                            this.LogInfo(exception.Message);
                             if (http.onError != null)
                                 http.onError(http);
                             throw exception;
@@ -410,10 +367,9 @@ namespace Sqor.Utils.Net
                     {
                         if (http.onError != null)
                             http.onError(http);
-                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url, error);
+                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url);
                     }
                 }
-                client.Dispose();
             }
 
             public WhenStatusContext WhenStatusIs(HttpStatusCode responseCode)
