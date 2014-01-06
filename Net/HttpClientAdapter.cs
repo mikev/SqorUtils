@@ -28,7 +28,7 @@ namespace Sqor.Utils.Net
 			public int Status { get; set; }
 		}
 
-        public async Task<IHttpResponse> Open(IHttpRequest request, CancellationToken cancelToken)
+        public async Task<IHttpResponse> Open(IHttpRequest request)
 		{
 //            if (cancelToken.IsCancellationRequested)
 //                return;
@@ -57,7 +57,7 @@ namespace Sqor.Utils.Net
                         httpClientRequest.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                var responseMessage = await httpClient.SendAsync(httpClientRequest, cancelToken).ConfigureAwait(true);
+                var responseMessage = await httpClient.SendAsync(httpClientRequest).ConfigureAwait(true);
 				var responseContent = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
 
 				responseMessage.EnsureSuccessStatusCode();

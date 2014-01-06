@@ -29,7 +29,7 @@ namespace Sqor.Utils.Net
             public int Status { get; set; }
         }
 
-        public async Task<IHttpResponse> Open(IHttpRequest request, CancellationToken cancellationToken )
+        public async Task<IHttpResponse> Open(IHttpRequest request)
         {
             using (var client = new TimeoutWebClient())
             {

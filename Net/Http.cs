@@ -86,7 +86,7 @@ namespace Sqor.Utils.Net
             this.onUnauthorized = onUnauthorized;
             return this;
         }
-        
+                
         public Http WithHeader(string key, string value)
         {
             if (key.Equals("accept", StringComparison.InvariantCultureIgnoreCase))
@@ -225,7 +225,7 @@ namespace Sqor.Utils.Net
             private bool isErrored;
             private bool isExecuted;
             private string responseContentType;
-            
+                        
             internal byte[] response;
             internal int statusCode;
             internal List<Tuple<Func<HttpStatusCode, bool>, Action>> statusCodeResponses = new List<Tuple<Func<HttpStatusCode, bool>, Action>>();
@@ -302,7 +302,7 @@ namespace Sqor.Utils.Net
                     Input = binaryRequestData
                 };
                 
-                var response = await http.adapter.Open(request, new CancellationToken());
+                var response = await http.adapter.Open(request);
                 this.response = response.Output;
                 responseContentType = response.Headers["Content-Type"];
 
