@@ -10,14 +10,15 @@ using Sqor.Utils.Json;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
 using Sqor.Utils.Strings;
+using System.Threading;
 
 namespace Sqor.Utils.Net
 {
     public class Http
     {
         private static readonly IHttpAdapter DefaultAdapter = 
-#if FALSE // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
-            // new FancyNetworkAdapter();
+#if MONOTOUCH // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
+            new HttpClientAdapter();
 #else
             new WebClientAdapter();
 #endif
@@ -85,7 +86,7 @@ namespace Sqor.Utils.Net
             this.onUnauthorized = onUnauthorized;
             return this;
         }
-        
+                
         public Http WithHeader(string key, string value)
         {
             if (key.Equals("accept", StringComparison.InvariantCultureIgnoreCase))
@@ -224,7 +225,7 @@ namespace Sqor.Utils.Net
             private bool isErrored;
             private bool isExecuted;
             private string responseContentType;
-            
+                        
             internal byte[] response;
             internal int statusCode;
             internal List<Tuple<Func<HttpStatusCode, bool>, Action>> statusCodeResponses = new List<Tuple<Func<HttpStatusCode, bool>, Action>>();

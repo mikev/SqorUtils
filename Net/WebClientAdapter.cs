@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Sqor.Utils.Dictionaries;
 using Sqor.Utils.Streams;
 using Sqor.Utils.Strings;
+using System.Threading;
 
 namespace Sqor.Utils.Net
 {
