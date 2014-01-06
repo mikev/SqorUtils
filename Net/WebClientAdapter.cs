@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Sqor.Utils.Dictionaries;
 using Sqor.Utils.Streams;
 using Sqor.Utils.Strings;
+using System.Threading;
 
 namespace Sqor.Utils.Net
 {
@@ -28,7 +29,7 @@ namespace Sqor.Utils.Net
             public int Status { get; set; }
         }
 
-        public async Task<IHttpResponse> Open(IHttpRequest request)
+        public async Task<IHttpResponse> Open(IHttpRequest request, CancellationToken cancellationToken )
         {
             using (var client = new TimeoutWebClient())
             {

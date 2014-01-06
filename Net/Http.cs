@@ -10,14 +10,15 @@ using Sqor.Utils.Json;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
 using Sqor.Utils.Strings;
+using System.Threading;
 
 namespace Sqor.Utils.Net
 {
     public class Http
     {
         private static readonly IHttpAdapter DefaultAdapter = 
-#if FALSE // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
-            // new FancyNetworkAdapter();
+#if MONOTOUCH // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
+            new HttpClientAdapter();
 #else
             new WebClientAdapter();
 #endif
@@ -301,7 +302,7 @@ namespace Sqor.Utils.Net
                     Input = binaryRequestData
                 };
                 
-                var response = await http.adapter.Open(request);
+                var response = await http.adapter.Open(request, new CancellationToken());
                 this.response = response.Output;
                 responseContentType = response.Headers["Content-Type"];
 

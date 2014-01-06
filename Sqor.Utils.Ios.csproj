@@ -70,6 +70,7 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Data" />
     <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -218,5 +219,8 @@
     <Compile Include="Net\IHttpRequest.cs" />
     <Compile Include="Net\IHttpResponse.cs" />
     <Compile Include="Net\WebClientAdapter.cs" />
+    <Compile Include="Net\ImageRequest.cs" />
+    <Compile Include="Net\HttpClientAdapter.cs" />
+    <Compile Include="Net\HttpClientFactory.cs" />
   </ItemGroup>
 </Project>
