@@ -154,6 +154,16 @@ namespace Sqor.Utils.DateTimes
                 return datetime.ToString(culture.DateTimeFormat.ShortDatePattern);
         }         
 
+        public static DateTime Truncate(this DateTime dateTime)
+        {
+            return dateTime.Truncate(TimeSpan.FromSeconds(1));
+        }
+
+        public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan)
+        {
+            return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
+        }
+
         enum Phase { Years, Months, Days, Done }
 
         public static DateTimeSpan Difference(this DateTime date1, DateTime date2) 

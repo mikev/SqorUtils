@@ -80,6 +80,10 @@ namespace Sqor.Utils.Web
                         {
                             throw new AmbiguousMatchException(string.Format("Could not find appropriate method for action '{0}' in controller '{1}' with HTTP method {2} and minimum version of {3}", actionName, controllerDescriptor.ControllerName, controllerContext.HttpContext.Request.HttpMethod, version));
                         }
+                        else if (methods.Length == 0)
+                        {
+                            throw new InvalidOperationException(string.Format("No method found for action {0} in controller {1} with HTTP method {2}", actionName, controllerDescriptor.ControllerName, controllerContext.HttpContext.Request.HttpMethod));
+                        }
                         else
                         {
                            method = methods.Single();

@@ -2,6 +2,11 @@
 {
     public static class ObjectExtensions
     {
+        public static object Null()
+        {
+            return null;
+        }
+
         public static bool SafeEquals<T>(this T o1, T o2)
         {
             bool o1Null = o1 == null;//EqualityComparer<T>.Default.Equals(o1, default(T));
