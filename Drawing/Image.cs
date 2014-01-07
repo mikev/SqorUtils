@@ -3,6 +3,7 @@ using Sqor.Utils.Json;
 using Sqor.Utils.Net;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading;
 
 #if MONOTOUCH 
 
@@ -23,6 +24,7 @@ namespace Sqor.Utils.Drawing
         private readonly ImageSource source;
         private readonly string url;
         private readonly byte[] byteArray;
+        private readonly CancellationTokenSource cancellationTokenSource;
         
         #if MONOTOUCH
         private readonly UIImage nativeImage;
@@ -47,6 +49,7 @@ namespace Sqor.Utils.Drawing
             this.byteArray = byteArray;
             #if MONOTOUCH
             this.nativeImage = nativeImage;
+            cancellationTokenSource = new CancellationTokenSource();
             #endif
         }
         
@@ -64,7 +67,12 @@ namespace Sqor.Utils.Drawing
         {
             get { return byteArray; }
         }
-        
+
+        public CancellationTokenSource CancellationTokenSource
+        {
+            get { return this.cancellationTokenSource; }
+        }
+
         public Task<byte[]> ToByteArray()
         {
             switch (Source)
@@ -185,7 +193,7 @@ namespace Sqor.Utils.Drawing
         
         public override string ToString()
         {
-            return string.Format("[Image: Source={0}, Url={1}, ByteArray={2}, NativeImage={3}]", 
+            return string.Format("[Image: Source={0}, Url={1}, ByteArray={2}, NativeImage={3}, CancellationToken={4}]", 
                 Source, 
                 Url, 
                 ByteArray != null ? "byte[" + ByteArray.Length + "]" : "null", 
@@ -194,6 +202,7 @@ namespace Sqor.Utils.Drawing
 #else
                 null
 #endif
+                ,cancellationTokenSource != null ? cancellationTokenSource.IsCancellationRequested.ToString() : "null"
             );
         }
 

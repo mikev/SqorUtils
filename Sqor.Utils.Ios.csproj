@@ -219,7 +219,6 @@
     <Compile Include="Net\IHttpRequest.cs" />
     <Compile Include="Net\IHttpResponse.cs" />
     <Compile Include="Net\WebClientAdapter.cs" />
-    <Compile Include="Net\ImageRequest.cs" />
     <Compile Include="Net\HttpClientAdapter.cs" />
     <Compile Include="Net\HttpClientFactory.cs" />
   </ItemGroup>
