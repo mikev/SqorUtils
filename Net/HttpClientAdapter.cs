@@ -80,18 +80,20 @@ namespace Sqor.Utils.Net
 				return httpResponse;
 
 			}
-				catch (WebException e)
-				{
-					// We can't do async stuff in an exception handler, so perform logic below
-					error = e;
-				}
-
-				return new HttpResponse
-				{
-					Status = (int)((HttpWebResponse)error.Response).StatusCode,
-					Output = error.Response.GetResponseStream().ReadBytesToEnd(),
-					Headers = error.Response.Headers.Cast<string>().ToDictionary(x => x, x => error.Response.Headers[x])
-				};
+			catch (WebException e)
+			{
+                if (e.Response == null)
+                    throw new InvalidOperationException("Unable to make request to " + request.Url, e);
+				// We can't do async stuff in an exception handler, so perform logic below
+				error = e;
 			}
+
+			return new HttpResponse
+			{
+				Status = (int)((HttpWebResponse)error.Response).StatusCode,
+				Output = error.Response.GetResponseStream().ReadBytesToEnd(),
+				Headers = error.Response.Headers.Cast<string>().ToDictionary(x => x, x => error.Response.Headers[x])
+			};
 		}
 	}
+}
