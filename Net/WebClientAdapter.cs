@@ -72,6 +72,9 @@ namespace Sqor.Utils.Net
                 }
                 catch (WebException e)
                 {
+                    if (e.Response == null)
+                        throw;
+
                     // We can't do async stuff in an exception handler, so perform logic below
                     error = e;
                 }
