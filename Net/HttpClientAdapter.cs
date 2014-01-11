@@ -60,7 +60,14 @@ namespace Sqor.Utils.Net
                 var responseMessage = await httpClient.SendAsync(httpClientRequest).ConfigureAwait(true);
 				var responseContent = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
 
-				responseMessage.EnsureSuccessStatusCode();
+                try 
+                {
+				    responseMessage.EnsureSuccessStatusCode();
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException("Error making request to: " + request.Url, e);
+                }
 
 				var httpResponse = new HttpResponse
 				{
