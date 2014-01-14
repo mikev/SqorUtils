@@ -304,7 +304,7 @@ namespace Sqor.Utils.Net
                 
                 var response = await http.adapter.Open(request);
                 this.response = response.Output;
-                responseContentType = response.Headers["Content-Type"];
+                responseContentType = response.Headers.Get("Content-Type") ?? "text/plain";
 
                 if (response.Status == 200)
                 {
