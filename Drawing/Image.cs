@@ -216,6 +216,8 @@ namespace Sqor.Utils.Drawing
             public JsonValue ToJson(object o)
             {
                 var image = (Image)o;
+                if (image.Source == ImageSource.None)
+                    return new JsonPrimitive();
                 if (image.Source != ImageSource.Url)
                     throw new InvalidOperationException("Cannot convert a non-Url based image into json");
                 return ((Image)o).Url;
