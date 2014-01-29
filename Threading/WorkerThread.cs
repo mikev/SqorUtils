@@ -13,23 +13,30 @@ namespace Sqor.Utils.Threading
         private AutoResetEvent waitLock = new AutoResetEvent(false);
         private List<Tuple<Action, Action>> queue = new List<Tuple<Action, Action>>();
         private object lockObject = new object();
-        private Thread thread;
+        private List<Thread> threadPool = new List<Thread>();
 
-        public WorkerThread(string name) 
+        public WorkerThread(string name, int poolSize = 4) 
         {
-            thread = new Thread(Run);
-            thread.Name = name;
-            thread.IsBackground = true;
+            for (var i = 0; i < poolSize; i++)
+            {
+                var thread = new Thread(Run);
+                thread.Name = name + ":" + (i + 1);
+                thread.IsBackground = true;
+                threadPool.Add(thread);
+            }
         }
         
-        protected Thread Thread
+        protected Thread[] Threads
         {
-            get { return thread; }
+            get { return threadPool.ToArray(); }
         }
 
         public void Start()
         {
-            thread.Start();
+            foreach (var thread in threadPool)
+            {
+               thread.Start();
+            }
         }
 
         public void Queue(Action action)
@@ -68,7 +75,7 @@ namespace Sqor.Utils.Threading
         {
             using(var autoResetEvent = new AutoResetEvent(false)) 
             {
-                Queue(Tuple.Create(action, (Action)(() => autoResetEvent.Set())));
+                Queue(Tuple.Create(action, (Action)(() => autoResetEvent.Set()))); // (It's not disposed, if you're seeing a resharper message you should disable that warning)
                 autoResetEvent.WaitOne();
             }
         }
@@ -89,6 +96,7 @@ namespace Sqor.Utils.Threading
                     {
                         try
                         {
+                            this.LogInfo("Invoking action on " + Thread.CurrentThread.Name);
                             action.Item1();
                         }
                         catch (Exception e)
