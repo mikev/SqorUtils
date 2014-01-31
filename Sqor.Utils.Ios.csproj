@@ -38,6 +38,14 @@
     <ConsolePause>false</ConsolePause>
     <DefineConstants>MONOTOUCH;ADHOC;DEV</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc-QA|iPhone' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc\Qa</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>MONOTOUCH;ADHOC;QA</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc-STAGING|iPhone' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Ad-Hoc\Staging</OutputPath>
