@@ -45,7 +45,7 @@ namespace Sqor.Utils.Logging
                 }
                 catch (Exception e)
                 {
-                    this.LogError("Error deleting old log file " + file.FullName, e);
+                    File.WriteAllText("c:\\Logs\\logcrash.txt", "Error deleting old log file: " + file.FullName + "\r\n" + e);
                 }
             }
         }
