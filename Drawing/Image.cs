@@ -97,7 +97,7 @@ namespace Sqor.Utils.Drawing
             if (!(obj is Image))
                 return false;
                 
-            return base.Equals((Image)obj);
+            return Equals((Image)obj);
         }
         
         public bool Equals(Image other)
