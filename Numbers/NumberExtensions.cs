@@ -38,6 +38,13 @@ namespace Sqor.Utils.Numbers
                 result = defaultValue;
             return result;
         }
+        
+        public static int GetProportionalValue(this int a, int c, int d)
+        {
+            var ratio = a / (float)c;
+            var b = d * ratio;
+            return (int)b;
+        }
     }
 }
 

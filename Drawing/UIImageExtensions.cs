@@ -15,13 +15,9 @@ namespace Sqor.Utils.Drawing
     {
         public static byte[] SaveToByteArray(this UIImage image)
         {
-            using (var outputData = new NSMutableData())
-            using (var destination = CGImageDestination.FromData(outputData, "public.png", 1))
+            using (var asPng = image.AsJPEG())
             {
-                destination.AddImage(image.CGImage, null);
-                destination.Close();
-
-                return outputData.ToByteArray();      
+                return asPng.ToByteArray();
             }
         }
     
