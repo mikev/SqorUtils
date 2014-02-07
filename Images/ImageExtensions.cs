@@ -29,6 +29,19 @@ namespace Sqor.Utils.Images
             return scaled;
         }
 
+        public static Image ScaleWidth(this Image image, int newWidth)
+        {
+            var width = newWidth;
+            var height = (int)(newWidth * ((float)image.Height / image.Width));
+
+            var scaled = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(scaled)) 
+            {
+                graphics.DrawImage(image, new Rectangle(0, 0, scaled.Width, scaled.Height));
+            }
+            return scaled;
+        }
+
         public static string GetFileExtension(this Image image)
         {
             if (ImageFormat.Jpeg.Equals(image.RawFormat))
