@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Sqor.Utils.Ios;
-using Sqor.Utils.Types;
 
-namespace Sqor.Mobile.Models
+namespace Sqor.Utils.Models
 {
-    public delegate void PropertyChangedEvent<T>(T obj, IProperty property, object oldValue, object newValue)
+    public delegate void PropertyChangedEvent<in T>(T obj, IProperty property, object oldValue, object newValue)
         where T : Model<T>;
     public delegate void PropertyChangedEvent<TModel, TValue>(Property<TModel, TValue> property, TValue oldValue, TValue newValue) 
         where TModel : Model<TModel>;
@@ -74,7 +73,7 @@ namespace Sqor.Mobile.Models
         object IProperty.Value
         {
             get { return Value; }
-            set { this.Value = (TValue)value; }
+            set { Value = (TValue)value; }
         }
     }
 
@@ -88,8 +87,8 @@ namespace Sqor.Mobile.Models
         
         public Model()
         {
-            this.metaData = ModelMetaData<T>.Instance;
-            this.properties = metaData.Properties.ToDictionary(x => x.Name, x => CreateProperty(x));
+            metaData = ModelMetaData<T>.Instance;
+            properties = metaData.Properties.ToDictionary(x => x.Name, x => CreateProperty(x));
         }
         
         private IProperty CreateProperty(PropertyInfo property)
