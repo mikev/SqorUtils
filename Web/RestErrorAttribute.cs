@@ -43,6 +43,7 @@ namespace Sqor.Utils.Web
             {
                 this.LogInfo("Unhandled Exception: " + filterContext.Exception);
                 var s = filterContext.Exception.ToString();
+                s = s.Substring(0, Math.Min(512, s.Length));
                 filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.InternalServerError, s);
             }
             filterContext.ExceptionHandled = true;
