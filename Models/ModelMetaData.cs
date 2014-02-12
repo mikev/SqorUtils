@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Sqor.Utils.Types;
 
-namespace Sqor.Mobile.Models
+namespace Sqor.Utils.Models
 {
     public class ModelMetaData
     {
@@ -25,7 +25,7 @@ namespace Sqor.Mobile.Models
         
         public Type ModelType
         {
-            get { return this.modelType; }
+            get { return modelType; }
         }
         
         public IEnumerable<PropertyInfo> Properties 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.ComponentModel;
 using Sqor.Utils.Ios;
 
-namespace Sqor.Mobile.Models
+namespace Sqor.Utils.Models
 {
     public class ModelCollection<T> : ObservableCollection<T>
         where T : Model<T>
