@@ -60,21 +60,12 @@ namespace Sqor.Utils.Net
                 var responseMessage = await httpClient.SendAsync(httpClientRequest).ConfigureAwait(true);
 				var responseContent = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
 
-                try 
-                {
-				    responseMessage.EnsureSuccessStatusCode();
-                }
-                catch (Exception e)
-                {
-                    throw new InvalidOperationException("Error making request to: " + request.Url, e);
-                }
-
 				var httpResponse = new HttpResponse
 				{
 					Headers = responseMessage.Headers.ToDictionary(x => x.Key,
 						x => string.Join(", ", Array.ConvertAll(x.Value.ToArray(), s => s.ToString() ) ) ),
 					Output = responseContent,
-					Status = 200
+					Status = (int)responseMessage.StatusCode
 				};
 
                 // Add content headers, headers are stored in two places when using HttpClient
