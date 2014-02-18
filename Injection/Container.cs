@@ -106,6 +106,36 @@ namespace Sqor.Utils.Injection
         }
 */
 
+        public bool TryGet<T>(out T result, IDictionary<Type, IBinding> customBindings = null) where T : class
+        {
+            var request = CreateRequest<T>(new Context(this, transientBindings: customBindings));
+            if (request == null)
+            {
+                result = null;
+                return false;
+            }
+            else
+            {
+                result = Resolve<T>(request);
+                return true;
+            }
+        }
+
+        public bool TryGet(Type type, out object result, IDictionary<Type, IBinding> customBindings = null)
+        {
+            var request = CreateRequest(type, new Context(this, transientBindings: customBindings));
+            if (request == null)
+            {
+                result = null;
+                return false;
+            }
+            else
+            {
+                result = Resolve(request);
+                return true;
+            }
+        }
+
         public object Get(Type type, IDictionary<Type, IBinding> customBindings = null)
         {
             return genericGet.MakeGenericMethod(type).Invoke(this, new[] { customBindings });
@@ -113,12 +143,17 @@ namespace Sqor.Utils.Injection
         
         public T Get<T>(IDictionary<Type, IBinding> customBindings = null) where T : class
         {
-            return Resolve<T>(CreateRequest<T>(new Context(this, transientBindings: customBindings)));
+            T result;
+            if (!TryGet(out result, customBindings))
+                throw new InvalidOperationException("No resolvers registered for " + typeof(T).FullName + " and type is not instantiatable.");
+            return result;
         }
 
         public void Inject(object target, IDictionary<Type, IBinding> customBindings = null)
         {
             var request = CreateRequest(target.GetType(), new Context(this, transientBindings: customBindings));
+            if (request == null)
+                throw new InvalidOperationException("No resolvers registered for " + target.GetType().FullName + " and type is not instantiatable.");
             Activate(request, target);
         }
 
@@ -133,7 +168,7 @@ namespace Sqor.Utils.Injection
 
             if (binding == null && !IsInstantiatable(typeof(T)))
             {
-                throw new InvalidOperationException("No resolvers registered for " + typeof(T).FullName + " and type is not instantiatable.");
+                return null;
             }          
             if (binding == null)
             {

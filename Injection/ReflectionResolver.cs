@@ -82,7 +82,13 @@ namespace Sqor.Utils.Injection
             {
                 arguments = constructor
                     .GetParameters()
-                        .Select(x => Tuple.Create<ParameterInfo, Func<Request, object>>(x, request => request.CreateChildRequest(x.ParameterType).Resolve()))
+                        .Select(x => Tuple.Create<ParameterInfo, Func<Request, object>>(x, request =>
+                        {
+                            var childRequest = request.CreateChildRequest(x.ParameterType);
+                            if (childRequest == null)
+                                throw new InvalidOperationException("No resolvers registered for " + request.Type.FullName + " and type is not instantiatable.");
+                            return childRequest.Resolve();
+                        }))
                         .ToList();
             }
             properties = type

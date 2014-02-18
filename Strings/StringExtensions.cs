@@ -193,18 +193,18 @@ namespace Sqor.Utils.Strings
             return buffer.ToString();
         }
 
-        public static string Underscore(string s)
+        public static string Underscore(this string s)
         {
             if (s.Length == 0)
                 return s;
 
-            StringBuilder buffer = new StringBuilder();
-            char[] characters = s.ToCharArray();
+            var buffer = new StringBuilder();
+            var characters = s.ToCharArray();
 
-            bool wasLowercase = false;
-            for (int i = 0; i < characters.Length; i++)
+            var wasLowercase = false;
+            for (var i = 0; i < characters.Length; i++)
             {
-                char character = characters[i];
+                var character = characters[i];
                 if (wasLowercase && char.IsUpper(character))
                 {
                     buffer.Append('_');
