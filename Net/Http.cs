@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Linq;
 using System.IO;
 using Sqor.Utils.Dictionaries;
+using Sqor.Utils.Generics;
 using Sqor.Utils.Logging;
 using Sqor.Utils.Json;
 using System.Threading.Tasks;
@@ -199,7 +201,23 @@ namespace Sqor.Utils.Net
                     if (item.Value != null)
                     {
                         builder.Append(delimiter);
-                        builder.Append(System.Web.HttpUtility.UrlEncode(item.Key.ToString()) + "=" + System.Web.HttpUtility.UrlEncode(item.Value.ToString()));
+                        // Handle passing arrays through query string e.g. ?list=5&list=6&list=7
+                        // not checking for any given IEnumerable because strings implement that, but should be treated the normal way (?str=string)
+                        var list = item.Value as IList;
+                        if (list != null)
+                        {
+                            delimiter = "";
+                            foreach (var value in list)
+                            {
+                                builder.Append(delimiter);
+                                builder.Append(System.Web.HttpUtility.UrlEncode(item.Key.ToString()) + "=" + System.Web.HttpUtility.UrlEncode(value.ToString()));
+                                delimiter = "&";
+                            }
+                        }
+                        else
+                        {
+                            builder.Append(System.Web.HttpUtility.UrlEncode(item.Key.ToString()) + "=" + System.Web.HttpUtility.UrlEncode(item.Value.ToString()));
+                        }
                         delimiter = "&";
                     }
                 }
