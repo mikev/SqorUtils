@@ -7,7 +7,7 @@ using Sqor.Utils.Dictionaries;
 
 namespace Sqor.Utils.Web
 {
-    public class IntegerRouteConstraint : IRouteConstraint, IHttpRouteConstraint
+    public class IntegerRouteConstraint : IRouteConstraint
     {
         public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values,
             RouteDirection routeDirection)
