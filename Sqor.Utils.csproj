@@ -259,7 +259,6 @@
     <Compile Include="Web\HttpStatusCodeException.cs" />
     <Compile Include="Web\HttpUnauthorizedException.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
-    <Compile Include="Web\InjectionDependencyResolver.cs" />
     <Compile Include="Web\InputExtensions.cs" />
     <Compile Include="Web\IntegerRouteConstraint.cs" />
     <Compile Include="Web\JsonDefaultModelBinder.cs" />
