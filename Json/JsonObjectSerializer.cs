@@ -78,7 +78,7 @@ namespace Sqor.Utils.Json
                 if (graph == null)
                     return enumCache.NullValue;
                 else
-                    return enumCache.EnumsByKey[graph];
+                    return enumCache.EnumsByKey[((string)graph).ToUpper()];
             }
 			else if (type == typeof(bool)) 
 			{

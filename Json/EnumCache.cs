@@ -26,7 +26,7 @@ namespace Sqor.Utils.Json
                 .Select(x => new { Key = x.Attribute != null && x.Attribute.JsonKey != null ? x.Attribute.JsonKey : x.Field.Name, x.Value, x.Attribute })
                 .ToArray();
 
-            enumsByKey = enumData.ToDictionary(x => x.Key, x => x.Value);
+            enumsByKey = enumData.ToDictionary(x => x.Key.ToUpper(), x => x.Value);
             keysByEnum = enumData.ToDictionary(x => x.Value, x => x.Key);
             nullValue = enumData.SingleOrDefault(x => x.Attribute != null && x.Attribute.RepresentsNull).IfNotNull(x => x.Value);
         }
