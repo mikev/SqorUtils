@@ -186,7 +186,17 @@ namespace Sqor.Utils.Json
                 var dictionary = (IDictionary)Activator.CreateInstance(catchAll.PropertyType);
                 foreach (var key in unusedKeys)
                 {
-                    dictionary[key] = Convert.ChangeType(this[key], catchAll.PropertyType.GetGenericArgument(typeof(Dictionary<,>), 1));
+                    object changed;
+                    var convertTo = catchAll.PropertyType.GetGenericArgument(typeof(Dictionary<,>), 1);
+                    try
+                    {
+                        changed = Convert.ChangeType(this[key], convertTo);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new InvalidOperationException("Could not convert " + this[key] + " (a " + this[key].GetType().FullName + ") to a " + convertTo.FullName);
+                    }
+                    dictionary[key] = changed;
                 }
                 catchAll.SetValue(result, dictionary, null);
             }
