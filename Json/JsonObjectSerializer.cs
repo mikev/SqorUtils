@@ -159,8 +159,16 @@ namespace Sqor.Utils.Json
 			}
 			else 
 			{
-				var jsonObject = (JsonObject)graph;
-                return jsonObject.To(type);
+				JsonObject jsonObject;
+			    if (graph != null)
+			    {
+			        jsonObject = (JsonObject) graph;
+			    }
+			    else
+			    {
+			        return null;
+			    }
+			    return jsonObject.To(type);
 			}
 		}
 
