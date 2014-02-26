@@ -275,7 +275,7 @@ namespace Sqor.Utils.Net
                     builder.Append("curl -v -X " + Method + " ");
                  
                     if (ContentType != null)
-                        builder.Append("-H \"Content-Type: " + ContentType + " ");
+                        builder.Append("-H \"Content-Type: " + ContentType + "\" ");
                     
                     foreach (var header in http.headers)
                     {
