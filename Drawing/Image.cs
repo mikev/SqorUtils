@@ -1,5 +1,6 @@
 using System;
-using Sqor.Utils.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sqor.Utils.Net;
 using System.Threading.Tasks;
 using System.Linq;
@@ -206,26 +207,37 @@ namespace Sqor.Utils.Drawing
             );
         }
 
-        class ImageJsonConverter : IJsonConverter
+        class ImageJsonConverter : JsonConverter
         {
-            public string TypeDescription
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                get { return "url"; }
+                var token = JToken.ReadFrom(reader);
+                return new Image(ImageSource.Url, (string)token, null, null);
             }
 
-            public JsonValue ToJson(object o)
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                var image = (Image)o;
+                var image = (Image)value;
                 if (image.Source == ImageSource.None)
-                    return new JsonPrimitive();
+                    JToken.Parse("null").WriteTo(writer);
                 if (image.Source != ImageSource.Url)
                     throw new InvalidOperationException("Cannot convert a non-Url based image into json");
-                return ((Image)o).Url;
+                ((JToken)image.Url).WriteTo(writer);
             }
 
-            public object FromJson(JsonValue json)
+            public override bool CanRead
             {
-                return new Image(ImageSource.Url, json, null, null);
+                get { return true; }
+            }
+
+            public override bool CanWrite
+            {
+                get { return true; }
+            }
+
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(Image);
             }
         }
     }

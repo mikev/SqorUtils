@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
-using Sqor.Utils.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sqor.Utils.Strings;
 
 namespace Sqor.Utils.Drawing
@@ -180,21 +181,33 @@ namespace Sqor.Utils.Drawing
             return string.Format("({0}, {1}, {2}, {3})", Red, Green, Blue, Alpha);
         }
 
-        class ColorJsonConverter : IJsonConverter
+        class ColorJsonConverter : JsonConverter
         {
-            public string TypeDescription
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                get { return "color ('#RRGGBB')"; }
+                var token = (string)JToken.ReadFrom(reader);
+                return FromHtmlColor(token);
             }
 
-            public JsonValue ToJson(object o)
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                return ((Color)o).ToHtmlColor();
+                var s = (JToken)((Color)value).ToHtmlColor();
+                s.WriteTo(writer);
             }
 
-            public object FromJson(JsonValue json)
+            public override bool CanConvert(Type objectType)
             {
-                return FromHtmlColor(json);
+                return objectType == typeof(Color);
+            }
+
+            public override bool CanRead
+            {
+                get { return true; }
+            }
+
+            public override bool CanWrite
+            {
+                get { return true; }
             }
         }
     }

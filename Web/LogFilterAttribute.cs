@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Sqor.Utils.Json;
 using Sqor.Utils.Logging;
 
@@ -35,7 +36,7 @@ namespace Sqor.Utils.Web
             var jsonResult = filterContext.Result as JsonResult;
             if (jsonResult != null)
             {
-                this.LogInfo("Output: " + jsonResult.ToJson().Trim());
+                this.LogInfo("Output: " + JsonConvert.SerializeObject(jsonResult.Data).Trim());
             }
 
             var httpStatusResult = filterContext.Result as HttpStatusCodeResult;

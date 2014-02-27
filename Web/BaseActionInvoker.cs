@@ -10,6 +10,7 @@ namespace Sqor.Utils.Web
 {
     public class BaseActionInvoker : AsyncControllerActionInvoker
     {
+/*
         protected override ActionDescriptor FindAction(ControllerContext controllerContext, ControllerDescriptor controllerDescriptor, string actionName)
         {
             var actionMethods = controllerDescriptor.ControllerType.GetMethods()
@@ -95,6 +96,7 @@ namespace Sqor.Utils.Web
                 return result is AsyncActionDescriptor ? (ActionDescriptor)new BaseAsyncActionDescriptor((AsyncActionDescriptor)result) : result != null ? new BaseActionDescriptor(result) : null;
             }
         }
+*/
 
         private ActionDescriptor CreateActionDescriptor(MethodInfo method, string actionName, ControllerDescriptor controllerDescriptor)
         {
