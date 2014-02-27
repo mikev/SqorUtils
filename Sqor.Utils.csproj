@@ -80,6 +80,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -162,6 +165,7 @@
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Json\JsonArray.cs" />
     <Compile Include="Json\JsonAttribute.cs" />
+    <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Json\JsonConverterAttribute.cs" />
     <Compile Include="Json\JsonExtensions.cs" />
     <Compile Include="Json\JsonGroupAttribute.cs" />
@@ -271,8 +275,6 @@
     <Compile Include="Web\MinimumVersionAttribute.cs" />
     <Compile Include="Web\ModelExtensions.cs" />
     <Compile Include="Web\NotAreaConstraint.cs" />
-    <Compile Include="Web\NotNullAttribute.cs" />
-    <Compile Include="Web\NotNullFilterAttribute.cs" />
     <Compile Include="Web\RestErrorAttribute.cs" />
     <Compile Include="Web\RestValidationException.cs" />
     <Compile Include="Web\UrlHelperExtensions.cs" />

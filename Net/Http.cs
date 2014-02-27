@@ -5,14 +5,12 @@ using System.Net;
 using System.Text;
 using System.Linq;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sqor.Utils.Dictionaries;
-using Sqor.Utils.Generics;
 using Sqor.Utils.Logging;
-using Sqor.Utils.Json;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
-using Sqor.Utils.Strings;
-using System.Threading;
 
 namespace Sqor.Utils.Net
 {
@@ -426,7 +424,7 @@ namespace Sqor.Utils.Net
             /// Returns the response as a JSON value.  If the response is in an errored state
             /// </summary>
             /// <returns>The json.</returns>
-            public async Task<JsonValue> AsJson()
+            public async Task<JToken> AsJson()
             {
                 await Execute();
                 if (isErrored) 
@@ -435,20 +433,20 @@ namespace Sqor.Utils.Net
                 return ResponseAsJson();
             }
 
-            public async Task<JsonObject> AsJsonObject()
+            public async Task<JObject> AsJsonObject()
             {
                 var response = await AsJson();
-                return (JsonObject)response;
+                return (JObject)response;
             }
             
-            internal JsonValue ResponseAsJson()
+            internal JToken ResponseAsJson()
             {
                 using (var stream = new MemoryStream(response))
                 using (var reader = new StreamReader(stream))
                 {
                     var s = reader.ReadToEnd();
                     this.LogInfo("Response: " + s);
-                    var result = s.FromJson();
+                    var result = JToken.Parse(s);
                     return result;
                 }
             }
@@ -469,7 +467,7 @@ namespace Sqor.Utils.Net
                 {
                     var s = reader.ReadToEnd();
                     this.LogInfo("Response: " + s);
-                    var result = s.FromJson<T>();
+                    var result = JsonConvert.DeserializeObject<T>(s);
                     return result;
                 }
             }
@@ -531,16 +529,16 @@ namespace Sqor.Utils.Net
                 return this;
             }
             
-            public RequestContext Json(JsonValue json)
+            public RequestContext Json(JToken json)
             {
                 ContentType = "application/json";
-                stringRequestData = json.ToJson();
+                stringRequestData = json.ToString();
                 return this;
             }
             
             public RequestContext Json(object o)
             {
-                var json = o.ToJson();
+                var json = JsonConvert.SerializeObject(o);
                 ContentType = "application/json";
                 stringRequestData = json;
                 return this;
@@ -582,7 +580,7 @@ namespace Sqor.Utils.Net
                 this.responseCode = responseCode;
             }
             
-            public RequestContext ReturnJson(Action<JsonValue> returnValue) 
+            public RequestContext ReturnJson(Action<JToken> returnValue) 
             {
                 requestContext.statusCodeResponses.Add(Tuple.Create<Func<HttpStatusCode, bool>, Action>(responseCode, () => returnValue(requestContext.ResponseAsJson())));
                 return requestContext;

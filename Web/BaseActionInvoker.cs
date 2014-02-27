@@ -112,9 +112,11 @@ namespace Sqor.Utils.Web
             var statusCodeResult = actionResult as HttpStatusCodeResult;
             if (statusCodeResult != null)
             {
-                actionResult = new HttpStatusCodeResult(statusCodeResult.StatusCode);
+                controllerContext.HttpContext.Response.StatusCode = statusCodeResult.StatusCode;
+                controllerContext.HttpContext.Response.StatusDescription = statusCodeResult.StatusDescription;
                 controllerContext.HttpContext.Response.ContentType = "text/plain";
                 controllerContext.HttpContext.Response.Write(statusCodeResult.StatusDescription);
+                return;
             }
 
             base.InvokeActionResult(controllerContext, actionResult);
