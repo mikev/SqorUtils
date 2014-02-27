@@ -325,7 +325,7 @@ namespace Sqor.Utils.Net
                 this.response = response.Output;
                 responseContentType = response.Headers.Get("Content-Type") ?? "text/plain";
 
-                if (response.Status == 200)
+                if (response.Status >= 200 && response.Status < 300)
                 {
                     if (onStatus != null)
                         onStatus(HttpStatusCode.OK);

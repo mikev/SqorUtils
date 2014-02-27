@@ -233,5 +233,6 @@
     <Compile Include="Net\WebClientAdapter.cs" />
     <Compile Include="Net\HttpClientAdapter.cs" />
     <Compile Include="Net\HttpClientFactory.cs" />
+    <Compile Include="Json\JsonContractResolver.cs" />
   </ItemGroup>
 </Project>
