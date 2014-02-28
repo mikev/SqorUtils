@@ -1,7 +1,7 @@
 using System;
 using Sqor.Utils.SqliteLinq.Migrate.Operations;
 
-namespace Sqor.Utiles.SqliteLinq.Migrate
+namespace Sqor.Utils.SqliteLinq.Migrate
 {
     public class TableBuilder<TColumns>
     {
