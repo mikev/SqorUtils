@@ -37,6 +37,11 @@ namespace Sqor.Utils.Models
         {
             return propertiesByName[property.GetPropertyInfo().Name];
         }
+        
+        public PropertyInfo GetProperty(string name) 
+        {
+            return propertiesByName[name];
+        }
     }
     
     public class ModelMetaData<T> : ModelMetaData where T : Model<T>

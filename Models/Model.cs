@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Sqor.Utils.Ios;
+using System.Runtime.CompilerServices;
 
 namespace Sqor.Utils.Models
 {
@@ -110,6 +111,18 @@ namespace Sqor.Utils.Models
         {
             var propertyInfo = metaData.GetProperty(property);
             return (Property<T, TValue>)properties[propertyInfo.Name];
+        }
+        
+        protected TValue Get<TValue>([CallerMemberName]string callerMemberName = null) 
+        {
+            var property = properties[callerMemberName];
+            return (TValue)property.Value;
+        }
+        
+        protected void Set(object value, [CallerMemberName]string callerMemberName = null) 
+        {
+            var property = properties[callerMemberName];
+            property.Value = value;
         }
         
         protected TValue Get<TValue>(Expression<Func<T, TValue>> property)
