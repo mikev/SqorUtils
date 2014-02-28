@@ -81,7 +81,6 @@ namespace Sqor.Utils.Models
     public class Model<T> where T : Model<T>
     {
         public event PropertyChangedEvent<T> PropertyChanged;
-        public event Action<T> Saving;
         
         private Dictionary<string, IProperty> properties;
         private ModelMetaData metaData;
@@ -97,26 +96,22 @@ namespace Sqor.Utils.Models
             return (IProperty)Activator.CreateInstance(typeof(Property<,>).MakeGenericType(typeof(T), property.PropertyType), this, property);
         }
         
-        public void Save()
-        {
-            OnSaving();
-        }
-        
-        protected virtual void OnSaving()
-        {
-            Saving.Fire(x => x((T)(object)this));
-        }
-
         public Property<T, TValue> Property<TValue>(Expression<Func<T, TValue>> property)
         {
             var propertyInfo = metaData.GetProperty(property);
             return (Property<T, TValue>)properties[propertyInfo.Name];
         }
         
-        protected TValue Get<TValue>([CallerMemberName]string callerMemberName = null) 
+        protected ImplicitValue Get([CallerMemberName]string callerMemberName = null) 
         {
             var property = properties[callerMemberName];
-            return (TValue)property.Value;
+            return new ImplicitValue(property.Value);
+        }
+        
+        protected TValue Get<TValue>([CallerMemberName]string callerMemberName = null) 
+        {
+            var property = (Property<T, TValue>)properties[callerMemberName];
+            return property.Value;
         }
         
         protected void Set(object value, [CallerMemberName]string callerMemberName = null) 
@@ -127,24 +122,16 @@ namespace Sqor.Utils.Models
         
         protected TValue Get<TValue>(Expression<Func<T, TValue>> property)
         {
-            var prop = Property(property);
-            return (TValue)Get(prop.Name);
+            var propertyName = Property(property).Name;
+            var prop = (Property<T, TValue>)properties[propertyName];
+            return prop.Value;
         }
         
         protected void Set<TValue>(Expression<Func<T, TValue>> property, TValue value)
         {
-            var prop = Property(property);
-            Set(prop.Name, value);
-        }
-        
-        protected object Get(string propertyName)
-        {
-            return properties[propertyName].Value;
-        }
-        
-        protected void Set(string propertyName, object value)
-        {
-            properties[propertyName].Value = value;
+            var propertyName = Property(property).Name;
+            var prop = (Property<T, TValue>)properties[propertyName];
+            prop.Value = value;
         }
         
         protected internal virtual void OnPropertyChanged(IProperty property, object oldValue, object newValue)

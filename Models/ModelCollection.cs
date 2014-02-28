@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
@@ -42,7 +41,6 @@ namespace Sqor.Utils.Models
             base.InsertItem(index, item);
             
             item.PropertyChanged += OnPropertyChanged;
-            item.Saving += OnItemSaving;
         }
         
         protected void OnPropertyChanged(T model, IProperty property, object oldValue, object newValue)
@@ -56,7 +54,6 @@ namespace Sqor.Utils.Models
             base.RemoveItem(index);
             
             item.PropertyChanged -= OnPropertyChanged;
-            item.Saving -= OnItemSaving;
         }
 
         protected override void ClearItems()

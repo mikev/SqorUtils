@@ -176,6 +176,7 @@
     <Compile Include="Logging\MessageType.cs" />
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
+    <Compile Include="Models\ImplicitValue.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\ModelCollection.cs" />
     <Compile Include="Models\ModelMetaData.cs" />
