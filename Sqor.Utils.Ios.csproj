@@ -212,5 +212,6 @@
     <Compile Include="Net\HttpClientAdapter.cs" />
     <Compile Include="Net\HttpClientFactory.cs" />
     <Compile Include="Json\JsonContractResolver.cs" />
+    <Compile Include="Models\ImplicitValue.cs" />
   </ItemGroup>
 </Project>
