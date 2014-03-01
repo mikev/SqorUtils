@@ -70,6 +70,7 @@ namespace Sqor.Utils.Images
 
         public static byte[] SaveToBytes(this Image image, ImageFormat imageFormat = null)
         {
+            imageFormat = ImageFormat.Png;
             using (var stream = new MemoryStream())
             {
                 if (imageFormat == null && imageFormat.Equals(ImageFormat.Jpeg))
