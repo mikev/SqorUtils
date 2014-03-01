@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sqor.Utils.SqliteLinq.Migrate.Operations;
-using Sqor.Utiles.SqliteLinq.Migrate;
+using Sqor.Utils.SqliteLinq.Migrate;
 
 namespace Sqor.Utils.SqliteLinq.Migrate
 {
