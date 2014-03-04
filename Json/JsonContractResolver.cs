@@ -10,6 +10,10 @@ namespace Sqor.Utils.Json
         /// </summary>
         protected override string ResolvePropertyName(string propertyName)
         {
+            // Temporary hack since this name was not being underscored.
+            if (propertyName == "HACKUserId")
+                return "userId";
+
             return propertyName.Underscore().ToLower();
         }
 
