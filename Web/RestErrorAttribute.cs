@@ -7,6 +7,7 @@ using Sqor.Utils.Logging;
 
 namespace Sqor.Utils.Web
 {
+/*
     public class RestErrorAttribute : HandleErrorAttribute
     {
         public override void OnException(ExceptionContext filterContext)
@@ -49,4 +50,5 @@ namespace Sqor.Utils.Web
             filterContext.ExceptionHandled = true;
         }
     }
+*/
 }
