@@ -16,6 +16,12 @@ namespace Sqor.Utils.Dictionaries
                 throw new InvalidOperationException("Key not found in dictionary: " + key);
         }
 
+        public static U Get<T, U>(this IDictionary<T, U> dictionary, T key) where U : class
+        {
+            return dictionary.Get (key, null);
+
+        }
+
         public static U Get<T, U>(this IDictionary<T, U> dictionary, T key, U returnIfNotFound = default(U))
         {
             if (dictionary == null)
