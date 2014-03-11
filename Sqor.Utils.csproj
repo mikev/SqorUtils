@@ -248,7 +248,6 @@
     <Compile Include="Web\ModelExtensions.cs" />
     <Compile Include="Web\NotAreaConstraint.cs" />
     <Compile Include="Web\RestErrorAttribute.cs" />
-    <Compile Include="Web\RestValidationException.cs" />
     <Compile Include="Web\UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
