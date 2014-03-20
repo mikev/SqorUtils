@@ -83,7 +83,12 @@ namespace Sqor.Utils.Drawing
         {
             return new RectangleF(rectangle.Left, rectangle.Top + y, rectangle.Width, rectangle.Height);
         }
-        
+
+        public static RectangleF ChangeHeight(this RectangleF rectangle, int height)
+        {
+            return new RectangleF(rectangle.Left, rectangle.Top, rectangle.Width, height);
+        }
+
         public static RectangleF ToRectangleF(this Rectangle rectangle)
         {
             return new RectangleF(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
@@ -128,7 +133,7 @@ namespace Sqor.Utils.Drawing
         {
             return new Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, Math.Min(rectangle.Height, amount));
         }
-        
+
         public static Rectangle OffsetX(this Rectangle rectangle, int x)
         {
             return new Rectangle(rectangle.Left + x, rectangle.Top, rectangle.Width, rectangle.Height);
