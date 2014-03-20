@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Sqor.Utils.Streams
 {
@@ -13,8 +14,8 @@ namespace Sqor.Utils.Streams
         {
             using (stream)
             {
-                byte[] buffer = new byte[1024 * 10];
-                MemoryStream output = new MemoryStream();
+                var buffer = new byte[1024 * 10];
+                var output = new MemoryStream();
                 for (int amountRead = stream.Read(buffer); amountRead > 0; amountRead = stream.Read(buffer))
                 {
                     output.Write(buffer, 0, amountRead);
@@ -22,6 +23,19 @@ namespace Sqor.Utils.Streams
                 return output.ToArray();
             }
         }        
-         
+
+        public static async Task<byte[]> ReadBytesToEndAsync(this Stream stream)
+        {
+            using (stream)
+            {
+                var buffer = new byte[1024 * 10];
+                var output = new MemoryStream();
+                for (int amountRead = await stream.ReadAsync(buffer, 0, buffer.Length); amountRead > 0; amountRead = await stream.ReadAsync(buffer, 0, buffer.Length))
+                {
+                    await output.WriteAsync(buffer, 0, amountRead);
+                }
+                return output.ToArray();
+            }
+        }        
     }
 }
