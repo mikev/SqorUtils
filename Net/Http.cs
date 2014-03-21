@@ -148,13 +148,13 @@ namespace Sqor.Utils.Net
             return this;
         }
 
-        public bool Exists(int retryCount = 0)
+        public async Task<bool> Exists(int retryCount = 0)
         {
             var request = WebRequest.Create(Url);
             request.Method = "HEAD";
             try
             {
-                request.GetResponse();
+                await request.GetResponseAsync();
                 return true;
             }
             catch (WebException e)
