@@ -243,7 +243,7 @@ namespace Sqor.Utils.Net
             private string responseContentType;
                         
             internal byte[] response;
-            internal int statusCode;
+//            internal int statusCode;
             internal List<Tuple<Func<HttpStatusCode, bool>, Action>> statusCodeResponses = new List<Tuple<Func<HttpStatusCode, bool>, Action>>();
             internal Action<HttpStatusCode> onStatus;
             

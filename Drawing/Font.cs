@@ -4,8 +4,10 @@ namespace Sqor.Utils.Drawing
 {
     public partial class Font
     {
+#pragma warning disable 649
         private string name;
         private float points;    
+#pragma warning restore 649
     
         public Font()
         {

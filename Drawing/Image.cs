@@ -25,7 +25,9 @@ namespace Sqor.Utils.Drawing
         private readonly ImageSource source;
         private readonly string url;
         private readonly byte[] byteArray;
+#pragma warning disable 649
         private readonly CancellationTokenSource cancellationTokenSource;
+#pragma warning restore 649
         
         #if MONOTOUCH
         private readonly UIImage nativeImage;
