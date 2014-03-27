@@ -554,9 +554,9 @@ namespace Sqor.Utils.Net
                 return this;
             }
             
-            public RequestContext Binary(byte[] data)
+            public RequestContext Binary(byte[] data, string contentType = "application/octet-stream")
             {
-                ContentType = "application/octet-stream";
+                ContentType = contentType;
                 binaryRequestData = data;
                 return this;
             }
