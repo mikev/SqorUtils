@@ -373,21 +373,21 @@ namespace Sqor.Utils.Net
                             
                             if (http.onError != null)
                                 http.onError(http);
-                            throw exception;
+                            throw new Exception(response.StatusMessage, exception);
                         }
                         else
                         {
-                            this.LogInfo(exception.Message);
+                            this.LogInfo(exception.Message + ": " + response.StatusMessage);
                             if (http.onError != null)
                                 http.onError(http);
-                            throw exception;
+                            throw new Exception(response.StatusMessage, exception);
                         }
                     }
                     else
                     {
                         if (http.onError != null)
                             http.onError(http);
-                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url);
+                        throw new InvalidOperationException("Error making " + Method + " request to: " + http.Url + ": " + response.StatusMessage);
                     }
                 }
             }
