@@ -26,6 +26,7 @@ namespace Sqor.Utils.Net
 			public IDictionary<string, string> Headers { get; set; }
 			public byte[] Output { get; set; }
 			public int Status { get; set; }
+            public string StatusMessage { get; set; }
 		}
 
         public async Task<IHttpResponse> Open(IHttpRequest request)
@@ -65,7 +66,8 @@ namespace Sqor.Utils.Net
 					Headers = responseMessage.Headers.ToDictionary(x => x.Key,
 						x => string.Join(", ", Array.ConvertAll(x.Value.ToArray(), s => s.ToString() ) ) ),
 					Output = responseContent,
-					Status = (int)responseMessage.StatusCode
+                    Status = (int)responseMessage.StatusCode,
+                    StatusMessage = responseMessage.ReasonPhrase
 				};
 
                 // Add content headers, headers are stored in two places when using HttpClient
@@ -89,6 +91,7 @@ namespace Sqor.Utils.Net
 			return new HttpResponse
 			{
 				Status = (int)((HttpWebResponse)error.Response).StatusCode,
+                StatusMessage = ((HttpWebResponse)error.Response).StatusDescription,
 				Output = error.Response.GetResponseStream().ReadBytesToEnd(),
 				Headers = error.Response.Headers.Cast<string>().ToDictionary(x => x, x => error.Response.Headers[x])
 			};
