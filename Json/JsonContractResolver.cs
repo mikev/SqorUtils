@@ -30,7 +30,10 @@ namespace Sqor.Utils.Json
                         if (value == null)
                         {
                             var dictionary = (IDictionary)dictionaryProperty.GetMethod.Invoke(o, null);
-                            dictionary[key] = null;
+                            if (dictionary != null)
+                            {
+                                dictionary[key] = null;
+                            }
                         }
                         else
                         {
