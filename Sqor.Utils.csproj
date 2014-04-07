@@ -249,23 +249,12 @@
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Types\Class.cs" />
     <Compile Include="Types\TypeExtensions.cs" />
-    <Compile Include="Web\ActionResult.cs" />
-    <Compile Include="Web\AreaActionFilterAttribute.cs" />
-    <Compile Include="Web\BaseActionInvoker.cs" />
     <Compile Include="Web\CookieExtensions.cs" />
     <Compile Include="Web\CustomAttributeExtensions.cs" />
-    <Compile Include="Web\HttpForbiddenException.cs" />
-    <Compile Include="Web\HttpStatusCodeException.cs" />
-    <Compile Include="Web\HttpUnauthorizedException.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
     <Compile Include="Web\InputExtensions.cs" />
     <Compile Include="Web\IntegerRouteConstraint.cs" />
-    <Compile Include="Web\JsonTypeAttribute.cs" />
-    <Compile Include="Web\MaximumVersionAttribute.cs" />
-    <Compile Include="Web\MinimumVersionAttribute.cs" />
     <Compile Include="Web\ModelExtensions.cs" />
-    <Compile Include="Web\NotAreaConstraint.cs" />
-    <Compile Include="Web\RestErrorAttribute.cs" />
     <Compile Include="Web\UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
