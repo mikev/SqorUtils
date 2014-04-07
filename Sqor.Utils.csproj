@@ -255,6 +255,7 @@
     <Compile Include="Web\InputExtensions.cs" />
     <Compile Include="Web\IntegerRouteConstraint.cs" />
     <Compile Include="Web\ModelExtensions.cs" />
+    <Compile Include="Web\NotAreaConstraint.cs" />
     <Compile Include="Web\UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
