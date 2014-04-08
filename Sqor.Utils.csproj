@@ -119,7 +119,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arrays\ArrayReadOnlyList.cs" />
     <Compile Include="Caches\LruCache.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
