@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Arrays\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -192,7 +193,6 @@
     <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="DateTimes\DateTimeExtensions.cs" />
     <Compile Include="DateTimes\DateTimeSpan.cs" />
-    <Compile Include="Arrays\ArrayReadOnlyList.cs" />
     <Compile Include="Lists\ListExtensions.cs" />
     <Compile Include="Caches\LruCache.cs" />
     <Compile Include="Numbers\NumberExtensions.cs" />
@@ -213,5 +213,6 @@
     <Compile Include="Net\HttpClientFactory.cs" />
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Models\ImplicitValue.cs" />
+    <Compile Include="Arrays\ArrayReadOnlyList.cs" />
   </ItemGroup>
 </Project>
