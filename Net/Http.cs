@@ -256,6 +256,12 @@ namespace Sqor.Utils.Net
                 Method = method;
             }
             
+            public RequestContext WithContentType(string contentType)
+            {
+                ContentType = contentType;
+                return this;
+            }
+
             public string ResponseContentType
             {
                 get { return responseContentType; }
