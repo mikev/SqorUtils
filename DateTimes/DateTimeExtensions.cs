@@ -36,54 +36,56 @@ namespace Sqor.Utils.DateTimes
             var now = DateTime.UtcNow;
 
             var timeSpan = now.Difference(datetime);
-            var days = timeSpan.Days;
-            if (timeSpan.Years > 0 || timeSpan.Months > 0)
-            {
-                int years = timeSpan.Years;
-                int months = timeSpan.Months;
-                    
-                var yearsText = years > 1 ? "years" : "year";
-                var monthsText = months > 1 ? "months" : "month";
-                
-                var monthsResult = months + " " + monthsText;
 
-                if (years > 0 && months == 0)
-                    return years + " " + yearsText + " ago";
-                else if (years > 0)
-                    return years + " " + yearsText + ", " + monthsResult + " ago";
-                else
-                    return monthsResult + " ago";
-            }
-            else if (days >= 2)
-                return days + " days ago";
-            else if (days >= 1)
-                return days + " day ago";
-            else
+            string result = "";
+
+            ////
+            int years = timeSpan.Years;
+            int months = timeSpan.Months;
+
+            if(years > 0 )
+                result += years +"y";
+            if(months > 0)
+                result += months + "m";
+
+            if(years > 0 || months > 0)
+                return result;
+
+            /////////
+            int weeks = 0;
+            int days = timeSpan.Days;
+
+            if(days >= 7)
             {
-                var hours = timeSpan.Hours;
-                if (hours >= 2)
-                    return (int)hours + " hours ago";
-                else if (hours >= 1)
-                    return (int)hours + " hour ago";
-                else
-                {
-                    var minutes = timeSpan.Minutes;
-                    if (minutes >= 2)
-                        return (int)minutes + " minutes ago";
-                    else if (minutes >= 1)
-                        return (int)minutes + " minute ago";
-                    else
-                    {
-                        var seconds = timeSpan.Seconds;
-                        if (seconds >= 2)
-                            return (int)seconds + " seconds ago";
-                        else if (minutes >= 1)
-                            return (int)seconds + " second ago";
-                        else
-                            return "Just now";
-                    }
-                }
+                weeks = days/7;
+                days = days %7;
             }
+
+            if(weeks > 0)
+                result += weeks + "w";
+            if(days > 0)
+                result += days + "d";
+
+            if(weeks > 0 || days > 0)
+                return result;
+
+            /////////
+            int hours = timeSpan.Hours;
+            int minutes = timeSpan.Minutes;
+
+            if(hours > 0)
+                return hours + "h";
+                
+            if(minutes > 0)
+                return minutes + "m";
+
+            /////////
+            int seconds = timeSpan.Seconds;
+
+            if(seconds > 0)
+                return seconds + "s";
+
+            return result;
         } 
 
         public static string ToHowLongAgoUnless(this DateTime datetime, Func<TimeSpan, bool> unless)
