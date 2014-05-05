@@ -105,7 +105,14 @@ namespace Sqor.Utils.Net
             cookies[key] = value;
             return this;
         }
-        
+
+        public Http WithQueryString(Dictionary<string, object> dictionary)
+        {
+            foreach (var item in dictionary)
+                queryString[item.Key] = item.Value;
+            return this;
+        }
+
         public Http WithQueryString(string key, string value)
         {
             queryString[key] = value;
