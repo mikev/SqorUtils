@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Sqor.Utils.Net
 {
@@ -7,6 +8,6 @@ namespace Sqor.Utils.Net
         string Url { get; }
         string HttpMethod { get; }
         Dictionary<string, string> Headers { get; }
-        byte[] Input { get; }
+        Stream Input { get; }
     }
 }
