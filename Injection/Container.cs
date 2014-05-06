@@ -277,6 +277,11 @@ namespace Sqor.Utils.Injection
 
             private static IResolver CreateResolver()
             {
+                if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Func<,>))
+                {
+                    var returnType = typeof(T).GetGenericArguments()[1];
+                    return new TypeFactoryResolver(returnType);
+                }
                 if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Func<>))
                 {
                     var returnType = typeof(T).GetGenericArguments()[0];

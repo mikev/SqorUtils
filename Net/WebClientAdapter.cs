@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -52,15 +53,27 @@ namespace Sqor.Utils.Net
                     {
                         if (request.Input == null && request.HttpMethod == "GET")
                             response = client.DownloadData(new Uri(request.Url));
-                        else 
-                            response = client.UploadData(new Uri(request.Url), request.HttpMethod, request.Input ?? new byte[0]);
+                        else
+                        {
+                            var stream = client.OpenWrite(new Uri(request.Url), request.HttpMethod);
+                            request.Input.CopyTo(stream, 10 * 1024);
+                            var output = new MemoryStream();
+                            stream.CopyTo(output);
+                            response = output.ToArray();
+                        } 
                     }
                     else
                     {
                         if (request.Input == null && request.HttpMethod == "GET")
                             response = await client.DownloadDataTaskAsync(new Uri(request.Url)).ConfigureAwait(true);
-                        else 
-                            response = await client.UploadDataTaskAsync(new Uri(request.Url), request.HttpMethod, request.Input ?? new byte[0]).ConfigureAwait(true);                        
+                        else
+                        {
+                            var stream = await client.OpenWriteTaskAsync(new Uri(request.Url), request.HttpMethod);
+                            await request.Input.CopyToAsync(stream);
+                            var output = new MemoryStream();
+                            await stream.CopyToAsync(output);
+                            response = output.ToArray();
+                        }
                     }
                     
                     var httpResponse = new HttpResponse

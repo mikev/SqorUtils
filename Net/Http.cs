@@ -235,7 +235,7 @@ namespace Sqor.Utils.Net
             public string Url { get; set; }
             public string HttpMethod { get; set; }
             public Dictionary<string, string> Headers { get; set; }
-            public byte[] Input { get; set; }
+            public Stream Input { get; set; }
         }
         
         public class RequestContext 
@@ -255,7 +255,7 @@ namespace Sqor.Utils.Net
             internal Action<HttpStatusCode> onStatus;
             
             protected string stringRequestData;
-            protected byte[] binaryRequestData;
+            protected Stream binaryRequestData;
             
             public RequestContext(Http http, string method)
             {
@@ -318,7 +318,7 @@ namespace Sqor.Utils.Net
                 // Upload data
                 if (binaryRequestData == null && stringRequestData != null)
                 {
-                    binaryRequestData = Encoding.UTF8.GetBytes(stringRequestData);
+                    binaryRequestData = new MemoryStream(Encoding.UTF8.GetBytes(stringRequestData));
                 }
                 
                 var request = new HttpRequest
@@ -568,6 +568,13 @@ namespace Sqor.Utils.Net
             }
             
             public RequestContext Binary(byte[] data, string contentType = "application/octet-stream")
+            {
+                ContentType = contentType;
+                binaryRequestData = new MemoryStream(data);
+                return this;
+            }
+            
+            public RequestContext Binary(Stream data, string contentType = "application/octet-stream")
             {
                 ContentType = contentType;
                 binaryRequestData = data;

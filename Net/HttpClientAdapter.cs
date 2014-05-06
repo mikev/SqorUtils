@@ -46,7 +46,7 @@ namespace Sqor.Utils.Net
 
                 if (request.Input != null)
                 {        
-                    httpClientRequest.Content = new ByteArrayContent(request.Input);
+                    httpClientRequest.Content = new StreamContent(request.Input);
                 }
 
                 // Process headers

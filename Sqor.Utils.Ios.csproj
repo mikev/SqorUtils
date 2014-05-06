@@ -86,12 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="Arrays\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Events\EventExtensions.cs" />
     <Compile Include="Dictionaries\DictionaryExtensions.cs" />
+    <Compile Include="Injection\TypeFactoryResolver.cs" />
     <Compile Include="Streams\StreamExtensions.cs" />
     <Compile Include="Generics\GenericExtensions.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
