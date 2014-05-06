@@ -214,5 +214,6 @@
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Models\ImplicitValue.cs" />
     <Compile Include="Arrays\ArrayReadOnlyList.cs" />
+    <Compile Include="Files\FileExtensions.cs" />
   </ItemGroup>
 </Project>
