@@ -20,6 +20,9 @@ namespace Sqor.Utils.Injection.Scopes
 
         public ICache GetCache(Request request)
         {
+            if (HttpContext.Current == null)
+                return request.Context.Cache;
+
             var items = HttpContext.Current.Items;
             var cache = (ICache)items[typeof(WebRequestScope)];
             if (cache == null)

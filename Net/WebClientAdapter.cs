@@ -65,14 +65,22 @@ namespace Sqor.Utils.Net
                     else
                     {
                         if (request.Input == null && request.HttpMethod == "GET")
+                        {
                             response = await client.DownloadDataTaskAsync(new Uri(request.Url)).ConfigureAwait(true);
+                        }
+                        else if (request.Input != null)
+                        {
+                            var streamOut = await client.OpenWriteTaskAsync(new Uri(request.Url), request.HttpMethod);
+                            await request.Input.CopyToAsync(streamOut);
+                            var streamIn = await client.OpenReadAsync()
+
+                            var output = new MemoryStream();
+                            await streamOut.CopyToAsync(output);
+                            response = output.ToArray();
+                        }
                         else
                         {
-                            var stream = await client.OpenWriteTaskAsync(new Uri(request.Url), request.HttpMethod);
-                            await request.Input.CopyToAsync(stream);
-                            var output = new MemoryStream();
-                            await stream.CopyToAsync(output);
-                            response = output.ToArray();
+                            response = await client.UploadDataTaskAsync(new Uri(request.Url), request.HttpMethod, new byte[0]);
                         }
                     }
                     

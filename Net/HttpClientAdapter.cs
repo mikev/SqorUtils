@@ -34,7 +34,7 @@ namespace Sqor.Utils.Net
 //            if (cancelToken.IsCancellationRequested)
 //                return;
             	
-            var httpClient = HttpClientFactory.Get();
+            var httpClient = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
 			
 			httpClient.Timeout = TimeSpan.FromSeconds(timeout);
 
@@ -58,8 +58,8 @@ namespace Sqor.Utils.Net
                         httpClientRequest.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                var responseMessage = await httpClient.SendAsync(httpClientRequest).ConfigureAwait(true);
-				var responseContent = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
+                var responseMessage = await httpClient.SendAsync(httpClientRequest).ConfigureAwait(false);
+				var responseContent = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
 				var httpResponse = new HttpResponse
 				{

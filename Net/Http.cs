@@ -16,12 +16,7 @@ namespace Sqor.Utils.Net
 {
     public class Http
     {
-        private static readonly IHttpAdapter DefaultAdapter = 
-#if MONOTOUCH // Todo, change to #if MONOTOUCH or Make this a settable property and set it somewhere else in the bootstrapping process
-            new HttpClientAdapter();
-#else
-            new WebClientAdapter();
-#endif
+        private static readonly IHttpAdapter DefaultAdapter = new HttpClientAdapter();
 
         private IHttpAdapter adapter;
         private string url;
@@ -44,7 +39,7 @@ namespace Sqor.Utils.Net
 
             headers["Accept-Language"] = "en-us,en;q=0.5";
             headers["Accept-Encoding"] = "gzip,deflate";
-            headers["Accept-Charset"] = "ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+            headers["Accept-Charset"] = "utf-8;q=0.7,*;q=0.7";
         }
 
         public string Url
@@ -161,7 +156,7 @@ namespace Sqor.Utils.Net
             request.Method = "HEAD";
             try
             {
-                await request.GetResponseAsync();
+                await request.GetResponseAsync().ConfigureAwait(false);;
                 return true;
             }
             catch (WebException e)
@@ -334,7 +329,7 @@ namespace Sqor.Utils.Net
                     Input = binaryRequestData
                 };
                 
-                var response = await http.adapter.Open(request);
+                var response = await http.adapter.Open(request).ConfigureAwait(false);;
                 this.response = response.Output;
                 responseContentType = response.Headers.Get("Content-Type") ?? "text/plain";
 
@@ -359,8 +354,8 @@ namespace Sqor.Utils.Net
                         var onUnauthorized = http.onUnauthorized;
                         http.onUnauthorized = null;  // Clear out so we don't get an infinite loop
                         isExecuted = false;
-                        await onUnauthorized(http);
-                        await Execute();
+                        await onUnauthorized(http).ConfigureAwait(false);;
+                        await Execute().ConfigureAwait(false);;
                         return;
                     }
                     if (response.Output != null)
@@ -423,7 +418,7 @@ namespace Sqor.Utils.Net
             
             public async Task Go()
             {
-                await Execute();
+                await Execute().ConfigureAwait(false);;
             }
 
             public RequestContext OnStatus(Action<HttpStatusCode> onStatus)
@@ -439,7 +434,7 @@ namespace Sqor.Utils.Net
             /// <returns>The json.</returns>
             public async Task<JToken> AsJson()
             {
-                await Execute();
+                await Execute().ConfigureAwait(false);;
                 if (isErrored) 
                     return null;
 
@@ -448,25 +443,32 @@ namespace Sqor.Utils.Net
 
             public async Task<JObject> AsJsonObject()
             {
-                var response = await AsJson();
+                var response = await AsJson().ConfigureAwait(false);;
                 return (JObject)response;
             }
             
             internal JToken ResponseAsJson()
             {
                 using (var stream = new MemoryStream(response))
-                using (var reader = new StreamReader(stream))
+                using (var reader = new StreamReader(stream, Encoding.UTF8))
                 {
                     var s = reader.ReadToEnd();
                     this.LogInfo("Response: " + s);
-                    var result = JToken.Parse(s);
-                    return result;
+                    try
+                    {
+                        var result = JToken.Parse(s);
+                        return result;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Error parsing JSON: " + s, e);
+                    }
                 }
             }
             
             public async Task<T> As<T>()
             {
-                await Execute();
+                await Execute().ConfigureAwait(false);
                 if (isErrored) 
                     return default(T);
 
@@ -487,7 +489,7 @@ namespace Sqor.Utils.Net
             
             public async Task<string> AsString()
             {
-                await Execute();
+                await Execute().ConfigureAwait(false);;
                 if (isErrored) 
                     return null;
 
@@ -507,7 +509,7 @@ namespace Sqor.Utils.Net
             
             public async Task<byte[]> AsBinary()
             {
-                await Execute();
+                await Execute().ConfigureAwait(false);;
                 if (isErrored) 
                     return null;
 
