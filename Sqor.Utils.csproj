@@ -179,6 +179,7 @@
     <Compile Include="Injection\Scopes\TransientScope.cs" />
     <Compile Include="Injection\Scopes\WebRequestScope.cs" />
     <Compile Include="Injection\TypeFactoryResolver.cs" />
+    <Compile Include="Json\FilterContractResolver.cs" />
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Lists\ListExtensions.cs" />
     <Compile Include="Logging\BasicLogFormatter.cs" />
