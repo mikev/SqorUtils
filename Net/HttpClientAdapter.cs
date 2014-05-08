@@ -5,21 +5,12 @@ using System.Net;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
 using System.Net.Http;
-using System.Threading;
-
 
 namespace Sqor.Utils.Net
 {
 	public class HttpClientAdapter : IHttpAdapter
 	{
-		private int readWriteTimeout = 60 * 1000;                   // 1 minute
 		private int timeout = 60 * 1000;                            // 1 minute
-
-
-		public HttpClientAdapter()
-		{
-
-		}
 
 		class HttpResponse : IHttpResponse
 		{
@@ -34,11 +25,11 @@ namespace Sqor.Utils.Net
 //            if (cancelToken.IsCancellationRequested)
 //                return;
             	
-            var httpClient = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
+            var httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
 			
 			httpClient.Timeout = TimeSpan.FromSeconds(timeout);
 
-			WebException error = null;
+			WebException error;
 			try
 			{
 
