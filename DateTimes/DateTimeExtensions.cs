@@ -61,13 +61,18 @@ namespace Sqor.Utils.DateTimes
                 days = days %7;
             }
 
-            if(weeks > 0)
+            if (weeks > 0)
+            {
                 result += weeks + "w";
-            if(days > 0)
-                result += days + "d";
-
-            if(weeks > 0 || days > 0)
                 return result;
+            }
+                
+
+            if (days > 0)
+            {
+                result += days + "d";
+                return result;
+            }
 
             /////////
             int hours = timeSpan.Hours;
