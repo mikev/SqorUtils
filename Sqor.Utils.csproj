@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caches\LruCache.cs" />
+    <Compile Include="Chars\CharExtensions.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
     <Compile Include="DateTimes\DateTimeExtensions.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
     <Compile Include="Images\ImageExtensions.cs" />
     <Compile Include="Drawing\IosBitmap.cs" />
