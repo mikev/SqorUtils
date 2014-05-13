@@ -42,6 +42,11 @@ namespace Sqor.Utils.Net
             headers["Accept-Charset"] = "utf-8;q=0.7,*;q=0.7";
         }
 
+        public string BaseUrl
+        {
+            get { return url; }
+        }
+
         public string Url
         {
             get 
@@ -63,6 +68,11 @@ namespace Sqor.Utils.Net
         {
             get { return acceptHeader; }
             set { acceptHeader = value; }
+        }
+
+        public Dictionary<string, object> QueryString
+        {
+            get { return queryString; }
         }
 
         public static Http To(string url, IHttpAdapter adapter = null)
@@ -262,6 +272,11 @@ namespace Sqor.Utils.Net
             {
                 ContentType = contentType;
                 return this;
+            }
+
+            public Http Http
+            {
+                get { return http; }
             }
 
             public string ResponseContentType
