@@ -58,7 +58,7 @@ namespace Sqor.Utils.Dictionaries
             if (obj == null)
                 return new Dictionary<string, object>();
             if (obj is IDictionary<string, object>)
-                return (IDictionary<string, object>)obj;
+                return new Dictionary<string, object>((IDictionary<string, object>)obj);
             return obj.GetType().GetProperties().ToDictionary(o => o.Name, o => o.GetValue(obj, null));
         }
 
