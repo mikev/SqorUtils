@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Linq;
 using System.IO;
@@ -182,6 +183,11 @@ namespace Sqor.Utils.Net
         public RequestContext Get()
         {
             return new RequestContext(this, "GET");
+        }
+
+        public RequestContext Head()
+        {
+            return new RequestContext(this, "HEAD");
         }
         
         public SendRequestContext Post()

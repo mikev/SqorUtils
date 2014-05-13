@@ -50,22 +50,29 @@ namespace Sqor.Utils.Images
 
         public static string GetFileExtension(this Image image)
         {
-            if (ImageFormat.Jpeg.Equals(image.RawFormat))
-            {
-                return "jpg";
-            }
-            else if (ImageFormat.Png.Equals(image.RawFormat))
-            {
-                return "png";
-            }
-            else if (ImageFormat.Gif.Equals(image.RawFormat))
-            {
-                return "gif";
-            }
-            else
-            {
-                return "foo";
-            }
+            return image.RawFormat.GetFileExtension();
+        }
+
+        public static string GetFileExtension(this ImageFormat format)
+        {
+            var extension = ImageCodecInfo.GetImageEncoders()
+                .First(x => x.FormatID == format.Guid).FilenameExtension
+                .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .First()
+                .Trim('*')
+                .ToLower();
+            return extension;
+        }
+
+        public static string GetMimeType(this Image image)
+        {
+            return image.RawFormat.GetMimeType();
+        }
+
+        public static string GetMimeType(this ImageFormat imageFormat)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+            return codecs.First(codec => codec.FormatID == imageFormat.Guid).MimeType;
         }
 
         public static byte[] SaveToBytes(this Image image, ImageFormat imageFormat = null)
