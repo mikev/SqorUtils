@@ -132,7 +132,6 @@
     <Compile Include="Drawing\ColorExtensions.cs" />
     <Compile Include="Drawing\Font.cs" />
     <Compile Include="Drawing\GraphicsPath.cs" />
-    <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
     <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
