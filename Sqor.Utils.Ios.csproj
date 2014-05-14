@@ -197,7 +197,6 @@
     <Compile Include="Data\NSDataExtensions.cs" />
     <Compile Include="Drawing\UIImageExtensions.cs" />
     <Compile Include="Drawing\Image.cs" />
-    <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Matrix.cs" />
     <Compile Include="Drawing\IosGraphicsPath.cs" />
