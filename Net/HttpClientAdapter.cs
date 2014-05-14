@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Sqor.Utils.Streams;
 using System.Net.Http;
@@ -39,10 +40,22 @@ namespace Sqor.Utils.Net
                 {        
                     httpClientRequest.Content = new StreamContent(request.Input);
                 }
+                else if (request.HttpMethod != "GET")
+                {
+                    httpClientRequest.Content = new ByteArrayContent(new byte[0]);
+                }
+
+                if (httpClientRequest.Content != null && request.Headers.ContainsKey("Content-Type"))
+                {
+                    httpClientRequest.Content.Headers.ContentType = new MediaTypeHeaderValue(request.Headers["Content-Type"]);
+                }
 
                 // Process headers
                 foreach (var header in request.Headers)
                 {
+                    if (header.Key == "Content-Type")
+                        continue;
+
                     httpClientRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
 
                     if (httpClientRequest.Content != null)
