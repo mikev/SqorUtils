@@ -40,7 +40,7 @@ namespace Sqor.Utils.Net
                 {        
                     httpClientRequest.Content = new StreamContent(request.Input);
                 }
-                else if (request.HttpMethod != "GET")
+                else if (!new []{"GET", "HEAD"}.Contains(request.HttpMethod))
                 {
                     httpClientRequest.Content = new ByteArrayContent(new byte[0]);
                 }
