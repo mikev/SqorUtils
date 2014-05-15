@@ -83,6 +83,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Sqor.Utils.Portable">
+      <HintPath>..\SqorUtilsPortable\bin\Debug\Sqor.Utils.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -119,13 +122,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caches\LruCache.cs" />
-    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
-    <Compile Include="DateTimes\DateTimeExtensions.cs" />
-    <Compile Include="DateTimes\DateTimeSpan.cs" />
-    <Compile Include="Delegates\Actions.cs" />
-    <Compile Include="Dictionaries\DictionaryExtensions.cs" />
     <Compile Include="Drawing\Bitmap.cs" />
     <Compile Include="Drawing\Color.cs" />
     <Compile Include="Drawing\ColorExtensions.cs" />
@@ -148,106 +145,13 @@
     <Compile Include="Drawing\UIImageExtensions.cs" />
     <Compile Include="Encryption\Crypto.cs" />
     <Compile Include="EntityFramework\DbSetExtensions.cs" />
-    <Compile Include="Enumerables\EnumerableExtensions.cs" />
-    <Compile Include="Events\EventExtensions.cs" />
-    <Compile Include="Exceptions\ExceptionExtensions.cs" />
     <Compile Include="Files\FileExtensions.cs" />
-    <Compile Include="Functional\FunctionalExtensions.cs" />
-    <Compile Include="Generators\Generate.cs" />
-    <Compile Include="Generics\GenericExtensions.cs" />
-    <Compile Include="Injection\Binding.cs" />
-    <Compile Include="Injection\Cache.cs" />
-    <Compile Include="Injection\ConcurrentCache.cs" />
-    <Compile Include="Injection\ConstantResolver.cs" />
-    <Compile Include="Injection\Container.cs" />
-    <Compile Include="Injection\Context.cs" />
-    <Compile Include="Injection\FactoryResolver.cs" />
-    <Compile Include="Injection\HybridCache.cs" />
-    <Compile Include="Injection\IBinding.cs" />
-    <Compile Include="Injection\ICache.cs" />
-    <Compile Include="Injection\IgnoreAttribute.cs" />
-    <Compile Include="Injection\InjectionModule.cs" />
-    <Compile Include="Injection\Injector.cs" />
-    <Compile Include="Injection\IResolver.cs" />
-    <Compile Include="Injection\IScope.cs" />
-    <Compile Include="Injection\MethodResolver.cs" />
-    <Compile Include="Injection\ReflectionResolver.cs" />
-    <Compile Include="Injection\Request.cs" />
-    <Compile Include="Injection\ResolverFactoryResolver.cs" />
-    <Compile Include="Injection\Scopes\NoScope.cs" />
-    <Compile Include="Injection\Scopes\SingletonScope.cs" />
-    <Compile Include="Injection\Scopes\TransientScope.cs" />
-    <Compile Include="Injection\Scopes\WebRequestScope.cs" />
-    <Compile Include="Json\JsonContractResolver.cs" />
-    <Compile Include="Lists\ListExtensions.cs" />
-    <Compile Include="Logging\BasicLogFormatter.cs" />
-    <Compile Include="Logging\ConsoleLogPrinter.cs" />
-    <Compile Include="Logging\DatePrefixedFormatter.cs" />
-    <Compile Include="Logging\FileLogPrinter.cs" />
-    <Compile Include="Logging\HybridPrinter.cs" />
-    <Compile Include="Logging\IFileManager.cs" />
-    <Compile Include="Logging\ILogFormatter.cs" />
-    <Compile Include="Logging\ILogPrinter.cs" />
-    <Compile Include="Logging\LogContext.cs" />
-    <Compile Include="Logging\LogExtensions.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\MessageType.cs" />
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
-    <Compile Include="Models\ImplicitValue.cs" />
-    <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\ModelCollection.cs" />
-    <Compile Include="Models\ModelMetaData.cs" />
-    <Compile Include="Net\Http.cs" />
-    <Compile Include="Net\IHttpAdapter.cs" />
-    <Compile Include="Net\IHttpRequest.cs" />
-    <Compile Include="Net\IHttpResponse.cs" />
-    <Compile Include="Net\NSUrlExtensions.cs" />
-    <Compile Include="Net\TimeoutWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Net\WebClientAdapter.cs" />
-    <Compile Include="Numbers\NumberExtensions.cs" />
-    <Compile Include="Objects\ObjectExtensions.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />
-    <Compile Include="SqliteLinq\AutoIncrementAttribute.cs" />
-    <Compile Include="SqliteLinq\ColumnAttribute.cs" />
-    <Compile Include="SqliteLinq\DataContext.cs" />
-    <Compile Include="SqliteLinq\DbConnectionExtensions.cs" />
-    <Compile Include="SqliteLinq\Mapping.cs" />
-    <Compile Include="SqliteLinq\MappingManager.cs" />
-    <Compile Include="SqliteLinq\MaxLengthAttribute.cs" />
-    <Compile Include="SqliteLinq\Migrations\ColumnBuilder.cs" />
-    <Compile Include="SqliteLinq\Migrations\CreateMetaTables.cs" />
-    <Compile Include="SqliteLinq\Migrations\IDatabaseDriver.cs" />
-    <Compile Include="SqliteLinq\Migrations\Migration.cs" />
-    <Compile Include="SqliteLinq\Migrations\MigrationManager.cs" />
-    <Compile Include="SqliteLinq\Migrations\MigrationOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\AddColumnOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\CreateTableOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\DropColumnOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\DropTableOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\RenameTableOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\Operations\SqlOperation.cs" />
-    <Compile Include="SqliteLinq\Migrations\SqliteDriver.cs" />
-    <Compile Include="SqliteLinq\Migrations\SqlType.cs" />
-    <Compile Include="SqliteLinq\Migrations\SysColumn.cs" />
-    <Compile Include="SqliteLinq\Migrations\SysDb.cs" />
-    <Compile Include="SqliteLinq\Migrations\SysMigration.cs" />
-    <Compile Include="SqliteLinq\Migrations\SysTable.cs" />
-    <Compile Include="SqliteLinq\Migrations\TableBuilder.cs" />
-    <Compile Include="SqliteLinq\PrimaryKeyAttribute.cs" />
-    <Compile Include="SqliteLinq\SqliteConnectionFactory.cs" />
-    <Compile Include="SqliteLinq\Table.cs" />
-    <Compile Include="SqliteLinq\TableAttribute.cs" />
-    <Compile Include="Streams\StreamExtensions.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
-    <Compile Include="Threading\AsyncLazy.cs" />
-    <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="Threading\WorkerThread.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
-    <Compile Include="Types\Class.cs" />
-    <Compile Include="Types\TypeExtensions.cs" />
     <Compile Include="Web\CookieExtensions.cs" />
     <Compile Include="Web\CustomAttributeExtensions.cs" />
     <Compile Include="Web\InjectionControllerFactory.cs" />
@@ -263,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
