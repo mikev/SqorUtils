@@ -85,7 +85,7 @@ namespace Sqor.Utils.Json
 
             public override Type ConvertedType
             {
-                get { return get.GetPropertyInfo().PropertyType; }
+                get { return get.GetExpressionType(); }
             }
 
             public override object GetValue(object target)
