@@ -64,6 +64,12 @@ namespace Sqor.Utils.Types
             return (PropertyInfo)call.Member;
         }
 
+        public static Type GetExpressionType(this LambdaExpression expression)
+        {
+            var current = expression.Body;
+            return current.Type;
+        }
+
         public static IEnumerable<MemberInfo> GetPropertyPath(this LambdaExpression expression)
         {
             MemberExpression member = expression.Body as MemberExpression;
