@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System;
 
 namespace Sqor.Utils.Files
 {
@@ -54,6 +55,27 @@ namespace Sqor.Utils.Files
             foreach (var file in directory.GetFiles())
             {
                 file.CopyTo(destination + Path.DirectorySeparatorChar + file.Name);
+            }
+        }
+
+        /// ---------------------------------------------------------------
+        /// <summary> Convert from a <i>URL</i> to a <see cref="FileInfo"/>.</summary>
+        /// <param name="url">File URL.
+        /// </param>
+        /// <returns> The equivalent <see cref="FileInfo"/> object, or <i>null</i> if the URL's protocol
+        /// is not <i>file</i>
+        /// </returns>
+        /// ---------------------------------------------------------------
+        public static FileInfo ToFile(this System.Uri url)
+        {
+            if (url.Scheme.Equals("file") == false)
+            {
+                return null;
+            }
+            else
+            {
+                String filename = url.PathAndQuery.Replace('/', Path.DirectorySeparatorChar);
+                return new FileInfo(filename);
             }
         }
     }

@@ -86,9 +86,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Sqor.Utils.Portable">
-      <HintPath>..\SqorUtilsPortable\obj\Release\Sqor.Utils.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -131,7 +128,6 @@
     <Compile Include="Drawing\ColorExtensions.cs" />
     <Compile Include="Drawing\Font.cs" />
     <Compile Include="Drawing\GraphicsPath.cs" />
-    <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
     <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
@@ -151,6 +147,7 @@
     <Compile Include="EntityFramework\DbSetExtensions.cs" />
     <Compile Include="Files\FileExtensions.cs" />
     <Compile Include="Injection\WebRequestScope.cs" />
+    <Compile Include="Injection\TypeFactoryResolver.cs" />
     <Compile Include="Logging\BasicLogFormatter.cs" />
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
@@ -173,6 +170,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SqorUtilsPortable\Sqor.Utils.Portable.csproj">
+      <Project>{88374b2c-6210-4ed7-8139-c9f8f68c77e1}</Project>
+      <Name>Sqor.Utils.Portable</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
