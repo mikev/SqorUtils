@@ -133,6 +133,7 @@
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Identicon.cs" />
     <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
     <Compile Include="Images\ImageExtensions.cs" />
     <Compile Include="Drawing\IosBitmap.cs" />
@@ -149,6 +150,8 @@
     <Compile Include="Encryption\Crypto.cs" />
     <Compile Include="EntityFramework\DbSetExtensions.cs" />
     <Compile Include="Files\FileExtensions.cs" />
+    <Compile Include="Injection\WebRequestScope.cs" />
+    <Compile Include="Logging\BasicLogFormatter.cs" />
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />
