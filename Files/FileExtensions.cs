@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System;
+using System.Linq;
 
 namespace Sqor.Utils.Files
 {
@@ -77,6 +78,12 @@ namespace Sqor.Utils.Files
                 String filename = url.PathAndQuery.Replace('/', Path.DirectorySeparatorChar);
                 return new FileInfo(filename);
             }
+        }
+
+        public static string GetExtension(this string fileName)
+        {
+            var parts = fileName.Split('.');
+            return parts.Last();
         }
     }
 }
