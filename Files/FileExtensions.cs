@@ -1,6 +1,5 @@
-﻿using System.IO;
-using System;
-using System.Linq;
+﻿using System;
+using System.IO;
 
 namespace Sqor.Utils.Files
 {
@@ -80,10 +79,5 @@ namespace Sqor.Utils.Files
             }
         }
 
-        public static string GetExtension(this string fileName)
-        {
-            var parts = fileName.Split('.');
-            return parts.Last();
-        }
     }
 }
