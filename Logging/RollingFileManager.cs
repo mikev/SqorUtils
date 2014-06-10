@@ -24,6 +24,12 @@ namespace Sqor.Utils.Logging
                 // Adjust the date so that it happens at the correct tiem of day.
                 nextRotation = nextRotation.Date.Add(timeOfDay.Value);
             }
+
+            if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            }
+
             OpenFile(DateTime.Now);
         }
 
