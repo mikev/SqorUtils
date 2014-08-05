@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Goheer.EXIF;
+using Sqor.Utils.Logging;
 using Sqor.Utils.Net;
 
 
@@ -338,15 +339,22 @@ namespace Sqor.Utils.Images
         public static void ExifRotate(byte[] bytes, ref Image image)
         {
             var bmp = new Bitmap(new MemoryStream(bytes));
-            var exif = new EXIFextractor(ref bmp, "n");
-            if (exif["Orientation"] != null)
+            try
             {
-                RotateFlipType flip = OrientationToFlipType(exif["Orientation"].ToString());
-
-                if (flip != RotateFlipType.RotateNoneFlipNone)
+                var exif = new EXIFextractor(ref bmp, "n");
+                if (exif["Orientation"] != null)
                 {
-                    image.RotateFlip(flip);
+                    RotateFlipType flip = OrientationToFlipType(exif["Orientation"].ToString());
+
+                    if (flip != RotateFlipType.RotateNoneFlipNone)
+                    {
+                        image.RotateFlip(flip);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.LogError("Error rotating image", e);
             }
             bmp.Dispose();
         }
