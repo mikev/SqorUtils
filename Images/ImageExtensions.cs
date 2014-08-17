@@ -101,7 +101,12 @@ namespace Sqor.Utils.Images
         /// <summary>
         /// Crop the image focus on the center of the image, removing from all sides when necessary.
         /// </summary>
-        CropFocusCenter = 2048
+        CropFocusCenter = 2048, 
+
+        /// <summary>
+        /// If the format is png, convert it to a jpg.
+        /// </summary>
+        PngToJpg = 4096
     }
 
     public static class ImageExtensions
@@ -172,7 +177,7 @@ namespace Sqor.Utils.Images
             return codecs.First(codec => codec.FormatID == imageFormat.Guid).MimeType;
         }
 
-        public static byte[] SaveToBytes(this Image image, ImageFormat imageFormat = null)
+        public static byte[] SaveToBytes(this Image image, ImageFormat imageFormat = null, long quality = 100L)
         {
             imageFormat = ImageFormat.Png;
             using (var stream = new MemoryStream())
@@ -183,7 +188,7 @@ namespace Sqor.Utils.Images
                     {
                         var imageCodecInfo = ImageCodecInfo.GetImageEncoders().First(encoder => String.Compare(encoder.MimeType, "image/jpeg", StringComparison.OrdinalIgnoreCase) == 0);
                         var memoryStream = new MemoryStream();
-                        encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
+                        encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
                         image.Save(memoryStream, imageCodecInfo, encoderParameters);
 
                         return memoryStream.ToArray();
@@ -314,7 +319,12 @@ namespace Sqor.Utils.Images
             if (crop)
                 image = ImageExtensions.CropImage(width, height, fp, image);
 
-            var modifiedBytes = image.SaveToBytes(format);
+            if (transform.HasFlag(ImageTransform.PngToJpg) && format == ImageFormat.Png)
+            {
+                format = ImageFormat.Jpeg;
+            }
+
+            var modifiedBytes = image.SaveToBytes(format, 85L);
             image.Dispose();
             return modifiedBytes;
         }
