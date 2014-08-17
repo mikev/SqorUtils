@@ -319,7 +319,7 @@ namespace Sqor.Utils.Images
             if (crop)
                 image = ImageExtensions.CropImage(width, height, fp, image);
 
-            if (transform.HasFlag(ImageTransform.PngToJpg) && format == ImageFormat.Png)
+            if (transform.HasFlag(ImageTransform.PngToJpg) && format.Guid == ImageFormat.Png.Guid)
             {
                 format = ImageFormat.Jpeg;
             }
