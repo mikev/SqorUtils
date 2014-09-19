@@ -13,7 +13,7 @@ namespace Sqor.Utils.Csvs
             {
                 var input = line;
                 var values = new List<string>();
-                for (var value = ReadNextToken(ref input); input != null; input = ReadNextToken(ref input))
+                for (string value; ReadNextToken(ref input, out value);)
                 {
                     values.Add(value);
                 }
@@ -26,8 +26,14 @@ namespace Sqor.Utils.Csvs
             }
         }
 
-        private static string ReadNextToken(ref string input)
+        private static bool ReadNextToken(ref string input, out string value)
         {
+            if (input == null)
+            {
+                value = null;
+                return false;
+            }
+
             var result = new StringBuilder();
             for (var i = 0; i < input.Length; i++)
             {
@@ -48,8 +54,12 @@ namespace Sqor.Utils.Csvs
                         }
                         else if (newC == '"')
                         {
-                            i = j + 1;
+                            i = j;
                             goto success;
+                        }
+                        else
+                        {
+                            result.Append(newC);
                         }
                     }
                     throw new Exception("No closing quote character found");
@@ -57,7 +67,7 @@ namespace Sqor.Utils.Csvs
                 }
                 else if (c == ',')
                 {
-                    input = input.Substring(i);
+                    input = input.Substring(i + 1);
                     goto done;
                 }
                 else
@@ -67,15 +77,16 @@ namespace Sqor.Utils.Csvs
             }
             input = null;
         done:
-            var value = result.ToString().Trim();
-            return value;
+            value = result.ToString().Trim();
+            return true;
         }
 
         public static IEnumerable<CsvRow> ParseCsv(this string input)
         {
             using (var reader = new StringReader(input))
             {
-                return reader.ParseCsv();
+                foreach (var row in reader.ParseCsv())
+                    yield return row;
             }
         }
 
@@ -83,7 +94,8 @@ namespace Sqor.Utils.Csvs
         {
             using (var reader = new StreamReader(input))
             {
-                return reader.ParseCsv();
+                foreach (var row in reader.ParseCsv())
+                    yield return row;
             }
         }
 
