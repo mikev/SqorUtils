@@ -7,10 +7,16 @@ namespace Sqor.Utils.Csvs
 {
     public static class CsvExtensions
     {
-        public static IEnumerable<CsvRow> ParseCsv(this TextReader reader)
+        public static IEnumerable<CsvRow> ParseCsv(this TextReader reader, bool hasHeaderRow = false)
         {
+            var skippedHeaderRow = !hasHeaderRow;
             for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
             {
+                if (!skippedHeaderRow)
+                {
+                    skippedHeaderRow = true;
+                    continue;
+                }
                 var input = line;
                 var values = new List<string>();
                 for (string value; ReadNextToken(ref input, out value);)
@@ -90,11 +96,11 @@ namespace Sqor.Utils.Csvs
             }
         }
 
-        public static IEnumerable<CsvRow> ParseCsv(this Stream input) 
+        public static IEnumerable<CsvRow> ParseCsv(this Stream input, bool hasHeaderRow = false) 
         {
             using (var reader = new StreamReader(input))
             {
-                foreach (var row in reader.ParseCsv())
+                foreach (var row in reader.ParseCsv(hasHeaderRow))
                     yield return row;
             }
         }
