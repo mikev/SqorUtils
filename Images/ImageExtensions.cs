@@ -223,6 +223,15 @@ namespace Sqor.Utils.Images
             return scaled;
         }
 
+        /// <summary>
+        /// Applies image transformations using Imagic Magick, which requires C++ redistributable to be installed on servers (http://www.microsoft.com/en-us/download/details.aspx?id=30679).
+        /// </summary>
+        /// <param name="origUrl"></param>
+        /// <param name="transform"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="maxFileSizeInBytes"></param>
+        /// <returns></returns>
         public static async Task<byte[]> TransformImage(string origUrl, ImageTransform transform, int? width = null, int? height = null, int? maxFileSizeInBytes = null)
         {
             if (string.IsNullOrWhiteSpace(origUrl))
