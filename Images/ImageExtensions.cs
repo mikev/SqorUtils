@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Goheer.EXIF;
+using ImageMagick;
 using Sqor.Utils.Logging;
 using Sqor.Utils.Net;
 
@@ -106,7 +107,13 @@ namespace Sqor.Utils.Images
         /// <summary>
         /// If the format is png, convert it to a jpg.
         /// </summary>
-        PngToJpg = 4096
+        [Obsolete("Use ConvertToJpg instead.")]
+        PngToJpg = 4096,
+
+        /// <summary>
+        /// Convert image to jpeg, may be ignored for animated gifs in the future.
+        /// </summary>
+        ConvertToJpg = 4096
     }
 
     public static class ImageExtensions
@@ -216,215 +223,149 @@ namespace Sqor.Utils.Images
             return scaled;
         }
 
-        public static async Task<byte[]> TransformImage(string origUrl, ImageTransform transform, int? width = null, int? height = null)
+        /// <summary>
+        /// Applies image transformations using Imagic Magick, which requires C++ redistributable to be installed on servers (http://www.microsoft.com/en-us/download/details.aspx?id=30679).
+        /// </summary>
+        /// <param name="origUrl"></param>
+        /// <param name="transform"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="maxFileSizeInBytes"></param>
+        /// <returns></returns>
+        public static async Task<byte[]> TransformImage(string origUrl, ImageTransform transform, int? width = null, int? height = null, int? maxFileSizeInBytes = null)
         {
             if (string.IsNullOrWhiteSpace(origUrl))
             {
                 throw new ArgumentException("Image URL must be provided.", "origUrl");
             }
 
-            var bytes = await Http.To(origUrl).Get().AsBinary();
-            var image = Image.FromStream(new MemoryStream(bytes));
-            if (width == null)
-            {
-                width = image.Width;
-            }
-            if (height == null)
-            {
-                height = image.Height;
-            }
-            if (width <= 0 || height <= 0)
-            {
-                // height and width must be greater than 0.
-                throw new ArgumentException("Height and width must be greater than 0.");
-            }
-            var format = image.RawFormat;
-
             if (transform == ImageTransform.None)
-                throw new Exception("I can only apply transformations.");
-
-            if (transform.HasFlag(ImageTransform.RotateExif))
             {
-                ImageExtensions.ExifRotate(bytes, ref image);
+                throw new Exception("I can only apply transformations");
             }
 
-            var sm = ScaleMode.None;
-            if (transform.HasFlag(ImageTransform.ScaleContainBoth))
+            var bytes = await Http.To(origUrl).Get().AsBinary();
+            using (var image = new MagickImage(bytes))
             {
-                sm = ScaleMode.ContainBoth;
-            }
-            else if (transform.HasFlag(ImageTransform.ScaleFitBoth))
-            {
-                sm = ScaleMode.FitBoth;
-            }
-            else if (transform.HasFlag(ImageTransform.ScaleFitHeight))
-            {
-                sm = ScaleMode.FitHeight;
-            }
-            else if (transform.HasFlag(ImageTransform.ScaleFitWidth))
-            {
-                sm = ScaleMode.FitWidth;
-            }
-
-            image = ImageExtensions.ScaleImage(width.GetValueOrDefault(), height.GetValueOrDefault(), sm, image);
-
-            if (image.Width < width)
-            {
-                width = image.Width;
-            }
-            if (image.Height < height)
-            {
-                height = image.Height;
-            }
-
-            var crop = false;
-            var fp = FocusPoint.SixthDownCenter;
-
-            if (transform.HasFlag(ImageTransform.CropFocusBottomCenter))
-            {
-                crop = true;
-                fp = FocusPoint.BottomCenter;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusBottomLeft))
-            {
-                crop = true;
-                fp = FocusPoint.BottomLeft;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusCenter))
-            {
-                crop = true;
-                fp = FocusPoint.Center;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusObjects))
-            {
-                crop = true;
-                fp = FocusPoint.Objects;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusSixthDownCenter))
-            {
-                crop = true;
-                fp = FocusPoint.SixthDownCenter;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusTopCenter))
-            {
-                crop = true;
-                fp = FocusPoint.TopCenter;
-            }
-            else if (transform.HasFlag(ImageTransform.CropFocusTopLeft))
-            {
-                crop = true;
-                fp = FocusPoint.TopLeft;
-            }
-
-            if (crop)
-                image = ImageExtensions.CropImage(width, height, fp, image);
-
-            if (transform.HasFlag(ImageTransform.PngToJpg) && format.Guid == ImageFormat.Png.Guid)
-            {
-                format = ImageFormat.Jpeg;
-            }
-
-            var modifiedBytes = image.SaveToBytes(format, 85L);
-            image.Dispose();
-            return modifiedBytes;
-        }
-
-        public static RotateFlipType GetExifRotateFlip(byte[] bytes)
-        {
-            var bmp = new Bitmap(new MemoryStream(bytes));
-            var exif = new EXIFextractor(ref bmp, "n");
-            var flip = RotateFlipType.RotateNoneFlipNone;
-            if (exif["Orientation"] != null)
-            {
-                flip = OrientationToFlipType(exif["Orientation"].ToString());
-            }
-            return flip;
-        }
-
-        /// <summary>
-        /// Rotates the image based on the Exif data.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <param name="image"></param>
-        public static void ExifRotate(byte[] bytes, ref Image image)
-        {
-            var bmp = new Bitmap(new MemoryStream(bytes));
-            try
-            {
-                var exif = new EXIFextractor(ref bmp, "n");
-                if (exif["Orientation"] != null)
+                if (width == null)
                 {
-                    RotateFlipType flip = OrientationToFlipType(exif["Orientation"].ToString());
+                    width = image.Width;
+                }
+                if (height == null)
+                {
+                    height = image.Height;
+                }
+                if (width <= 0 || height <= 0)
+                {
+                    // height and width must be greater than 0.
+                    throw new ArgumentException("Height and width must be greater than 0.");
+                }
 
-                    if (flip != RotateFlipType.RotateNoneFlipNone)
+                if (transform.HasFlag(ImageTransform.RotateExif))
+                {
+                    image.AutoOrient();
+                }
+
+                var sm = ScaleMode.None;
+                if (transform.HasFlag(ImageTransform.ScaleContainBoth))
+                {
+                    sm = ScaleMode.ContainBoth;
+                }
+                else if (transform.HasFlag(ImageTransform.ScaleFitBoth))
+                {
+                    sm = ScaleMode.FitBoth;
+                }
+                else if (transform.HasFlag(ImageTransform.ScaleFitHeight))
+                {
+                    sm = ScaleMode.FitHeight;
+                }
+                else if (transform.HasFlag(ImageTransform.ScaleFitWidth))
+                {
+                    sm = ScaleMode.FitWidth;
+                }
+
+                ScaleImage(width.GetValueOrDefault(), height.GetValueOrDefault(), sm, image);
+
+                if (image.Width < width)
+                {
+                    width = image.Width;
+                }
+                if (image.Height < height)
+                {
+                    height = image.Height;
+                }
+
+                var crop = false;
+                var fp = FocusPoint.SixthDownCenter;
+
+                if (transform.HasFlag(ImageTransform.CropFocusBottomCenter))
+                {
+                    crop = true;
+                    fp = FocusPoint.BottomCenter;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusBottomLeft))
+                {
+                    crop = true;
+                    fp = FocusPoint.BottomLeft;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusCenter))
+                {
+                    crop = true;
+                    fp = FocusPoint.Center;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusObjects))
+                {
+                    crop = true;
+                    fp = FocusPoint.Objects;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusSixthDownCenter))
+                {
+                    crop = true;
+                    fp = FocusPoint.SixthDownCenter;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusTopCenter))
+                {
+                    crop = true;
+                    fp = FocusPoint.TopCenter;
+                }
+                else if (transform.HasFlag(ImageTransform.CropFocusTopLeft))
+                {
+                    crop = true;
+                    fp = FocusPoint.TopLeft;
+                }
+
+                if (crop)
+                {
+                    CropImage(width, height, fp, image);
+                }
+
+                if (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif)
+                {
+                    image.Format = MagickFormat.Jpeg;
+                    image.Interlace = Interlace.Plane;
+                }
+
+                image.Strip();
+                var result = image.ToByteArray();
+
+                // force file size
+                if (maxFileSizeInBytes.HasValue)
+                {
+                    while (result.Length > maxFileSizeInBytes)
                     {
-                        image.RotateFlip(flip);
+                        image.Scale(new Percentage(75.0));
+                        result = image.ToByteArray();
                     }
                 }
+
+                return result;
             }
-            catch (Exception e)
-            {
-                Logger.Instance.LogError("Error rotating image", e);
-            }
-            bmp.Dispose();
         }
 
-        private static RotateFlipType OrientationToFlipType(string orientation)
-        {
-            var rv = RotateFlipType.RotateNoneFlipNone;
-
-            switch (int.Parse(orientation))
-            {
-                case 1:
-                    rv = RotateFlipType.RotateNoneFlipNone;
-                    break;
-                case 2:
-                    rv = RotateFlipType.RotateNoneFlipX;
-                    break;
-                case 3:
-                    rv = RotateFlipType.Rotate180FlipNone;
-                    break;
-                case 4:
-                    rv = RotateFlipType.Rotate180FlipX;
-                    break;
-                case 5:
-                    rv = RotateFlipType.Rotate90FlipX;
-                    break;
-                case 6:
-                    rv = RotateFlipType.Rotate90FlipNone;
-                    break;
-                case 7:
-                    rv = RotateFlipType.Rotate270FlipX;
-                    break;
-                case 8:
-                    rv = RotateFlipType.Rotate270FlipNone;
-                    break;
-            }
-            return rv;
-        }
-
-        public static Image CropImage(int? width, int? height, FocusPoint focus, Image image)
+        public static void CropImage(int? width, int? height, FocusPoint focus, MagickImage image)
         {
             var top = 0;
             var left = 0;
-            if (focus == FocusPoint.Objects)
-            {
-                var res = GetObjectFocusPoint(ref image);
-                if (res == null || !res.Any())
-                {
-                    // if no objects found, default to:
-                    focus = FocusPoint.SixthDownCenter;
-                }
-                else
-                {
-                    var subject = res.First();
-                    // TODO: pick a better focal point.. the biggest object or get the most in the viewport 
-
-                    // try to center around center of subject
-                    top = (int)Math.Max(0, (subject.Top + subject.Height / 2.0) - (height.GetValueOrDefault() / 2.0));
-                    left = (int)Math.Max(0, (subject.Left + subject.Width / 2.0) - (width.GetValueOrDefault() / 2.0));
-                }
-            }
             switch (focus)
             {
                 case FocusPoint.TopLeft:
@@ -457,108 +398,64 @@ namespace Sqor.Utils.Images
                     left = (int)Math.Max(0, (image.Width / 2.0) - (width.GetValueOrDefault() / 2.0));
                     break;
             }
-            image = image.Crop(left, top, width.GetValueOrDefault(), height.GetValueOrDefault(), width.GetValueOrDefault(),
-                height.GetValueOrDefault());
-            return image;
+            var g = new MagickGeometry(left, top, width.GetValueOrDefault(), height.GetValueOrDefault());
+            image.Crop(g);
         }
 
-        public static Image ScaleImage(int width, int height, ScaleMode scale, Image image)
+        public static void ScaleImage(int width, int height, ScaleMode scale, MagickImage image)
         {
+            if (scale == ScaleMode.None)
+            {
+                return;
+            }
+
             int scaledHeight = height;
             int scaledWidth = width;
-            if (scale != ScaleMode.None)
+            var aspectRatio = ((double)image.Width) / image.Height;
+
+            var widthScaledToHeight = (int)(aspectRatio * height);
+            var heightScaledToWidth = (int)(width / aspectRatio);
+            switch (scale)
             {
-                var aspectRatio = ((double)image.Width) / image.Height;
+                case ScaleMode.ContainBoth:
 
-                var widthScaledToHeight = (int)(aspectRatio * height);
-                var heightScaledToWidth = (int)(width / aspectRatio);
-                switch (scale)
-                {
-                    case ScaleMode.ContainBoth:
-
-                        if (widthScaledToHeight < width)
-                        {
-                            scaledHeight = heightScaledToWidth;
-                        }
-                        else if (heightScaledToWidth < height)
-                        {
-                            scaledWidth = widthScaledToHeight;
-                        }
-                        else
-                        {
-                            scaledHeight = heightScaledToWidth;
-                        }
-                        break;
-                    case ScaleMode.FitBoth:
-                        if (widthScaledToHeight > width)
-                        {
-                            scaledHeight = heightScaledToWidth;
-                        }
-                        else if (heightScaledToWidth > height)
-                        {
-                            scaledWidth = widthScaledToHeight;
-                        }
-                        else
-                        {
-                            scaledHeight = heightScaledToWidth;
-                        }
-                        break;
-                    case ScaleMode.FitHeight:
-                        // set the height to the max value.
-                        scaledWidth = widthScaledToHeight;
-                        break;
-                    case ScaleMode.FitWidth:
+                    if (widthScaledToHeight < width)
+                    {
                         scaledHeight = heightScaledToWidth;
-                        break;
-                }
-                image = image.Scale(scaledWidth, scaledHeight);
+                    }
+                    else if (heightScaledToWidth < height)
+                    {
+                        scaledWidth = widthScaledToHeight;
+                    }
+                    else
+                    {
+                        scaledHeight = heightScaledToWidth;
+                    }
+                    break;
+                case ScaleMode.FitBoth:
+                    if (widthScaledToHeight > width)
+                    {
+                        scaledHeight = heightScaledToWidth;
+                    }
+                    else if (heightScaledToWidth > height)
+                    {
+                        scaledWidth = widthScaledToHeight;
+                    }
+                    else
+                    {
+                        scaledHeight = heightScaledToWidth;
+                    }
+                    break;
+                case ScaleMode.FitHeight:
+                    // set the height to the max value.
+                    scaledWidth = widthScaledToHeight;
+                    break;
+                case ScaleMode.FitWidth:
+                    scaledHeight = heightScaledToWidth;
+                    break;
             }
-            return image;
+            image.Scale(scaledWidth, scaledHeight);
         }
 
-        public static Rectangle[] GetObjectFocusPoint(ref Image img)
-        {
-            if (img == null)
-            {
-                throw new ArgumentNullException("img", "Image must not be null.");
-            }
-            // try to detect faces
-            /*
-            var filePath = HostingEnvironment.MapPath(@"~\App_data\haarcascade_eye.xml");
-            if (filePath == null)
-                throw new Exception("haarcascade_eye.xml not found.");
-            var xml = File.ReadAllText(filePath);
-            */
-            /*
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(HaarCascadeClassifer.My.Resources.Resources.haarcascade_frontalface_alt);
-            //xmlDoc.LoadXml(xml);
-            var detector = new HaarDetector(xmlDoc);
-            int maxDetCount = int.MaxValue;
-            int minNRectCount = 0;
-            float firstScale = detector.Size2Scale(10);
-            float maxScale = detector.Size2Scale(400);
-            float scaleMult = 1.1f;
-            float sizeMultForNesRectCon = 0.3f;
-            float slidingRatio = 0.2f;
-            Pen pen = null;
-#if DEBUG
-            // for debugging purposes outline object.
-            pen = new Pen(Brushes.Red, 4);
-#endif
-
-            var detectorParameters = new HaarDetector.DetectionParams(maxDetCount, minNRectCount,
-                firstScale, maxScale, scaleMult, sizeMultForNesRectCon, slidingRatio, pen);
-            var bmp = new Bitmap(img);
-            var res = detector.Detect(ref bmp, detectorParameters);
-
-#if DEBUG
-            // for debugging purposes outline object.
-            img = bmp;
-#endif
-            return res.DetectedOLocs;
-             */
-            return null;
-        }
     }
 }
