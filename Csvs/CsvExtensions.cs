@@ -2,11 +2,69 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Sqor.Utils.Enumerables;
 
 namespace Sqor.Utils.Csvs
 {
     public static class CsvExtensions
     {
+        public class CsvColumn<T, TValue> : ICsvColumn<T>
+        {
+            public string Name { get; set; }
+            public Func<T, TValue> Getter { get; set; }
+
+            Func<T, object> ICsvColumn<T>.Getter
+            {
+                get { return x => Getter(x); }
+            }
+        }
+
+        public interface ICsvColumn<in T>
+        {
+            string Name { get; }
+            Func<T, object> Getter { get; }
+        }
+
+        public class ColumnCreator<T>
+        {
+            internal List<ICsvColumn<T>> columns = new List<ICsvColumn<T>>();
+
+            public void Column<TValue>(string name, Func<T, TValue> getter)
+            {
+                columns.Add(new CsvColumn<T, TValue> { Name = name, Getter = getter });
+            }
+        }
+
+        public static string WriteCsv<T>(this IEnumerable<T> rows, Action<ColumnCreator<T>> columns)
+        {
+            var creator = new ColumnCreator<T>();
+            columns(creator);
+
+            var builder = new StringBuilder();
+            foreach (var column in creator.columns.SelectPosition())
+            {
+                builder.Append(column.Item.Name);
+                if (!column.IsLast)
+                    builder.Append(",");
+            }
+            builder.AppendLine();
+
+            foreach (var row in rows)
+            {
+                foreach (var column in creator.columns.SelectPosition())
+                {
+                    var value = column.Item.Getter(row);
+                    if (value != null)
+                        builder.Append(value);
+                    if (!column.IsLast)
+                        builder.Append(",");
+                }
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
         public static IEnumerable<CsvRow> ParseCsv(this TextReader reader, bool hasHeaderRow = false)
         {
             var skippedHeaderRow = !hasHeaderRow;
