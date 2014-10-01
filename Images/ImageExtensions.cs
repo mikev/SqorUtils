@@ -244,7 +244,12 @@ namespace Sqor.Utils.Images
                 throw new Exception("I can only apply transformations");
             }
 
-            var bytes = await Http.To(origUrl).Get().AsBinary();
+            var downloadError = false;
+            var bytes = await Http.To(origUrl).Get().WhenStatusIs(x => (int)x < 200 || (int)x >= 300).ReturnTrue(x => downloadError = x).AsBinary();
+            if (downloadError || bytes == null || bytes.Length == 0)
+            {
+                throw new ArgumentException(string.Format("Unable to download image ({0})", origUrl));
+            }
             using (var image = new MagickImage(bytes))
             {
                 if (width == null)
