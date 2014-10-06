@@ -344,7 +344,7 @@ namespace Sqor.Utils.Images
                     CropImage(width, height, fp, image);
                 }
 
-                if (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif)
+                if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
                 {
                     image.Format = MagickFormat.Jpeg;
                     image.Interlace = Interlace.Plane;
