@@ -54,6 +54,8 @@ namespace Sqor.Utils.Csvs
                 foreach (var column in creator.columns.SelectPosition())
                 {
                     var value = column.Item.Getter(row);
+                    if (value is string && ((string)value).Contains(","))
+                        value = "\"" + ((string)value).Replace("\"", "\"\"") + "\"";
                     if (value != null)
                         builder.Append(value);
                     if (!column.IsLast)
@@ -107,17 +109,18 @@ namespace Sqor.Utils.Csvs
                     for (var j = i + 1; j < input.Length; j++)
                     {
                         var newC = input[j];
-                        if (newC == '\\')
+                        if (newC == '\"')
                         {
-                            if (j + 1 < input.Length) 
-                                throw new Exception("Invalid escape sequence: no input after escape character");
-                            var nextC = input[j + 1];
-                            if (nextC != '\\' && nextC != '\"')
-                                throw new Exception("Invalid escape sequence: '" + nextC + "' does not need to be escaped");
-                            result.Append(nextC);
-                        }
-                        else if (newC == '"')
-                        {
+                            if (j < input.Length - 1)
+                            {
+                                var nextC = input[j + 1];
+                                if (nextC == '"')
+                                {
+                                    result.Append(newC);
+                                    j++;
+                                    continue;
+                                }
+                            }
                             i = j;
                             goto success;
                         }
