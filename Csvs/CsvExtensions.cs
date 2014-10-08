@@ -148,11 +148,11 @@ namespace Sqor.Utils.Csvs
             return true;
         }
 
-        public static IEnumerable<CsvRow> ParseCsv(this string input)
+        public static IEnumerable<CsvRow> ParseCsv(this string input, bool hasHeaderRow = false)
         {
             using (var reader = new StringReader(input))
             {
-                foreach (var row in reader.ParseCsv())
+                foreach (var row in reader.ParseCsv(hasHeaderRow))
                     yield return row;
             }
         }
