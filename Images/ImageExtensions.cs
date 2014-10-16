@@ -113,7 +113,9 @@ namespace Sqor.Utils.Images
         /// <summary>
         /// Convert image to jpeg, may be ignored for animated gifs in the future.
         /// </summary>
-        ConvertToJpg = 4096
+        ConvertToJpg = 4096,
+
+        AddPlayButton = 8192
     }
 
     public static class ImageExtensions
@@ -337,6 +339,16 @@ namespace Sqor.Utils.Images
                 {
                     crop = true;
                     fp = FocusPoint.TopLeft;
+                }
+
+                if (transform.HasFlag(ImageTransform.AddPlayButton))
+                {
+                    var playButtonBytes = await Http.To("http://www.iconsdb.com/icons/download/dark-gray/video-play-3-512.png")
+                        .Get().AsBinary();
+                    var playButtonImage = new ImageMagick.MagickImage(playButtonBytes);
+                    playButtonImage.Scale(Math.Min(image.Width, image.Height), Math.Min(image.Width, image.Height));
+
+                    image.Composite(playButtonImage, Gravity.Center, CompositeOperator.Atop);
                 }
 
                 if (crop)
