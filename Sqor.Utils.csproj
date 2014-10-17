@@ -143,6 +143,7 @@
     <Compile Include="Drawing\Font.cs" />
     <Compile Include="Drawing\GraphicsPath.cs" />
     <Compile Include="Drawing\Image.cs" />
+    <Compile Include="Emit\TypeBuilderUtils.cs" />
     <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
     <Compile Include="Images\ImageExtensions.cs" />
