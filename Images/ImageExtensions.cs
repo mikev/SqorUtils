@@ -378,7 +378,26 @@ namespace Sqor.Utils.Images
 
                 if (transform.HasFlag(ImageTransform.CropToCircle))
                 {
-                    using (var circle = new DrawableCircle(image.Width/2.0, image.Height/2.0, image.Width/2.0, 0))
+                    var widthCenter = (int)(image.Width/2.0);
+                    var heightCenter = (int)(image.Height/2.0);
+
+                    var edgeX = 0;
+                    var edgeY = 0;
+
+                    if (image.Width > image.Height)
+                    {
+                        // wider than tall
+                        edgeX = widthCenter;
+                        edgeY = 2;
+                    }
+                    else
+                    {
+                        // taller than wide, or square
+                        edgeX = 2;
+                        edgeY = heightCenter;
+                    }
+
+                    using (var circle = new DrawableCircle(widthCenter, heightCenter, edgeX, edgeY))
                     {
                         using (var circleMask = new MagickImage(image))
                         {
@@ -400,15 +419,14 @@ namespace Sqor.Utils.Images
                 {
                     using (var newImage = new MagickImage(image))
                     {
-                        /*
                         using (var black = new MagickImage(newImage))
                         {
+                            black.Transparent(MagickColor.Transparent);
                             black.Evaluate(Channels.RGB, EvaluateOperator.Set, 0);
-                            black.Evaluate(Channels.Alpha, EvaluateOperator.Set, .20);
+                            black.Evaluate(Channels.Alpha, EvaluateOperator.Set, 150);
                             
                             newImage.Composite(black, Gravity.Center, CompositeOperator.Atop);
                         }
-                        */
 
                     newImage.Blur(10.0, 10.0); //newImage.Blur(40.0, 20.0);
 
