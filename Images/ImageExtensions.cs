@@ -388,12 +388,12 @@ namespace Sqor.Utils.Images
                     {
                         // wider than tall
                         edgeX = widthCenter;
-                        edgeY = 2;
+                        edgeY = 0;
                     }
                     else
                     {
                         // taller than wide, or square
-                        edgeX = 2;
+                        edgeX = 0;
                         edgeY = heightCenter;
                     }
 
@@ -419,20 +419,21 @@ namespace Sqor.Utils.Images
                 {
                     using (var newImage = new MagickImage(image))
                     {
+                        newImage.Grayscale(PixelIntensityMethod.RMS);
                         using (var black = new MagickImage(newImage))
                         {
                             black.Transparent(MagickColor.Transparent);
                             black.Evaluate(Channels.RGB, EvaluateOperator.Set, 0);
-                            black.Evaluate(Channels.Alpha, EvaluateOperator.Set, 150);
+                            black.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, .7);
                             
-                            newImage.Composite(black, Gravity.Center, CompositeOperator.Atop);
+                            newImage.Composite(black, Gravity.Center, CompositeOperator.Overlay);
                         }
 
                     newImage.Blur(10.0, 10.0); //newImage.Blur(40.0, 20.0);
 
                     //newImage.Grayscale(PixelIntensityMethod.Average);
                        
-                    newImage.Scale(600, 600);
+                    //newImage.Scale(600, 600);
 
                     /*
                         image.Scale(120, 120);
@@ -451,7 +452,6 @@ namespace Sqor.Utils.Images
                     using (var logo = new MagickImage(logoBytes))
                     {
                         logo.BackgroundColor = new MagickColor(Color.Transparent);
-
                         newImage.Composite(logo, Gravity.Center, CompositeOperator.Atop);
                         /*
                         newImage.Composite(logo, 
