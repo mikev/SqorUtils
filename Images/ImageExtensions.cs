@@ -5,7 +5,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Web.Profile;
 using Goheer.EXIF;
 using ImageMagick;
 using Sqor.Utils.Logging;
@@ -115,7 +117,9 @@ namespace Sqor.Utils.Images
         /// </summary>
         ConvertToJpg = 4096,
 
-        AddPlayButton = 8192
+        AddPlayButton = 8192,
+        CrosspostPresentation = 16384,
+        CropToCircle = 32768 
     }
 
     public static class ImageExtensions
@@ -223,6 +227,17 @@ namespace Sqor.Utils.Images
                     GraphicsUnit.Pixel);
             }
             return scaled;
+        }
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
 
         /// <summary>
@@ -351,27 +366,104 @@ namespace Sqor.Utils.Images
                     image.Composite(playButtonImage, Gravity.Center, CompositeOperator.Atop);
                 }
 
+
                 if (crop)
                 {
                     CropImage(width, height, fp, image);
                 }
 
-                if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
+                image.Strip();
+
+                byte[] result = null;
+
+                if (transform.HasFlag(ImageTransform.CropToCircle))
                 {
-                    image.Format = MagickFormat.Jpeg;
-                    image.Interlace = Interlace.Plane;
+                    using (var circle = new DrawableCircle(image.Width/2.0, image.Height/2.0, image.Width/2.0, 0))
+                    {
+                        using (var circleMask = new MagickImage(image))
+                        {
+                            circleMask.Format = MagickFormat.Png;
+                            circleMask.Transparent(MagickColor.Transparent);
+                            circleMask.Evaluate(Channels.All, EvaluateOperator.Set, 0);
+                            circleMask.FillColor = new MagickColor(Color.White);
+                            circleMask.Draw(circle);
+
+                            image.Format = MagickFormat.Png;
+                            image.Transparent(MagickColor.Transparent);
+                            image.Composite(circleMask, Gravity.Center, CompositeOperator.DstIn);
+                        }
+                    }
+                    
                 }
 
-                image.Strip();
-                var result = image.ToByteArray();
-
-                // force file size
-                if (maxFileSizeInBytes.HasValue)
+                if (transform.HasFlag(ImageTransform.CrosspostPresentation))
                 {
-                    while (result.Length > maxFileSizeInBytes)
+                    using (var newImage = new MagickImage(image))
                     {
-                        image.Scale(new Percentage(75.0));
-                        result = image.ToByteArray();
+                        /*
+                        using (var black = new MagickImage(newImage))
+                        {
+                            black.Evaluate(Channels.RGB, EvaluateOperator.Set, 0);
+                            black.Evaluate(Channels.Alpha, EvaluateOperator.Set, .20);
+                            
+                            newImage.Composite(black, Gravity.Center, CompositeOperator.Atop);
+                        }
+                        */
+
+                    newImage.Blur(10.0, 10.0); //newImage.Blur(40.0, 20.0);
+
+                    //newImage.Grayscale(PixelIntensityMethod.Average);
+                       
+                    newImage.Scale(600, 600);
+
+                    /*
+                        image.Scale(120, 120);
+                        //image.Rotate(9);
+                        newImage.Composite(image, 
+                        new MagickGeometry(newImage.Width - (image.Width + 20),
+                            (int)(newImage.Height/2.0 - image.Height/2.0), 
+                            image.Width, 
+                            image.Height
+                            ), 
+                        CompositeOperator.Atop);
+                    */
+
+                        
+                    var logoBytes = File.ReadAllBytes(Path.Combine(AssemblyDirectory, "../Images/sqor-sports-logo-web.png"));
+                    using (var logo = new MagickImage(logoBytes))
+                    {
+                        logo.BackgroundColor = new MagickColor(Color.Transparent);
+
+                        newImage.Composite(logo, Gravity.Center, CompositeOperator.Atop);
+                        /*
+                        newImage.Composite(logo, 
+                            new MagickGeometry(20,
+                                (int)(newImage.Height/2.0 - logo.Height/2.0), 
+                                logo.Width, 
+                                logo.Height
+                                ), 
+                            CompositeOperator.Atop);
+                        */
+                    }
+                    result = newImage.ToByteArray(MagickFormat.Png);
+                    }
+                }
+                else
+                {
+                    if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
+                    {
+                        image.Format = MagickFormat.Jpeg;
+                        image.Interlace = Interlace.Plane;
+                    }
+                    result = image.ToByteArray();
+                    // force file size
+                    if (maxFileSizeInBytes.HasValue)
+                    {
+                        while (result.Length > maxFileSizeInBytes)
+                        {
+                            image.Scale(new Percentage(75.0));
+                            result = image.ToByteArray();
+                        }
                     }
                 }
 
