@@ -370,142 +370,153 @@ namespace Sqor.Utils.Images
 
                 image.Strip();
 
-                byte[] result = null;
 
                 if (transform.HasFlag(ImageTransform.CropToCircle))
                 {
-                    var widthCenter = (int)(image.Width/2.0);
-                    var heightCenter = (int)(image.Height/2.0);
-
-                    var edgeX = 0;
-                    var edgeY = 0;
-
-                    if (image.Width > image.Height)
-                    {
-                        // wider than tall
-                        edgeX = widthCenter;
-                        edgeY = 0;
-                    }
-                    else
-                    {
-                        // taller than wide, or square
-                        edgeX = 0;
-                        edgeY = heightCenter;
-                    }
-
-                    // force image to png to support transparency 
-                    image.Format = MagickFormat.Png;
-                    image.Transparent(MagickColor.Transparent);
-                    using (var circleMask = new MagickImage(MagickColor.Transparent, image.Width, image.Height))
-                    {
-                        circleMask.Transparent(MagickColor.Transparent);
-                        circleMask.FillColor = new MagickColor(Color.White);
-                        using (var circle = new DrawableCircle(widthCenter, heightCenter, edgeX, edgeY))
-                        {
-                            circleMask.Draw(circle);
-                        }
-                        image.Composite(circleMask, Gravity.Center, CompositeOperator.DstIn);
-                    }
+                    CropImageToCircle(image);
                 }
 
                 if (transform.HasFlag(ImageTransform.CrosspostPresentation))
                 {
-                    using (var backgroundImage = new MagickImage(image))
-                    {
-                        backgroundImage.Grayscale(PixelIntensityMethod.RMS);
-                        backgroundImage.Blur(10.0, 10.0); 
-                        
-                        var logoBytes = File.ReadAllBytes(Path.Combine(AssemblyDirectory, "../Images/sqor-sports-logo-web.png"));
-                        using (var logo = new MagickImage(logoBytes))
-                        {
-                            const int borderThickness = 3;
-                            int paddingThickness = (int)((3.0/600.0)*backgroundImage.Width);
-                            int semiOpaqueBorderThickness = 2 * paddingThickness;
-                            int mainContentHeight = (int)((150.0/640.0) * backgroundImage.Height);
-                            int logoWidth = (int) ((330.0/600.0)*backgroundImage.Width);
-
-                            ScaleImage(logoWidth, mainContentHeight - 30, ScaleMode.FitBoth, logo);
-                            ScaleImage(mainContentHeight, mainContentHeight, ScaleMode.FitBoth, image);
-
-                            var logoWhiteBackgroundWidth = backgroundImage.Width - image.Width - 3*paddingThickness - 4*borderThickness; 
-                            var logoXOffset = (int)(((double)logoWhiteBackgroundWidth - logo.Width)/2.0);
-
-                            // Semi Transparent box surrounding sqor logo and image thumbnail.
-                            var semiTransparentBoxHeight = mainContentHeight + 2*borderThickness + 2*semiOpaqueBorderThickness;
-                            AddBackgroundBox(
-                                backgroundImage,
-                                width: backgroundImage.Width,
-                                height: semiTransparentBoxHeight,
-                                xOffset: 0,
-                                semiTransparent: true);
-
-                            // dark gray border around sqor logo box
-                            AddBorderBox(
-                                backgroundImage, 
-                                color: new MagickColor(Color.FromArgb(128, 128, 128)), 
-                                xOffset: paddingThickness,
-                                width: logoWhiteBackgroundWidth + 2*borderThickness, 
-                                height: mainContentHeight+2*borderThickness, 
-                                cornerSize: 2 * borderThickness);
-
-                            // white background behind sqor logo
-                            AddBackgroundBox(
-                                backgroundImage,
-                                width: logoWhiteBackgroundWidth,
-                                height: mainContentHeight,
-                                xOffset: paddingThickness + borderThickness,
-                                semiTransparent: false);
-
-                            // Sqor Logo
-                            backgroundImage.Composite(logo, 
-                                new MagickGeometry(logoXOffset + borderThickness + paddingThickness,
-                                    (int)(backgroundImage.Height/2.0 - logo.Height/2.0), 
-                                    logo.Width, 
-                                    logo.Height), 
-                                CompositeOperator.Atop);
-
-                            // white border around thumbnail image
-                            AddBorderBox(
-                                backgroundImage, 
-                                color: new MagickColor(Color.White),
-                                xOffset: backgroundImage.Width - (image.Width + 2*borderThickness + paddingThickness),
-                                width: image.Width + 2*borderThickness,
-                                height: image.Height+2*borderThickness,
-                                cornerSize: 2 * borderThickness);
-
-                            // thumbnail image
-                            backgroundImage.Composite(image, 
-                            new MagickGeometry(
-                                backgroundImage.Width - (image.Width + borderThickness + paddingThickness),
-                                (int)(backgroundImage.Height/2.0 - image.Height/2.0), 
-                                image.Width,
-                                image.Height
-                                ), 
-                            CompositeOperator.Atop);
-                        }
-                        result = backgroundImage.ToByteArray(MagickFormat.Png);
-                    }
+                    ConvertToCrosspostingRepresentation(image, bytes);
                 }
-                else
+
+                if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
                 {
-                    if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
+                    image.Format = MagickFormat.Jpeg;
+                    image.Interlace = Interlace.Plane;
+                }
+
+                byte[] result = image.ToByteArray();
+
+                // force file size
+                if (maxFileSizeInBytes.HasValue)
+                {
+                    while (result.Length > maxFileSizeInBytes)
                     {
-                        image.Format = MagickFormat.Jpeg;
-                        image.Interlace = Interlace.Plane;
-                    }
-                    result = image.ToByteArray();
-                    // force file size
-                    if (maxFileSizeInBytes.HasValue)
-                    {
-                        while (result.Length > maxFileSizeInBytes)
-                        {
-                            image.Scale(new Percentage(75.0));
-                            result = image.ToByteArray();
-                        }
+                        image.Scale(new Percentage(75.0));
+                        result = image.ToByteArray();
                     }
                 }
 
                 return result;
+            }
+        }
+
+        private static void ConvertToCrosspostingRepresentation(MagickImage image, byte[] orig)
+        {
+            const int borderThickness = 3;
+            int paddingThickness = (int)((3.0 / 600.0) * image.Width);
+            int semiOpaqueBorderThickness = 2 * paddingThickness;
+            int mainContentHeight = (int)((150.0 / 640.0) * image.Height);
+
+            using (var thumbnailImage = new MagickImage(orig))
+            {
+
+                image.Grayscale(PixelIntensityMethod.RMS);
+                image.Blur(10.0, 10.0);
+
+                var logoBytes = File.ReadAllBytes(Path.Combine(AssemblyDirectory, "../Images/sqor-sports-logo-web.png"));
+                using (var logo = new MagickImage(logoBytes))
+                {
+                    ScaleImage(mainContentHeight, mainContentHeight, ScaleMode.FitBoth, thumbnailImage);
+                    //int logoWidth = (int)((330.0 / 600.0) * image.Width);
+                    var logoWhiteBackgroundWidth = image.Width - thumbnailImage.Width - 3 * paddingThickness -
+                                                   4*borderThickness;
+                    // 80% for border
+                    ScaleImage((int)(logoWhiteBackgroundWidth * .8), (int)(mainContentHeight * .8), ScaleMode.FitBoth, logo);
+
+                    var logoXOffset = (int) (((double) logoWhiteBackgroundWidth - logo.Width)/2.0);
+
+                    // Semi Transparent box surrounding sqor logo and image thumbnail.
+                    var semiTransparentBoxHeight = mainContentHeight + 2*borderThickness + 2*semiOpaqueBorderThickness;
+                    AddBackgroundBox(
+                        image,
+                        width: image.Width,
+                        height: semiTransparentBoxHeight,
+                        xOffset: 0,
+                        semiTransparent: true);
+
+                    // dark gray border around sqor logo box
+                    AddBorderBox(
+                        image,
+                        color: new MagickColor(Color.FromArgb(128, 128, 128)),
+                        xOffset: paddingThickness,
+                        width: logoWhiteBackgroundWidth + 2*borderThickness,
+                        height: mainContentHeight + 2*borderThickness,
+                        cornerSize: 2*borderThickness);
+
+                    // white background behind sqor logo
+                    AddBackgroundBox(
+                        image,
+                        width: logoWhiteBackgroundWidth,
+                        height: mainContentHeight,
+                        xOffset: paddingThickness + borderThickness,
+                        semiTransparent: false);
+
+                    // Sqor Logo
+                    image.Composite(logo,
+                        new MagickGeometry(logoXOffset + borderThickness + paddingThickness,
+                            (int)(image.Height / 2.0 - logo.Height / 2.0),
+                            logo.Width,
+                            logo.Height),
+                        CompositeOperator.Atop);
+
+                    // white border around thumbnail image
+                    AddBorderBox(
+                        image,
+                        color: new MagickColor(Color.White),
+                        xOffset: image.Width - (thumbnailImage.Width + 2 * borderThickness + paddingThickness),
+                        width: thumbnailImage.Width + 2 * borderThickness,
+                        height: thumbnailImage.Height + 2 * borderThickness,
+                        cornerSize: 2*borderThickness);
+
+                    // thumbnail image
+                    image.Composite(thumbnailImage,
+                        new MagickGeometry(
+                            image.Width - (thumbnailImage.Width + borderThickness + paddingThickness),
+                            (int)(image.Height / 2.0 - thumbnailImage.Height / 2.0),
+                            thumbnailImage.Width,
+                            thumbnailImage.Height
+                            ),
+                        CompositeOperator.Atop);
+                }
+            }
+        }
+
+        private static void CropImageToCircle(MagickImage image)
+        {
+            var widthCenter = (int) (image.Width/2.0);
+            var heightCenter = (int) (image.Height/2.0);
+
+            var edgeX = 0;
+            var edgeY = 0;
+
+            if (image.Width > image.Height)
+            {
+                // wider than tall
+                edgeX = widthCenter;
+                edgeY = 0;
+            }
+            else
+            {
+                // taller than wide, or square
+                edgeX = 0;
+                edgeY = heightCenter;
+            }
+
+            // force image to png to support transparency 
+            image.Format = MagickFormat.Png;
+            image.Transparent(MagickColor.Transparent);
+            using (var circleMask = new MagickImage(MagickColor.Transparent, image.Width, image.Height))
+            {
+                circleMask.Transparent(MagickColor.Transparent);
+                circleMask.FillColor = new MagickColor(Color.White);
+                using (var circle = new DrawableCircle(widthCenter, heightCenter, edgeX, edgeY))
+                {
+                    circleMask.Draw(circle);
+                }
+                image.Composite(circleMask, Gravity.Center, CompositeOperator.DstIn);
             }
         }
 
