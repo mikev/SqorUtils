@@ -378,7 +378,7 @@ namespace Sqor.Utils.Images
 
                 if (transform.HasFlag(ImageTransform.CrosspostPresentation))
                 {
-                    image.Quality = 95;
+                    image.Format = MagickFormat.Png;
                     ConvertToCrosspostingRepresentation(image, bytes);
                 }
 
