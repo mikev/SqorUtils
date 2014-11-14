@@ -407,7 +407,7 @@ namespace Sqor.Utils.Images
         {
             const int borderThickness = 3;
             int paddingThickness = (int)((3.0 / 600.0) * image.Width);
-            int semiOpaqueBorderThickness = 2 * paddingThickness;
+            int semiOpaqueBorderThickness = 4 * paddingThickness;
             int mainContentHeight = (int)((150.0 / 640.0) * image.Height);
 
             using (var thumbnailImage = new MagickImage(orig))
@@ -422,14 +422,14 @@ namespace Sqor.Utils.Images
                     ScaleImage(mainContentHeight, mainContentHeight, ScaleMode.FitBoth, thumbnailImage);
                     //int logoWidth = (int)((330.0 / 600.0) * image.Width);
                     var logoWhiteBackgroundWidth = image.Width - thumbnailImage.Width - 3 * paddingThickness -
-                                                   4*borderThickness;
+                                                   4 * borderThickness;
                     // 80% for border
                     ScaleImage((int)(logoWhiteBackgroundWidth * .8), (int)(mainContentHeight * .8), ScaleMode.FitBoth, logo);
 
                     var logoXOffset = (int) (((double) logoWhiteBackgroundWidth - logo.Width)/2.0);
 
                     // Semi Transparent box surrounding sqor logo and image thumbnail.
-                    var semiTransparentBoxHeight = mainContentHeight + 2*borderThickness + 2*semiOpaqueBorderThickness;
+                    var semiTransparentBoxHeight = mainContentHeight + 2 * borderThickness + 2 * semiOpaqueBorderThickness;
                     AddBackgroundBox(
                         image,
                         width: image.Width,
@@ -442,8 +442,8 @@ namespace Sqor.Utils.Images
                         image,
                         color: new MagickColor(Color.FromArgb(128, 128, 128)),
                         xOffset: paddingThickness,
-                        width: logoWhiteBackgroundWidth + 2*borderThickness,
-                        height: mainContentHeight + 2*borderThickness,
+                        width: logoWhiteBackgroundWidth + 2 * borderThickness,
+                        height: mainContentHeight + 2 * borderThickness,
                         cornerSize: 2*borderThickness);
 
                     // white background behind sqor logo
@@ -541,14 +541,17 @@ namespace Sqor.Utils.Images
 
         private static void AddBorderBox(MagickImage image, MagickColor color, int xOffset, int width, int height, int cornerSize)
         {
-            using (var box = new MagickImage(MagickColor.Transparent, width, height))
+            using (var box = new MagickImage(color, width, height))
             {
+
+                /*
                 box.Transparent(MagickColor.Transparent);
                 box.FillColor = color;
                 using (var rect = new DrawableRoundRectangle(0, 0, box.Width, box.Height, cornerSize, cornerSize))
                 {
                     box.Draw(rect);
                 }
+                */
 
                 image.Composite(box,
                     new MagickGeometry(xOffset,
