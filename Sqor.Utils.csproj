@@ -165,6 +165,7 @@
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />
+    <Compile Include="StatsInc\StatsIncSignature.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
     <Compile Include="Threading\WorkerThread.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
