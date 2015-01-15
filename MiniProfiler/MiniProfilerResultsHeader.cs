@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using StackExchange.Profiling;
 
 namespace Sqor.Utils.MiniProfiler
 {
@@ -54,7 +56,7 @@ namespace Sqor.Utils.MiniProfiler
             using (var reader = new StreamReader(stream))
             {
                 var text = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<MiniProfilerResultsHeader>(text);
+                return  JsonConvert.DeserializeObject<MiniProfilerResultsHeader>(text);
             }
         }
 
@@ -69,7 +71,8 @@ namespace Sqor.Utils.MiniProfiler
             {
                 using (var writer = new StreamWriter(stream, Encoding.Unicode))
                 {
-                    writer.Write(JsonConvert.SerializeObject(header));
+                    var serializeObject = JsonConvert.SerializeObject(header);
+                    writer.Write(serializeObject);
                     writer.Flush();
                     byte[] buffer = stream.GetBuffer();
                     Array.Resize(ref buffer, (int)stream.Length);
