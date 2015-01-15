@@ -52,6 +52,7 @@ namespace Sqor.Utils.Web
                 }
                 var controller = (IController)container.Get(controllerType);
                 requestContext.HttpContext.Items[typeof(ControllerBase)] = controller;
+                HttpContext.Current.Items[typeof(ControllerBase)] = controller;
 
                 Injected.Fire(x => x(controller));
                 
