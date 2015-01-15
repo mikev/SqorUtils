@@ -90,6 +90,10 @@
     <Reference Include="Magick.NET-x64">
       <HintPath>..\ImageMagik.NET\Magick.NET-x64.dll</HintPath>
     </Reference>
+    <Reference Include="MiniProfiler, Version=3.1.1.140, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MiniProfiler.3.0.10\lib\net40\MiniProfiler.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -167,6 +171,9 @@
     <Compile Include="Injection\TypeFactoryResolver.cs" />
     <Compile Include="Logging\RollingFileManager.cs" />
     <Compile Include="Logging\WindowsEventLogPrinter.cs" />
+    <Compile Include="MiniProfiler\MiniProfilerExtensions.cs" />
+    <Compile Include="MiniProfiler\MiniProfilerRequestHeader.cs" />
+    <Compile Include="MiniProfiler\MiniProfilerResultsHeader.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />
     <Compile Include="StatsInc\StatsIncSignature.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
