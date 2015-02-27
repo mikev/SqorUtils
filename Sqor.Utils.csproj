@@ -96,7 +96,20 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Nito.AsyncEx">
+      <HintPath>..\Nito.AsyncEx.3.0.0\lib\net45\Nito.AsyncEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Concurrent">
+      <HintPath>..\Nito.AsyncEx.3.0.0\lib\net45\Nito.AsyncEx.Concurrent.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Enlightenment">
+      <HintPath>..\Nito.AsyncEx.3.0.0\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
+    </Reference>
+    <Reference Include="RabbitMQ.Client">
+      <HintPath>..\RabbitMQ.Client.3.2.1\lib\net30\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -141,6 +154,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caches\AsyncLruCache.cs" />
+    <Compile Include="Caches\CacheSizeAttribute.cs" />
+    <Compile Include="CommonSettings.cs" />
     <Compile Include="Csvs\CsvExtensions.cs" />
     <Compile Include="Data\NSDataExtensions.cs" />
     <Compile Include="Drawing\Bitmap.cs" />
@@ -175,6 +191,9 @@
     <Compile Include="MiniProfiler\MiniProfilerRequestHeader.cs" />
     <Compile Include="MiniProfiler\MiniProfilerResultsHeader.cs" />
     <Compile Include="Passwords\PasswordUtils.cs" />
+    <Compile Include="RabbitMq\IQueueSubscriber.cs" />
+    <Compile Include="RabbitMq\QueueSubscriber.cs" />
+    <Compile Include="RabbitMq\SqorRabbitConnectionFactory.cs" />
     <Compile Include="StatsInc\StatsIncSignature.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
     <Compile Include="Threading\WorkerThread.cs" />
@@ -190,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
