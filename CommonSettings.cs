@@ -21,5 +21,8 @@ namespace Sqor.Utils
 
         public const string DatabaseUpdateExchange = "db-updates-exchange";
         public const string DatabaseUpdateQueue = "db-updates-queue";
+
+        public const string DataUpdateExchange = "data-updates-exchange";
+        public const string DataUpdateQueue = "data-updates-queue";
     }
 }

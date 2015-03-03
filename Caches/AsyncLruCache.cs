@@ -7,6 +7,7 @@ using Nito.AsyncEx;
 namespace Sqor.Utils.Caches
 {
     public class AsyncLruCache<TKey, TValue> 
+        where TValue : class
     {
         private int capacity;
         private Dictionary<TKey, Entry> storage = new Dictionary<TKey, Entry>();
@@ -54,9 +55,9 @@ namespace Sqor.Utils.Caches
             }
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        public void Remove(KeyValuePair<TKey, TValue> item)
         {
-            return Remove(item.Key);
+            Remove(item.Key);
         }
 
         public int Count
@@ -85,24 +86,21 @@ namespace Sqor.Utils.Caches
 
         private Tuple<Entry, IDisposable> AddLater(TKey key)
         {
-            using (locker.Lock())
-            {
-                while (storage.Count >= capacity)
-                    Sacrifice();
+            while (storage.Count >= capacity)
+                Sacrifice();
 
-                var entry = new Entry(key);
-                entry.OlderItem = newestItem;
-                newestItem = entry;
+            var entry = new Entry(key);
+            entry.OlderItem = newestItem;
+            newestItem = entry;
 
-                if (entry.OlderItem != null)
-                    entry.OlderItem.NewerItem = newestItem;
-                else
-                    oldestItem = newestItem;
+            if (entry.OlderItem != null)
+                entry.OlderItem.NewerItem = newestItem;
+            else
+                oldestItem = newestItem;
 
-                storage.Add(key, entry);
+            storage.Add(key, entry);
 
-                return Tuple.Create(entry, entry.Locker.Lock());
-            }            
+            return Tuple.Create(entry, entry.Locker.Lock());
         }
 
         public void Add(TKey key, TValue value)
@@ -129,45 +127,47 @@ namespace Sqor.Utils.Caches
         {
             using (locker.Lock())
             {
-                if (oldestItem != null && EqualityComparer<TKey>.Default.Equals(oldestItem.Key, key))
+                return InternalRemove(key);
+            }
+        }
+
+        private bool InternalRemove(TKey key)
+        {
+            if (oldestItem != null && EqualityComparer<TKey>.Default.Equals(oldestItem.Key, key))
+            {
+                Sacrifice();
+                return true;
+            }
+            else
+            {
+                Entry entry;
+                if (storage.TryGetValue(key, out entry))
                 {
-                    Sacrifice();
+                    RemoveEntryFromList(entry);
+                    storage.Remove(entry.Key);
                     return true;
                 }
                 else
                 {
-                    Entry entry;
-                    if (storage.TryGetValue(key, out entry))
-                    {
-                        RemoveEntryFromList(entry);
-                        storage.Remove(entry.Key);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }
 
         private void RemoveEntryFromList(Entry entry)
         {
-            using (locker.Lock())
-            {
-                if (entry.NewerItem != null)
-                    entry.NewerItem.OlderItem = entry.OlderItem;
-                if (entry.OlderItem != null)
-                    entry.OlderItem.NewerItem = entry.NewerItem;
-                if (Equals(oldestItem, newestItem) && oldestItem != null)
-                    oldestItem = newestItem = null;
-                else if (Equals(oldestItem, entry))
-                    oldestItem = oldestItem.NewerItem;
-                else if (Equals(newestItem, entry))
-                    newestItem = newestItem.OlderItem;            
-                entry.OlderItem = null;
-                entry.NewerItem = null;
-            }
+            if (entry.NewerItem != null)
+                entry.NewerItem.OlderItem = entry.OlderItem;
+            if (entry.OlderItem != null)
+                entry.OlderItem.NewerItem = entry.NewerItem;
+            if (Equals(oldestItem, newestItem) && oldestItem != null)
+                oldestItem = newestItem = null;
+            else if (Equals(oldestItem, entry))
+                oldestItem = oldestItem.NewerItem;
+            else if (Equals(newestItem, entry))
+                newestItem = newestItem.OlderItem;            
+            entry.OlderItem = null;
+            entry.NewerItem = null;
         }
 
         public async Task<TValue[]> TryGetValues(TKey[] keys)
@@ -265,11 +265,8 @@ namespace Sqor.Utils.Caches
 
         private Tuple<Entry, IDisposable> SetLater(TKey key)
         {
-            using (locker.Lock())
-            {
-                Remove(key);
-                return AddLater(key);
-            }
+            InternalRemove(key);
+            return AddLater(key);
         }
 
         public ICollection<TKey> Keys

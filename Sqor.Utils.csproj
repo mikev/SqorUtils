@@ -87,6 +87,9 @@
     <Reference Include="EXIFextractor">
       <HintPath>..\ExifExtractor\EXIFextractor.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Magick.NET-x64">
       <HintPath>..\ImageMagik.NET\Magick.NET-x64.dll</HintPath>
     </Reference>
@@ -195,7 +198,9 @@
     <Compile Include="RabbitMq\QueueSubscriber.cs" />
     <Compile Include="RabbitMq\SqorRabbitConnectionFactory.cs" />
     <Compile Include="StatsInc\StatsIncSignature.cs" />
+    <Compile Include="Strings\LimitedWhitespaceStringBuilder.cs" />
     <Compile Include="Strings\StringExtensions.cs" />
+    <Compile Include="Strings\TextCleaner.cs" />
     <Compile Include="Threading\WorkerThread.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Web\CookieExtensions.cs" />
