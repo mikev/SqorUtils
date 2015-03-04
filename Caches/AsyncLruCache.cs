@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
+using Sqor.Utils.Enumerables;
 
 namespace Sqor.Utils.Caches
 {
@@ -13,10 +14,10 @@ namespace Sqor.Utils.Caches
         private Dictionary<TKey, Entry> storage = new Dictionary<TKey, Entry>();
         private Entry newestItem;
         private Entry oldestItem;
-        private Func<TKey[], Task<TValue[]>> populator;
+        private Func<TKey[], Task<Tuple<TKey, TValue>[]>> populator;
         private AsyncLock locker = new AsyncLock();
 
-        public AsyncLruCache(int capacity, Func<TKey[], Task<TValue[]>> populator)
+        public AsyncLruCache(int capacity, Func<TKey[], Task<Tuple<TKey, TValue>[]>> populator)
         {
             if (capacity < 1)
                 throw new ArgumentException("Invalid capacity");     
@@ -175,6 +176,7 @@ namespace Sqor.Utils.Caches
             var result = new TValue[keys.Length];
             List<Tuple<TKey, Entry, IDisposable, int>> missingIds = null;
             List<Tuple<Entry, int>> pendingIds = null;
+            bool nullValues = false;
             using (await locker.LockAsync())
             {
                 for (var i = 0; i < keys.Length; i++)
@@ -194,6 +196,8 @@ namespace Sqor.Utils.Caches
                         if (entry.HasValue)
                         {
                             result[i] = entry.Value;
+                            if (entry.Value == null)
+                                nullValues = true;
                         }
                         else
                         {
@@ -217,15 +221,31 @@ namespace Sqor.Utils.Caches
                 try
                 {
                     var values = await populator(missingIds.Select(x => x.Item1).ToArray());
+                    var missingIdsById = missingIds.ToDictionary(x => x.Item1);
+                    var stillMissingIds = missingIds.ToHashSet();
+
                     for (var i = 0; i < values.Length; i++)
                     {
                         var value = values[i];
-                        var entry = missingIds[i].Item2;
-                        var entryLock = missingIds[i].Item3;
-                        var index = missingIds[i].Item4;
-                        entry.SetValue(value);
+                        var id = value.Item1;
+                        var missingId = missingIdsById[id];
+                        if (value.Item2 == null)
+                            nullValues = true;
+                        var entry = missingId.Item2;
+                        var entryLock = missingId.Item3;
+                        var index = missingId.Item4;
+                        entry.SetValue(value.Item2);
                         entryLock.Dispose();
-                        result[index] = value;
+                        result[index] = value.Item2;
+                        stillMissingIds.Remove(missingId);
+                    }
+                    foreach (var missingId in stillMissingIds)
+                    {
+                        nullValues = true;
+                        var entry = missingId.Item2;
+                        var entryLock = missingId.Item3;
+                        entry.SetValue(null);
+                        entryLock.Dispose();
                     }
                 }
                 catch 
@@ -243,11 +263,16 @@ namespace Sqor.Utils.Caches
                 foreach (var pendingId in pendingIds)
                 {
                     await pendingId.Item1.WaitForValue();
+                    if (pendingId.Item1.Value == null)
+                        nullValues = true;
                     result[pendingId.Item2] = pendingId.Item1.Value;
                 }
             }
 
-            return result;
+            if (!nullValues)
+                return result;
+            else
+                return result.Where(x => x != null).ToArray();
         }
 
         public async Task<TValue> TryGetValue(TKey key)
