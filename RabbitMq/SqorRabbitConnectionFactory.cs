@@ -6,7 +6,7 @@ namespace Sqor.Utils.RabbitMq
     {
         public SqorRabbitConnectionFactory()
         {
-            RequestedConnectionTimeout = 120000;
+            RequestedConnectionTimeout = 20000;
             HostName = CommonSettings.RabbitMqHost;
             UserName = CommonSettings.RabbitMqUserName;
             Password = CommonSettings.RabbitMqPassword;
