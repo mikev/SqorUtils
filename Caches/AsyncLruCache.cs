@@ -228,7 +228,10 @@ namespace Sqor.Utils.Caches
                     {
                         var value = values[i];
                         var id = value.Item1;
-                        var missingId = missingIdsById[id];
+                        Tuple<TKey, Entry, IDisposable, int> missingId;
+                        if (!missingIdsById.TryGetValue(id, out missingId))
+                            throw new Exception("Id " + id + " not found in missing ids.");
+                        missingId = missingIdsById[id];
                         if (value.Item2 == null)
                             nullValues = true;
                         var entry = missingId.Item2;
