@@ -379,5 +379,6 @@ namespace Sqor.Utils.Caches
                 }
             }
         }
-    }}
+    }
+}
 
