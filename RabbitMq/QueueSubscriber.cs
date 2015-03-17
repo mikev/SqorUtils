@@ -47,8 +47,6 @@ namespace Sqor.Utils.RabbitMq
 
         public override void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, byte[] body)
         {
-            this.LogInfo("Received packet on " + exchange);
-
             base.HandleBasicDeliver(consumerTag, deliveryTag, redelivered, exchange, routingKey, properties, body);
 
             using (var stream = new MemoryStream(body))
