@@ -171,6 +171,7 @@
     <Compile Include="Emit\TypeBuilderUtils.cs" />
     <Compile Include="Encryption\HmacSha1.cs" />
     <Compile Include="Encryption\SHA256Hash.cs" />
+    <Compile Include="Generics\GenericExtensions.cs" />
     <Compile Include="Images\ImageExtensions.cs" />
     <Compile Include="Drawing\IosBitmap.cs" />
     <Compile Include="Drawing\IosColor.cs" />
