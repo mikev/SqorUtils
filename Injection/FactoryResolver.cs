@@ -1,40 +1,38 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Sqor.Utils.Injection
 {
-    public class TypeFactoryResolver : IResolver
+    public class FactoryResolver : IResolver
     {
         private Func<Request, Delegate> factory;
         private static MethodInfo requestCreateChildRequest;
         private static MethodInfo requestResolve;
 
-        static TypeFactoryResolver()
+        static FactoryResolver()
         {
             requestCreateChildRequest = typeof(Request).GetTypeInfo().GetDeclaredMethod("CreateChildRequest");
             requestResolve = typeof(Request).GetTypeInfo().GetDeclaredMethod("Resolve");
         }
 
-        public TypeFactoryResolver(Type type)
+        public FactoryResolver(Type type)
         {
             var requestParameter = Expression.Parameter(typeof(Request), "_");
-            var typeParameter = Expression.Parameter(typeof(Type), "_");
 
             // Pseudo-code of what this expression tree is building toward
             // var childRequest = requestParameter.CreateChildRequest(type);
-            var createChildRequest = Expression.Call(requestParameter, requestCreateChildRequest, typeParameter);
+            var createChildRequest = Expression.Call(requestParameter, requestCreateChildRequest, Expression.Constant(type));
 
             // var resolution = childRequest.Resolve();
             var resolution = Expression.Call(createChildRequest, requestResolve);
 
             // var internalFactoryBody = (type)resolution;
             var internalFactoryBody = Expression.Convert(resolution, type);
-            var internalFactoryType = typeof(Func<,>).MakeGenericType(typeof(Type), type);
+            var internalFactoryType = typeof(Func<>).MakeGenericType(type);
 
             // Func<type> internalFactory = internalFactoryBody;
-            var internalFactory = Expression.Lambda(internalFactoryType, internalFactoryBody, typeParameter);
+            var internalFactory = Expression.Lambda(internalFactoryType, internalFactoryBody);
 
             // Func<Request, Func<Type>> factory = requestParameter => internalFactory;
             var factory = Expression.Lambda<Func<Request, Delegate>>(internalFactory, requestParameter);
