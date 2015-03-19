@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿#if FULL
+using System.Diagnostics;
 using System.Linq;
 using StackExchange.Profiling;
 
@@ -60,3 +61,4 @@ namespace Sqor.Utils.MiniProfiler
         }         
     }
 }
+#endif

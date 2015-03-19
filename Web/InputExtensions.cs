@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿#if FULL
+using System.Web;
 using System.Web.Mvc;
 using Sqor.Utils.Dictionaries;
 
@@ -21,3 +22,4 @@ namespace Sqor.Utils.Web
         }
     }
 }
+#endif

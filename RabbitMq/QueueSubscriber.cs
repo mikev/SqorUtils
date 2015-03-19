@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FULL
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -96,3 +97,4 @@ namespace Sqor.Utils.RabbitMq
         }
     }
 }
+    #endif

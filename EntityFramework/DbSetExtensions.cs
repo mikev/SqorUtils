@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if FULL
+using System.Collections.Generic;
 using System.Data.Entity;
 
 namespace Sqor.Utils.EntityFramework
@@ -14,3 +15,4 @@ namespace Sqor.Utils.EntityFramework
         }
     }
 }
+#endif

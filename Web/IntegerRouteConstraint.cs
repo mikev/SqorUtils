@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if FULL
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Web;
 using System.Web.Routing;
@@ -25,3 +26,4 @@ namespace Sqor.Utils.Web
         }
     }
 }
+#endif

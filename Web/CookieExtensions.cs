@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FULL
+using System;
 using System.Web;
 using Sqor.Utils.Functional;
 using Sqor.Utils.Strings;
@@ -104,3 +105,4 @@ namespace Sqor.Utils.Web
         Permanent
     }
 }
+#endif

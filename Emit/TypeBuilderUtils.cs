@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FULL
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -224,3 +225,4 @@ namespace Sqor.Utils.Emit
         }         
     }
 }
+#endif

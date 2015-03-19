@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿#if FULL
+using System.Configuration;
 
 namespace Sqor.Utils
 {
@@ -26,3 +27,4 @@ namespace Sqor.Utils
         public const string DataUpdateQueue = "data-updates-queue";
     }
 }
+#endif

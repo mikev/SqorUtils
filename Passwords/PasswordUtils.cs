@@ -1,4 +1,5 @@
-﻿namespace Sqor.Utils.Passwords
+﻿#if FULL
+namespace Sqor.Utils.Passwords
 {
     public class PasswordUtils
     {
@@ -15,3 +16,4 @@
         }
     }
 }
+#endif
