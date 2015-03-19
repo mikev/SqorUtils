@@ -18,6 +18,16 @@ namespace Sqor.Utils.Net
             UseAutomaticDecompression = true;
         }
 
+        public HttpClientAdapter()
+        {
+        }
+
+        private HttpMessageHandler handler = null;
+        public HttpClientAdapter(HttpMessageHandler msgHandler)
+        {
+            handler = msgHandler;
+        }
+
         public static bool UseAutomaticDecompression { get; set; }
 
         private int timeout = 60 * 1000;                            // 1 minute
@@ -34,21 +44,24 @@ namespace Sqor.Utils.Net
         {
             //            if (cancelToken.IsCancellationRequested)
             //                return;
-            HttpClientHandler handler;
-            if (UseAutomaticDecompression) 
-            {
-                // temporarily using httpClientHandler instead of ModernHttps NativeHttpClient
-                // because there were some bugs in the OKHttp implementation. New version
-                handler = new NativeMessageHandler();
-            } 
-            else 
-            {
-                handler = new HttpClientHandler();
+
+            if(handler == null) {
+                if (UseAutomaticDecompression) 
+                {
+                    // temporarily using httpClientHandler instead of ModernHttps NativeHttpClient
+                    // because there were some bugs in the OKHttp implementation. New version
+                    handler = new NativeMessageHandler();
+                } 
+                else 
+                {
+                    handler = new HttpClientHandler();
+                }
+                var decompProperty = handler.GetType ().GetRuntimeProperty ("AutomaticDecompression");
+                if (decompProperty != null) {
+                    decompProperty.SetValue(handler, 1 | 2);
+                }
             }
-            var decompProperty = handler.GetType ().GetRuntimeProperty ("AutomaticDecompression");
-            if (decompProperty != null)
-                decompProperty.SetValue(handler, 1 | 2);
-      
+
             var httpClient = new HttpClient(handler)
             {
                 Timeout = TimeSpan.FromSeconds(timeout)
