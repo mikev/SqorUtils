@@ -38,7 +38,12 @@ namespace Sqor.Utils.Numbers
                 result = defaultValue;
             return result;
         }
-        
+
+        public static bool IsInt(this string s, int defaultValue = -1)
+        {
+            return ParseInt(s) > -1;
+        }
+
         public static int GetProportionalValue(this int a, int c, int d)
         {
             var ratio = a / (float)c;
