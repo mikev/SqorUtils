@@ -39,9 +39,10 @@ namespace Sqor.Utils.Numbers
             return result;
         }
 
-        public static bool IsInt(this string s, int defaultValue = -1)
+        public static bool IsInt(this string input)
         {
-            return ParseInt(s) > -1;
+            int o;
+            return int.TryParse(input, out o);
         }
 
         public static int GetProportionalValue(this int a, int c, int d)
