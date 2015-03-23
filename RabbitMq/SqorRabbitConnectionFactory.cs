@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿#if FULL
+using RabbitMQ.Client;
 
 namespace Sqor.Utils.RabbitMq
 {
@@ -16,3 +17,4 @@ namespace Sqor.Utils.RabbitMq
         }
     }
 }
+#endif

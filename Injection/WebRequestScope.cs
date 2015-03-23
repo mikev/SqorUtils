@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿#if FULL
+
+using System.Web;
 
 #if !MONOTOUCH && !MONODROID
 
@@ -40,4 +42,5 @@ namespace Sqor.Utils.Injection.Scopes
     }
 }
 
+#endif
 #endif

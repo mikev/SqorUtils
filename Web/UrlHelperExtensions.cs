@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FULL
+using System;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -75,3 +76,4 @@ namespace Sqor.Utils.Web
         }
     }
 }
+#endif

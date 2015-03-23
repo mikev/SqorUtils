@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿#if FULL
+using System.Web;
 using HtmlAgilityPack;
 
 namespace Sqor.Utils.Strings
@@ -65,3 +66,4 @@ namespace Sqor.Utils.Strings
         }
     }
 }
+#endif

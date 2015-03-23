@@ -1,3 +1,5 @@
+#if FULL
+    
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -381,4 +383,4 @@ namespace Sqor.Utils.Caches
         }
     }
 }
-
+#endif

@@ -1,3 +1,4 @@
+#if FULL
 using System;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -48,4 +49,5 @@ namespace Sqor.Utils.Logging
     }
 }
 
+#endif
 #endif
