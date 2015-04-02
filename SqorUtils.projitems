@@ -146,5 +146,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Web\ModelExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Web\NotAreaConstraint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Web\UrlHelperExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\CurlGenerator.cs" />
   </ItemGroup>
 </Project>
