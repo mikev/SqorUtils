@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sqor.Utils
 {
@@ -19,7 +20,7 @@ namespace Sqor.Utils
             foreach (var header in request.Headers)
             {
                 if (header.Value != null)
-                    builder.Append("-H \"" + header.Key + ": " + header.Value + "\" ");
+                    builder.Append("-H \"" + header.Key + ": " + header.Value.First() + "\" ");
             }
 
             if (request.Content is StringContent)
