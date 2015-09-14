@@ -283,6 +283,7 @@ namespace Sqor.Utils.Images
                 {
                     image.Format = MagickFormat.Jpeg;
                     image.Interlace = Interlace.Plane;
+                    image.BackgroundColor = new MagickColor(255, 255, 255);
                 }
 
                 byte[] result = image.ToByteArray();
