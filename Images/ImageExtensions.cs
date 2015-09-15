@@ -281,9 +281,10 @@ namespace Sqor.Utils.Images
 
                 if ((image.Format == MagickFormat.Jpeg || image.Format == MagickFormat.Jpg) || (transform.HasFlag(ImageTransform.ConvertToJpg) && image.Format != MagickFormat.Gif))
                 {
+                    image.BackgroundColor = new MagickColor(Color.White);
+                    image.Alpha(AlphaOption.Remove);
                     image.Format = MagickFormat.Jpeg;
                     image.Interlace = Interlace.Plane;
-                    image.BackgroundColor = new MagickColor(255, 255, 255);
                 }
 
                 byte[] result = image.ToByteArray();
