@@ -731,6 +731,20 @@ namespace Sqor.Utils.Strings
             return true;
         }
 
+        public static bool IsValidPhoneNumber(this string s)
+        {
+            /* matching E.164 standards http://en.wikipedia.org/wiki/E.164 */
+            string pattern = @"^\+?[1-9]\d{1,14}$";
+
+            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            if (string.IsNullOrWhiteSpace(s) || !regex.IsMatch(s))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Compare two strings and return the index of the first difference.  
         /// Return -1 if the strings are equal.
