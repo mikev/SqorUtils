@@ -556,7 +556,7 @@ namespace Sqor.Utils.Images
                     scaledHeight = heightScaledToWidth;
                     break;
             }
-            image.Scale(scaledWidth, scaledHeight);//
+            image.Scale(scaledWidth, scaledHeight);
         }
 
     }
