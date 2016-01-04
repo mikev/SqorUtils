@@ -201,15 +201,15 @@ namespace Sqor.Utils.Images
 
                 ScaleImage(width.GetValueOrDefault(), height.GetValueOrDefault(), sm, image);
 
-                //Removed for Facebook Portrait Zoom Issues
-                //if (image.Width < width)
-                //{
-                //    width = image.Width;
-                //}
-                //if (image.Height < height)
-                //{
-                //    height = image.Height;
-                //}
+                //Possible fix (commenting out for FB portrait) - CWN//
+                if (image.Width < width)
+                {
+                    width = image.Width;
+                }
+                if (image.Height < height)
+                {
+                    height = image.Height;
+                }
 
                 var crop = false;
                 var fp = FocusPoint.SixthDownCenter;
