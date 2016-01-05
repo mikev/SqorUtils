@@ -421,6 +421,26 @@ namespace Sqor.Utils.Images
             }
         }
 
+        //CWN - Create Letterbox for portrait images (current issue - xpost portrait to facebook via ios)
+        private static void ForceLetterbox(MagickImage image, int width, int height, int xOffset, bool semiTransparent)
+        {
+            using (var box = new MagickImage(new MagickColor(Color.White), width, height))
+            {
+                if (semiTransparent)
+                {
+                    box.Transparent(MagickColor.Transparent);
+                    box.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, .38);
+                }
+
+                image.Composite(box,
+                    new MagickGeometry(xOffset,
+                        (int)(image.Height / 2.0 - box.Height / 2.0),
+                        box.Width,
+                        box.Height),
+                    CompositeOperator.Atop);
+            }
+        }
+
         private static void AddBackgroundBox(MagickImage image, int width, int height, int xOffset, bool semiTransparent)
         {
             using (var box = new MagickImage(new MagickColor(Color.White), width, height))
