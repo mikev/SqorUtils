@@ -121,7 +121,7 @@ namespace Sqor.Utils.Images
             }
             return scaled;
         }
-
+        
         public static string AssemblyDirectory
         {
             get
@@ -201,7 +201,6 @@ namespace Sqor.Utils.Images
 
                 ScaleImage(width.GetValueOrDefault(), height.GetValueOrDefault(), sm, image);
 
-                //Possible fix (commenting out for FB portrait) - CWN//
                 if (image.Width < width)
                 {
                     width = image.Width;
@@ -268,6 +267,11 @@ namespace Sqor.Utils.Images
 
                 image.Strip();
 
+                if (transform.HasFlag(ImageTransform.FacebookPortrait))
+                {
+                    sm = ScaleMode.None;
+                    ForceLetterbox(image);
+                }
 
                 if (transform.HasFlag(ImageTransform.CropToCircle))
                 {
@@ -302,6 +306,12 @@ namespace Sqor.Utils.Images
 
                 return result;
             }
+        }
+
+        private static void ForceLetterbox(MagickImage image)
+        {
+            //image.Resize(400, 629);
+            image.Extent(1200, 629, Gravity.Center, new MagickColor("White"));
         }
 
         private static void ConvertToCrosspostingRepresentation(MagickImage image, byte[] orig)
@@ -418,26 +428,6 @@ namespace Sqor.Utils.Images
                     circleMask.Draw(circle);
                 }
                 image.Composite(circleMask, Gravity.Center, CompositeOperator.DstIn);
-            }
-        }
-
-        //CWN - Create Letterbox for portrait images (current issue - xpost portrait to facebook via ios)
-        private static void ForceLetterbox(MagickImage image, int width, int height, int xOffset, bool semiTransparent)
-        {
-            using (var box = new MagickImage(new MagickColor(Color.White), width, height))
-            {
-                if (semiTransparent)
-                {
-                    box.Transparent(MagickColor.Transparent);
-                    box.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, .38);
-                }
-
-                image.Composite(box,
-                    new MagickGeometry(xOffset,
-                        (int)(image.Height / 2.0 - box.Height / 2.0),
-                        box.Width,
-                        box.Height),
-                    CompositeOperator.Atop);
             }
         }
 
