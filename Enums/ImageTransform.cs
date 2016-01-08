@@ -85,6 +85,8 @@ namespace Sqor.Utils.Enums
 
         AddPlayButton = 8192,
         CrosspostPresentation = 16384,
-        CropToCircle = 32768
+        CropToCircle = 32768,
+        FacebookPortrait = 65536
+
     }
 }
