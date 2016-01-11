@@ -269,7 +269,7 @@ namespace Sqor.Utils.Images
 
                 if (transform.HasFlag(ImageTransform.FacebookPortrait))
                 {
-                    sm = ScaleMode.None;
+                    //sm = ScaleMode.None;
                     ForceLetterbox(image);
                 }
 
@@ -310,8 +310,7 @@ namespace Sqor.Utils.Images
 
         private static void ForceLetterbox(MagickImage image)
         {
-            //image.Resize(400, 629);
-            image.Extent(1200, 629, Gravity.Center, new MagickColor("White"));
+            image.Extent(1200, 629, Gravity.Center, new MagickColor(Color.White));
         }
 
         private static void ConvertToCrosspostingRepresentation(MagickImage image, byte[] orig)
