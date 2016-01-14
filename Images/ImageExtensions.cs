@@ -269,7 +269,6 @@ namespace Sqor.Utils.Images
 
                 if (transform.HasFlag(ImageTransform.FacebookPortrait))
                 {
-                    //sm = ScaleMode.None;
                     ForceLetterbox(image);
                 }
 
