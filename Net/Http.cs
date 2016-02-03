@@ -35,6 +35,10 @@ namespace Sqor.Utils.Net
         private Action<Http> onError;
         private bool preserveAsyncContext;
 
+        // CWN
+        private int? currentUserId;
+        private string AccessToken;  
+
         private Http(string url, IHttpAdapter adapter, bool messWithQuerystring = true, bool preserveAsyncContext = false)
         {
             this.preserveAsyncContext = preserveAsyncContext;
@@ -61,6 +65,9 @@ namespace Sqor.Utils.Net
 
             this.adapter = adapter ?? DefaultAdapter;
             this.url = url;
+
+            headers["User-Id"] = this.currentUserId.Value.ToString();
+            headers["Access-Token"] = this.AccessToken;
 
             //headers["Accept-Language"] = "en-us,en;q=0.5";
             //headers["Accept-Encoding"] = "gzip,deflate";
@@ -331,6 +338,8 @@ namespace Sqor.Utils.Net
                     {
                         { "User-Agent", http.userAgent },
                         { "Accept", http.acceptHeader },
+                        { "Access-Token", http.AccessToken },
+                        { "User-Id", http.currentUserId.Value.ToString()},
                         { "Content-Type", ContentType ?? "text/plain" }
                     }),
                     PreserveAsyncContext = http.preserveAsyncContext,
