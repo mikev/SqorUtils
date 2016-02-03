@@ -335,8 +335,6 @@ namespace Sqor.Utils.Net
                     {
                         { "User-Agent", http.userAgent },
                         { "Accept", http.acceptHeader },
-                        { "Access-Token", http.AccessToken },
-                        { "User-Id", http.currentUserId.Value.ToString()},
                         { "Content-Type", ContentType ?? "text/plain" }
                     }),
                     PreserveAsyncContext = http.preserveAsyncContext,
