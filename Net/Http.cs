@@ -66,9 +66,6 @@ namespace Sqor.Utils.Net
             this.adapter = adapter ?? DefaultAdapter;
             this.url = url;
 
-            headers["User-Id"] = this.currentUserId.Value.ToString();
-            headers["Access-Token"] = this.AccessToken;
-
             //headers["Accept-Language"] = "en-us,en;q=0.5";
             //headers["Accept-Encoding"] = "gzip,deflate";
             //headers["Accept-Charset"] = "utf-8;q=0.7,*;q=0.7";
