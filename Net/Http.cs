@@ -335,7 +335,7 @@ namespace Sqor.Utils.Net
                     {
                         { "User-Agent", http.userAgent },
                         { "Accept", http.acceptHeader },
-                        { "Content-Type", ContentType ?? "text/plain" }
+                        { "Content-Type", ContentType ?? "application/json" }
                     }),
                     PreserveAsyncContext = http.preserveAsyncContext,
                     Url = http.Url,
