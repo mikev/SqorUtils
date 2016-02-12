@@ -35,10 +35,6 @@ namespace Sqor.Utils.Net
         private Action<Http> onError;
         private bool preserveAsyncContext;
 
-        // CWN
-        private int? currentUserId;
-        private string AccessToken;  
-
         private Http(string url, IHttpAdapter adapter, bool messWithQuerystring = true, bool preserveAsyncContext = false)
         {
             this.preserveAsyncContext = preserveAsyncContext;
@@ -335,7 +331,7 @@ namespace Sqor.Utils.Net
                     {
                         { "User-Agent", http.userAgent },
                         { "Accept", http.acceptHeader },
-                        { "Content-Type", ContentType ?? "application/json" }
+                        { "Content-Type", ContentType ?? "text/plain" }
                     }),
                     PreserveAsyncContext = http.preserveAsyncContext,
                     Url = http.Url,

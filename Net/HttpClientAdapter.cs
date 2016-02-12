@@ -126,11 +126,11 @@ namespace Sqor.Utils.Net
                     request.Headers.Remove("User-Agent");
                 }
 
-                if (request.Headers.ContainsKey("Content-Type"))
-                {
-                    httpClientRequest.Headers.UserAgent.ParseAdd(request.Headers["Content-Type"]);
-                    request.Headers.Remove("Content-Type");
-                }
+                //if (request.Headers.ContainsKey("Content-Type"))
+                //{
+                //    httpClientRequest.Headers.UserAgent.ParseAdd(request.Headers["Content-Type"]);
+                //    request.Headers.Remove("Content-Type");
+                //}
 
                 // Process headers
                 foreach (var header in request.Headers)
