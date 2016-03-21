@@ -719,9 +719,7 @@ namespace Sqor.Utils.Strings
             /* taken from: 
              * http://haacked.com/archive/2007/08/21/i-knew-how-to-validate-an-email-address-until-i.aspx/
              */
-            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
-                + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 
-                + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
+            string pattern = @"[^\s@]+@[^\s@]+\.[^\s@]+";
 
             Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
             if (string.IsNullOrWhiteSpace(s) || !regex.IsMatch (s)) {
