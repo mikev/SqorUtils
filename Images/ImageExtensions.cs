@@ -267,6 +267,7 @@ namespace Sqor.Utils.Images
 
                 image.Strip();
 
+                //CWN
                 if (transform.HasFlag(ImageTransform.FacebookPortrait))
                 {
                     sm = ScaleMode.None;
