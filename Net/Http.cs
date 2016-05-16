@@ -30,7 +30,7 @@ namespace Sqor.Utils.Net
         private Dictionary<string, string> cookies = new Dictionary<string, string>();
         private List<Action<IDictionary<string, string>>> responseHeaders = new List<Action<IDictionary<string, string>>>();
         private string userAgent = "SqorAgent (sqor.com/about)";
-        // private string userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
+        //  private string userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
         private string acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
         private static bool isCurlLoggingEnabled = true;
         private Action<Http> onError;
